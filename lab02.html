@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lab 02 – Kundenstruktur & Demografie · UrbanCart · THWS</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif; background:#fff; color:#212529; }
+
+    .top-bar { height:4px; background:#E87722; position:fixed; top:0; left:0; right:0; z-index:200; }
+
+    .navbar {
+      position:sticky; top:4px; z-index:100;
+      background:#fff; border-bottom:1px solid #E9ECEF;
+      box-shadow:0 1px 8px rgba(0,0,0,0.05);
+      height:52px; display:flex; align-items:center;
+      padding:0 32px; justify-content:space-between;
+    }
+    .nav-brand { display:flex; align-items:center; gap:10px; text-decoration:none; }
+    .nav-brand-text { font-size:0.78rem; font-weight:700; color:#005B9A; letter-spacing:0.04em; text-transform:uppercase; }
+    .nav-lab-badge {
+      background:rgba(232,119,34,0.12); color:#E87722;
+      font-size:0.68rem; font-weight:700;
+      padding:3px 10px; letter-spacing:0.06em; text-transform:uppercase;
+    }
+    .lang-wrap { display:flex; gap:4px; }
+    .lang-btn {
+      padding:4px 10px; border-radius:3px;
+      border:1.5px solid #E9ECEF; background:#fff;
+      cursor:pointer; font-weight:700; font-size:0.72rem;
+      color:#6C757D; transition:all 0.15s; font-family:inherit;
+    }
+    .lang-btn.active { background:#E87722; color:#fff; border-color:#E87722; }
+
+    .progress-bar {
+      background:#F1F3F5; padding:12px 32px;
+      display:flex; align-items:center; gap:8px; overflow-x:auto;
+    }
+    .prog-step {
+      display:flex; align-items:center; gap:6px; white-space:nowrap;
+      font-size:0.72rem; font-weight:700; color:#9ca3af;
+    }
+    .prog-step.active { color:#E87722; }
+    .prog-step.done { color:#3D7A56; }
+    .prog-dot {
+      width:24px; height:24px; border-radius:50%;
+      background:#E9ECEF; display:flex; align-items:center;
+      justify-content:center; font-size:0.68rem; font-weight:800;
+      flex-shrink:0;
+    }
+    .prog-dot.active { background:#E87722; color:#fff; }
+    .prog-dot.done { background:#3D7A56; color:#fff; }
+    .prog-arrow { color:#D1D5DB; font-size:0.9rem; }
+
+    .lab-hero {
+      background:#005B9A; padding:48px 32px;
+      position:relative; overflow:hidden;
+    }
+    .lab-hero-inner { max-width:800px; }
+    .lab-num {
+      font-size:0.72rem; font-weight:700; letter-spacing:0.18em;
+      text-transform:uppercase; color:rgba(255,255,255,0.5); margin-bottom:8px;
+    }
+    .lab-title { font-size:clamp(1.8rem,4vw,2.8rem); font-weight:800; color:#fff; line-height:1.1; margin-bottom:12px; }
+    .lab-title span { color:#E87722; }
+    .lab-sub { font-size:1rem; color:rgba(255,255,255,0.75); line-height:1.7; max-width:560px; }
+    .lab-meta { display:flex; gap:16px; flex-wrap:wrap; margin-top:24px; }
+    .lab-meta-item {
+      display:flex; align-items:center; gap:6px;
+      font-size:0.78rem; font-weight:600; color:rgba(255,255,255,0.6);
+    }
+    .lab-meta-item strong { color:#fff; }
+
+    .content { max-width:800px; margin:0 auto; padding:48px 32px; }
+    .section-block { margin-bottom:48px; }
+    .block-eyebrow {
+      font-size:0.68rem; font-weight:700; letter-spacing:0.14em;
+      text-transform:uppercase; color:#E87722; margin-bottom:6px;
+    }
+    .block-title { font-size:1.3rem; font-weight:800; color:#005B9A; margin-bottom:8px; }
+    .block-lead { font-size:0.95rem; color:#6C757D; line-height:1.75; margin-bottom:20px; }
+    .divider { width:40px; height:3px; background:#E87722; margin:8px 0 16px; }
+
+    .steps { display:flex; flex-direction:column; gap:16px; }
+    .step-card {
+      border:1.5px solid #E9ECEF; padding:20px 24px;
+      border-left:3px solid #005B9A;
+      transition:border-color 0.2s;
+    }
+    .step-card:hover { border-left-color:#E87722; }
+    .step-header { display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+    .step-num {
+      width:28px; height:28px; border-radius:50%;
+      background:#005B9A; color:#fff;
+      display:flex; align-items:center; justify-content:center;
+      font-size:0.75rem; font-weight:800; flex-shrink:0;
+    }
+    .step-title { font-size:0.95rem; font-weight:800; color:#212529; }
+    .step-body { font-size:0.87rem; color:#6C757D; line-height:1.7; margin-left:40px; }
+    .step-body code {
+      background:#F1F3F5; padding:1px 6px;
+      font-family:'Consolas','Monaco',monospace; font-size:0.82rem;
+      color:#E87722; border-radius:2px;
+    }
+    .step-tip {
+      background:rgba(0,91,154,0.06); border-left:2px solid #005B9A;
+      padding:10px 14px; margin-top:10px; margin-left:40px;
+      font-size:0.82rem; color:#005B9A; line-height:1.6;
+    }
+
+    .screenshot-placeholder {
+      background:#F1F3F5; border:1.5px dashed #D1D5DB;
+      padding:32px; text-align:center; margin:16px 0;
+      border-radius:2px;
+    }
+    .screenshot-placeholder-icon { font-size:2rem; opacity:0.3; margin-bottom:8px; }
+    .screenshot-placeholder-text { font-size:0.78rem; color:#9ca3af; font-weight:600; }
+
+    .kpi-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:16px; margin:16px 0; }
+    .kpi-card {
+      background:#fff; border:1.5px solid #E9ECEF;
+      border-top:3px solid #E87722; padding:20px 16px; text-align:center;
+    }
+    .kpi-icon { font-size:1.4rem; margin-bottom:8px; }
+    .kpi-val { font-size:1.6rem; font-weight:900; color:#E87722; line-height:1; }
+    .kpi-lbl { font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:#005B9A; margin-top:4px; }
+    .kpi-def { font-size:0.78rem; color:#9ca3af; margin-top:6px; line-height:1.5; }
+
+    .quiz-section { background:#F1F3F5; padding:40px 32px; margin:0 -32px; border-radius:2px; }
+    .quiz-title { font-size:1.1rem; font-weight:800; color:#005B9A; margin-bottom:4px; }
+    .quiz-sub { font-size:0.84rem; color:#6C757D; margin-bottom:24px; }
+    .quiz-progress { font-size:0.72rem; font-weight:700; color:#9ca3af; margin-bottom:20px; text-transform:uppercase; letter-spacing:0.08em; }
+    .question-block { background:#fff; border:1.5px solid #E9ECEF; padding:24px; margin-bottom:16px; }
+    .question-num { font-size:0.68rem; font-weight:700; color:#E87722; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px; }
+    .question-text { font-size:0.95rem; font-weight:700; color:#212529; margin-bottom:16px; line-height:1.5; }
+    .options { display:flex; flex-direction:column; gap:8px; }
+    .option-btn {
+      background:#F9FAFB; border:1.5px solid #E9ECEF;
+      padding:10px 16px; text-align:left;
+      font-size:0.87rem; font-weight:600; color:#374151;
+      cursor:pointer; transition:all 0.15s; font-family:inherit;
+    }
+    .option-btn:hover { border-color:#005B9A; color:#005B9A; background:rgba(0,91,154,0.04); }
+    .option-btn.correct { background:rgba(61,122,86,0.1); border-color:#3D7A56; color:#3D7A56; }
+    .option-btn.wrong   { background:rgba(239,68,68,0.08); border-color:#ef4444; color:#ef4444; }
+    .option-btn.revealed { pointer-events:none; }
+    .feedback {
+      margin-top:10px; padding:10px 14px;
+      font-size:0.84rem; line-height:1.6; font-weight:600;
+    }
+    .feedback.correct { background:rgba(61,122,86,0.1); color:#3D7A56; border-left:2px solid #3D7A56; }
+    .feedback.wrong   { background:rgba(239,68,68,0.08); color:#dc2626; border-left:2px solid #dc2626; }
+    .quiz-result {
+      background:#fff; border:1.5px solid #E9ECEF; border-top:3px solid #E87722;
+      padding:32px; text-align:center; margin-top:16px;
+    }
+    .quiz-result-score { font-size:3rem; font-weight:900; color:#E87722; line-height:1; }
+    .quiz-result-label { font-size:0.84rem; color:#6C757D; margin-top:6px; }
+    .quiz-result-msg { font-size:1rem; font-weight:700; color:#212529; margin-top:16px; }
+
+    .ai-section {
+      background:#0f172a; padding:32px;
+      border-left:3px solid #E87722; margin:32px 0;
+    }
+    .ai-eyebrow { font-size:0.68rem; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:#E87722; margin-bottom:6px; }
+    .ai-title { font-size:1.1rem; font-weight:800; color:#fff; margin-bottom:12px; }
+    .ai-text { font-size:0.87rem; color:rgba(255,255,255,0.65); line-height:1.75; margin-bottom:16px; }
+    .code-block {
+      background:#1e293b; border-left:2px solid #E87722;
+      color:#e2e8f0; font-family:'Consolas','Monaco',monospace;
+      font-size:0.78rem; line-height:1.8; padding:16px 20px; overflow-x:auto;
+      white-space:pre;
+    }
+
+    .lab-nav {
+      border-top:1px solid #E9ECEF; padding:32px;
+      display:flex; justify-content:space-between; align-items:center;
+      max-width:800px; margin:0 auto;
+    }
+    .lab-nav-btn {
+      display:flex; align-items:center; gap:8px;
+      font-size:0.87rem; font-weight:700; color:#005B9A;
+      text-decoration:none; cursor:pointer;
+      transition:color 0.15s;
+    }
+    .lab-nav-btn:hover { color:#E87722; }
+    .lab-nav-btn.primary {
+      background:#E87722; color:#fff;
+      padding:10px 20px; border:2px solid #E87722;
+    }
+    .lab-nav-btn.primary:hover { background:#d06a1a; border-color:#d06a1a; }
+
+    .sr { opacity:0; transform:translateY(12px); transition:opacity 0.5s ease,transform 0.5s ease; }
+    .sr.visible { opacity:1; transform:translateY(0); }
+  </style>
+</head>
+<body>
+<div class="top-bar"></div>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+const T = {
+  de: {
+    labNum: "Lab 02 von 09",
+    labTitle: ["Kundenstruktur & ", "Demografie"],
+    labSub: "Wer kauft eigentlich bei UrbanCart? Du analysierst 8.000 Kunden nach Region, Altersgruppe und genutztem Gerät – und findest heraus, welches Segment den meisten Umsatz bringt.",
+    metaDauer: "60–90 Min.",
+    metaLevel: "Einsteiger",
+    metaData: "customers.csv · orders.csv",
+    metaTool: "Tableau Public (kostenlos)",
+    progSteps: ["Einführung","Daten laden","Analyse","Visualisierung","Quiz","KI-Ausblick"],
+    s1eye: "Kontext",
+    s1title: "Wer sind unsere Kunden?",
+    s1lead: "Im ersten Lab hast du Umsätze analysiert. Jetzt gehen wir eine Ebene tiefer: Wer steckt hinter diesen Zahlen? Alter, Region, verwendetes Gerät – das sind die demografischen Dimensionen, die Marketingentscheidungen treiben. Das Ziel dieses Labs: Du findest UrbanCarts wertvollstes Kundensegment.",
+    s2eye: "Schritt-für-Schritt",
+    s2title: "Daten laden & verknüpfen",
+    s2lead: "Wir laden customers.csv und verbinden die Bestelldaten per Join. So bekommen wir einen vollständigen Blick: Wer hat wann wie viel bestellt?",
+    steps: [
+      {
+        title: "customers.csv laden",
+        body: "Öffne Tableau Public. Klicke auf <code>Textdatei</code> und lade <code>customers.csv</code>. Die Tabelle enthält: <code>customer_id</code>, <code>name</code>, <code>region</code>, <code>age_group</code>, <code>device_type</code>, <code>gender</code>, <code>signup_date</code>.",
+        tip: "💡 Tipp: Prüfe, ob Tableau die Spaltentypen korrekt erkennt. age_group sollte als String (Abc), nicht als Zahl erkannt werden."
+      },
+      {
+        title: "orders.csv joinen über customer_id",
+        body: "Ziehe <code>orders.csv</code> aus dem linken Panel neben <code>customers.csv</code> auf die Arbeitsfläche. Tableau schlägt automatisch den Join vor. Stelle sicher: <code>Customer Id = Customer Id</code> (Inner Join). Du hast jetzt Kundendaten + Bestellungen in einer Ansicht.",
+        tip: "💡 Inner Join vs. Left Join: Inner Join = nur Kunden mit mind. einer Bestellung. Left Join = alle Kunden, auch ohne Bestellung. Für Umsatzanalysen nutze Inner Join."
+      },
+      {
+        title: "Balkendiagramm: Bestellungen nach Region",
+        body: "Neues Arbeitsblatt. Ziehe <code>Region</code> auf Zeilen, <code>Order Id</code> (COUNTD) auf Spalten. Klicke auf das Sortier-Symbol (absteigende Reihenfolge). Welche Region hat die meisten Bestellungen?",
+        tip: null
+      },
+      {
+        title: "Heatmap: Altersgruppe × Gerät",
+        body: "Neues Arbeitsblatt. Ziehe <code>Age Group</code> auf Zeilen, <code>Device Type</code> auf Spalten. Ziehe <code>Order Id</code> (COUNTD) auf <code>Color</code> im Marks-Panel. Wähle als Chart-Typ <code>Square</code>. Tableau zeigt dir jetzt, welche Kombination aus Altersgruppe und Gerät am häufigsten vorkommt.",
+        tip: "💡 Was ist eine Heatmap? Eine Matrix, bei der die Zellfarbe den Wert kodiert. Dunklere Farbe = höherer Wert. Ideal für Kreuzvergleiche."
+      },
+      {
+        title: "Treemap: Umsatz nach Region",
+        body: "Neues Arbeitsblatt. Ziehe <code>Region</code> auf <code>Label</code>, <code>Total Revenue</code> (SUM) auf <code>Size</code> und nochmal auf <code>Color</code>. Wähle als Chart-Typ <code>Treemap</code>. Größere Flächen = mehr Umsatz. Welche Region dominiert?",
+        tip: "💡 Treemap vs. Balkendiagramm: Treemaps zeigen Proportionen besser, Balken eignen sich besser für genaue Wertvergleiche. Nutze beide für unterschiedliche Aussagen."
+      },
+    ],
+    s3eye: "Kennzahlen",
+    s3title: "Kundenkennzahlen im Überblick",
+    s3lead: "Diese drei KPIs helfen dir, den Wert verschiedener Kundensegmente zu vergleichen.",
+    kpis: [
+      { icon:"👥", val:"8.000", lbl:"Unique Customers", def:"Anzahl eindeutiger Kunden im Datensatz. Tableau: COUNTD([customer_id])" },
+      { icon:"💰", val:"CLV", lbl:"Customer Lifetime Value", def:"Gesamtumsatz pro Kunde. Tableau: SUM([total_revenue]) / COUNTD([customer_id])" },
+      { icon:"📱", val:"Device", lbl:"Mobile / Desktop / Tablet", def:"Anteil der Bestellungen nach Gerätekategorie – wichtig für UX-Entscheidungen." },
+    ],
+    s4eye: "Visualisierung",
+    s4title: "Dashboard: UrbanCart Customer Insights",
+    viz_steps: [
+      {
+        title: "Neues Dashboard anlegen",
+        body: "Klicke unten links auf <code>+</code> → <code>Neues Dashboard</code>. Benenne es: <strong>UrbanCart Customer Insights</strong>. Setze die Größe auf <code>Automatisch</code>.",
+        tip: null
+      },
+      {
+        title: "Balkendiagramm & Treemap einbetten",
+        body: "Ziehe das Balkendiagramm (Bestellungen nach Region) in die linke Spalte. Ziehe die Treemap (Umsatz nach Region) daneben. Du siehst jetzt: Bestellt viel ≠ Umsatz viel? Dann gibt es Regionen mit hohem Warenkorbwert!",
+        tip: "💡 Dashboard-Tipp: Füge einen Region-Filter hinzu (rechtsklick auf eine Region im Balkendiagramm → 'Als Filter verwenden'). Damit filtert ein Klick alle Sheets gleichzeitig."
+      },
+      {
+        title: "Heatmap einbetten & interpretieren",
+        body: "Füge die Altersgruppen-Gerät-Heatmap hinzu. Erkennst du ein Muster? Typisches Ergebnis: Jüngere Kunden (18–25) kaufen häufiger mobil, ältere (46+) eher am Desktop. Das hat direkte Implikationen für das UX-Design des Webshops.",
+        tip: null
+      },
+      {
+        title: "Titel und Beschriftungen anpassen",
+        body: "Klicke auf jeden Titel und beschrifte die Charts verständlich: z.B. <strong>Bestellungen nach Region (sortiert)</strong>. Füge einen Dashboard-Titel ein: <strong>UrbanCart Customer Insights – Demografische Analyse 2023/24</strong>.",
+        tip: "💡 Good Dashboard Practice: Jedes Chart braucht einen aussagekräftigen Titel und (wo nötig) eine Achsenbeschriftung. Keine Grafik ohne Kontext!"
+      },
+    ],
+    quizTitle: "Quiz: Lab 02 – Kundenstruktur & Demografie",
+    quizSub: "15 Fragen · Beantworte alle, bevor du zum nächsten Lab gehst.",
+    questions: [
+      {
+        q: "Was ist der Customer Lifetime Value (CLV)?",
+        options: [
+          "Die Anzahl der Käufe eines Kunden",
+          "Der Gesamtumsatz, den ein Kunde über seine gesamte Kundenbeziehung generiert",
+          "Der Durchschnittspreis eines Produkts",
+          "Die Dauer der Kundenbeziehung in Tagen"
+        ],
+        correct: 1,
+        explain: "CLV = Customer Lifetime Value = Gesamtumsatz, den ein Kunde über die gesamte Beziehung mit dem Unternehmen bringt. Hoher CLV = wertvoller Kunde → mehr Marketingbudget gerechtfertigt."
+      },
+      {
+        q: "Was versteht man unter Kundensegmentierung?",
+        options: [
+          "Die Aufteilung des Sortiments in Kategorien",
+          "Die Einteilung von Kunden in homogene Gruppen nach gemeinsamen Merkmalen",
+          "Die Analyse von Bestellhäufigkeiten",
+          "Die geografische Darstellung von Umsätzen"
+        ],
+        correct: 1,
+        explain: "Kundensegmentierung = Kunden mit ähnlichen Eigenschaften (Alter, Region, Kaufverhalten) werden in Gruppen eingeteilt. Ziel: Maßnahmen zielgruppengenau ausrichten."
+      },
+      {
+        q: "Welcher Join-Typ liefert nur Kunden, die mindestens eine Bestellung aufgegeben haben?",
+        options: [
+          "Left Join",
+          "Right Join",
+          "Inner Join",
+          "Full Outer Join"
+        ],
+        correct: 2,
+        explain: "Inner Join = nur Datensätze, die in BEIDEN Tabellen vorhanden sind. Kunden ohne Bestellung werden herausgefiltert. Left Join würde alle Kunden behalten, auch ohne Bestellung."
+      },
+      {
+        q: "Was zeigt eine Heatmap in Tableau?",
+        options: [
+          "Geographische Verteilungen auf einer Karte",
+          "Temperaturverläufe über Zeit",
+          "Werte in einer Matrix, wobei die Farbe den Wert kodiert",
+          "Einen Vergleich zweier Liniendiagramme"
+        ],
+        correct: 2,
+        explain: "Eine Heatmap ist eine Matrix (z.B. Altersgruppe × Gerät), bei der die Zellfarbe den Messwert kodiert. Dunkel = hoch, hell = niedrig. Ideal für Kreuztabellenanalysen."
+      },
+      {
+        q: "Was zeigt eine Treemap?",
+        options: [
+          "Einen Baum aus Entscheidungsregeln (Decision Tree)",
+          "Proportionen durch unterschiedlich große Rechtecke",
+          "Zeitliche Entwicklung in Baumstruktur",
+          "Hierarchische Daten als Kreisdiagramm"
+        ],
+        correct: 1,
+        explain: "Eine Treemap stellt Proportionen als rechteckige Flächen dar. Größeres Rechteck = höherer Wert. Gut für: 'Welche Region/Kategorie hat den größten Anteil am Gesamtumsatz?'"
+      },
+      {
+        q: "UrbanCart-Daten zeigen: Die Region 'Bayern' hat die meisten Bestellungen, aber nicht den höchsten Gesamtumsatz. Was könnte das bedeuten?",
+        options: [
+          "Die Daten sind fehlerhaft",
+          "Bayern hat einen niedrigen Durchschnitts-Warenkorb",
+          "Bayern kauft ausschließlich Produkte mit Rabatten",
+          "In Bayern gibt es mehr Retouren"
+        ],
+        correct: 1,
+        explain: "Viele Bestellungen mit niedrigem Warenkorbwert können trotz hoher Bestellzahl zu niedrigem Gesamtumsatz führen. Das zeigt: Bestellanzahl ≠ Umsatz. AOV (Average Order Value) ist die entscheidende Kennzahl."
+      },
+      {
+        q: "Welches Gerät wird laut typischen E-Commerce-Studien am häufigsten für Käufe genutzt?",
+        options: [
+          "Desktop-PC",
+          "Tablet",
+          "Smartphone (Mobile)",
+          "Smart TV"
+        ],
+        correct: 2,
+        explain: "Laut aktuellen E-Commerce-Studien (z.B. Statista) werden über 60% der Online-Käufe mobil abgewickelt. Mobile-First-Design ist daher entscheidend für den Conversion-Erfolg."
+      },
+      {
+        q: "Warum ist die demografische Analyse im E-Commerce wichtig?",
+        options: [
+          "Um Datenschutzregeln zu umgehen",
+          "Um Marketingmaßnahmen auf die richtigen Zielgruppen auszurichten",
+          "Um die Lagerkosten zu senken",
+          "Um den Algorithmus von Google zu beeinflussen"
+        ],
+        correct: 1,
+        explain: "Demografische Analyse zeigt, wer die Kunden sind (Alter, Region, Gerät). Damit können Marketingbudgets zielgerichtet eingesetzt werden: Z.B. Instagram-Ads für 18–25, Newsletter für 36–55."
+      },
+      {
+        q: "Was ist der Unterschied zwischen B2C und B2B im E-Commerce?",
+        options: [
+          "B2C verkauft an Unternehmen, B2B an Endkunden",
+          "B2C verkauft an Endkonsumenten, B2B an Geschäftskunden",
+          "B2C hat höhere Durchschnittsbestellwerte",
+          "B2B nutzt keine Online-Shops"
+        ],
+        correct: 1,
+        explain: "B2C = Business-to-Consumer (Endkunde), B2B = Business-to-Business (Firmenkunde). UrbanCart ist ein B2C-Händler. B2B hat oft höhere AOV aber komplexere Kaufprozesse."
+      },
+      {
+        q: "Wie berechnet man in Tableau den Anteil eines Segments am Gesamtumsatz?",
+        options: [
+          "SUM([revenue]) / COUNT([segment])",
+          "SUM([revenue]) / TOTAL(SUM([revenue]))",
+          "AVG([revenue]) * 100",
+          "COUNTD([customer_id]) / SUM([revenue])"
+        ],
+        correct: 1,
+        explain: "TOTAL(SUM([revenue])) gibt den Gesamtwert über alle Segmente. Dividiert man den Segment-Umsatz dadurch, erhält man den prozentualen Anteil. Diese 'Table Calculation' ist in Tableau ein Standardwerkzeug."
+      },
+      {
+        q: "Was bedeutet 'Conversion Rate' im E-Commerce?",
+        options: [
+          "Der Anteil der Besucher, die zu Käufern werden",
+          "Die Rate der Produktretouren",
+          "Die Wechselkursumrechnung für internationale Shops",
+          "Die Conversion-Geschwindigkeit des Servers"
+        ],
+        correct: 0,
+        explain: "Conversion Rate = Käufer ÷ Besucher × 100%. Ein Shop mit 10.000 Besuchern und 200 Käufen hat eine CR von 2%. Branchendurchschnitt: 1–3%. Mobil liegt die CR oft niedriger als Desktop."
+      },
+      {
+        q: "Welche demografische Variable ist für die UX-Optimierung eines Online-Shops am relevantesten?",
+        options: [
+          "Altersgruppe",
+          "Geschlecht",
+          "Device Type (Mobile/Desktop/Tablet)",
+          "Region"
+        ],
+        correct: 2,
+        explain: "Der Device Type hat den direktesten Einfluss auf das UX-Design: Mobile erfordert andere Navigation, Button-Größen und Ladezeiten als Desktop. Ein responsives Design ist heute Pflicht."
+      },
+      {
+        q: "Was ist der Vorteil einer interaktiven Filterung im Tableau-Dashboard?",
+        options: [
+          "Das Dashboard wird kleiner",
+          "Nutzer können Daten dynamisch segmentieren, ohne neue Charts zu erstellen",
+          "Die Daten werden automatisch aktualisiert",
+          "Tableau exportiert die Daten automatisch nach Excel"
+        ],
+        correct: 1,
+        explain: "Interaktive Filter in Tableau verbinden mehrere Sheets: Ein Klick auf 'Bayern' filtert gleichzeitig alle Charts im Dashboard. Das ersetzt statische Einzelansichten und macht Präsentationen agiler."
+      },
+      {
+        q: "Du siehst in der Heatmap (Altersgruppe × Gerät), dass '46-55 / Mobile' eine sehr helle Farbe hat. Was bedeutet das?",
+        options: [
+          "Diese Kombination kauft am meisten",
+          "Diese Kombination kauft am wenigsten",
+          "Die Daten fehlen für diese Gruppe",
+          "Diese Gruppe nutzt ausschließlich Desktop"
+        ],
+        correct: 1,
+        explain: "In einer Heatmap kodiert die Farbe den Wert: Hell/Weiß = niedriger Wert = wenige Bestellungen. Ältere Kunden (46-55) kaufen seltener mobil ein – ein UX-Hinweis: Die mobile App muss eventuell für diese Gruppe optimiert werden."
+      },
+      {
+        q: "Warum ist der Inner Join zwischen customers.csv und orders.csv für eine Umsatzanalyse sinnvoll?",
+        options: [
+          "Weil er alle Kunden enthält, auch ohne Bestellung",
+          "Weil er nur Kunden mit Bestellungen einschließt und so keine Null-Werte entstehen",
+          "Weil er schneller berechnet wird als der Left Join",
+          "Weil er doppelte Einträge entfernt"
+        ],
+        correct: 1,
+        explain: "Für eine Umsatzanalyse interessieren uns nur Kunden, die auch bestellt haben. Der Inner Join liefert genau das: Nur Kunden, die in BEIDEN Tabellen auftauchen. Kunden ohne Bestellung würden Null-Werte liefern und die Analyse verfälschen."
+      },
+    ],
+    nextLab: "Lab 03: RFM-Analyse →",
+    prevLab: "← Lab 01: Tableau Grundlagen",
+    aiEye: "KI-Ausblick",
+    aiTitle: "Kundenanalyse mit Python, pandas & Plotly",
+    aiText: "Die demografische Analyse in Tableau lässt sich mit Python automatisieren und erweitern. Besonders mächtig: Choropleth-Karten für regionale Verteilungen und interaktive Heatmaps mit Plotly.",
+    aiPrompt: `# Prompt für ChatGPT / Claude:
+"Erstelle eine Kundendemografie-Analyse in Python.
+Lade 'customers.csv' und 'orders.csv' mit pandas.
+Merge die DataFrames über customer_id (inner join).
+
+1. Erstelle eine Heatmap (Plotly) mit:
+   - X-Achse: device_type (Mobile/Desktop/Tablet)
+   - Y-Achse: age_group
+   - Farbe: Anzahl Bestellungen (count)
+   
+2. Erstelle eine Choropleth-Karte (Plotly Express) mit:
+   - Regionale Umsatzverteilung (total_revenue)
+   - Nur für Deutschland (iso_alpha='DEU')
+   
+Farbschema: Orange #E87722 / Blau #005B9A.
+Zeige beide Charts in einem Plotly Subplot."`,
+  },
+  en: {
+    labNum: "Lab 02 of 09",
+    labTitle: ["Customer Structure & ", "Demographics"],
+    labSub: "Who actually buys from UrbanCart? You analyse 8,000 customers by region, age group and device – and find out which segment generates the most revenue.",
+    metaDauer: "60–90 min.",
+    metaLevel: "Beginner",
+    metaData: "customers.csv · orders.csv",
+    metaTool: "Tableau Public (free)",
+    progSteps: ["Introduction","Load Data","Analysis","Visualisation","Quiz","AI Outlook"],
+    s1eye: "Context",
+    s1title: "Who are our customers?",
+    s1lead: "In Lab 01 you analysed revenue. Now we go one level deeper: who is behind those numbers? Age, region, device type – these are the demographic dimensions that drive marketing decisions. The goal of this lab: find UrbanCart's most valuable customer segment.",
+    s2eye: "Step by Step",
+    s2title: "Load & join data",
+    s2lead: "We load customers.csv and join the order data. This gives us a complete picture: who ordered what, when, and how much?",
+    steps: [
+      {
+        title: "Load customers.csv",
+        body: "Open Tableau Public. Click <code>Text File</code> and load <code>customers.csv</code>. The table contains: <code>customer_id</code>, <code>name</code>, <code>region</code>, <code>age_group</code>, <code>device_type</code>, <code>gender</code>, <code>signup_date</code>.",
+        tip: "💡 Tip: Check that Tableau recognises column types correctly. age_group should be detected as String (Abc), not as a number."
+      },
+      {
+        title: "Join orders.csv via customer_id",
+        body: "Drag <code>orders.csv</code> from the left panel next to <code>customers.csv</code> on the canvas. Tableau auto-suggests the join. Make sure: <code>Customer Id = Customer Id</code> (Inner Join). You now have customer data + orders in one view.",
+        tip: "💡 Inner Join vs. Left Join: Inner Join = only customers with at least one order. Left Join = all customers, even without orders. Use Inner Join for revenue analysis."
+      },
+      {
+        title: "Bar chart: Orders by region",
+        body: "New sheet. Drag <code>Region</code> to Rows, <code>Order Id</code> (COUNTD) to Columns. Click the sort icon (descending). Which region has the most orders?",
+        tip: null
+      },
+      {
+        title: "Heatmap: Age group × Device",
+        body: "New sheet. Drag <code>Age Group</code> to Rows, <code>Device Type</code> to Columns. Drag <code>Order Id</code> (COUNTD) to <code>Color</code> in the Marks panel. Select chart type <code>Square</code>. Tableau now shows which age/device combination occurs most frequently.",
+        tip: "💡 What is a heatmap? A matrix where cell colour encodes the value. Darker = higher value. Ideal for cross-comparisons."
+      },
+      {
+        title: "Treemap: Revenue by region",
+        body: "New sheet. Drag <code>Region</code> to <code>Label</code>, <code>Total Revenue</code> (SUM) to <code>Size</code> and again to <code>Color</code>. Select chart type <code>Treemap</code>. Larger areas = more revenue. Which region dominates?",
+        tip: "💡 Treemap vs. Bar chart: Treemaps show proportions better; bars are better for precise value comparisons. Use both for different insights."
+      },
+    ],
+    s3eye: "Key Metrics",
+    s3title: "Customer KPIs at a glance",
+    s3lead: "These three KPIs help you compare the value of different customer segments.",
+    kpis: [
+      { icon:"👥", val:"8,000", lbl:"Unique Customers", def:"Count of unique customers. Tableau: COUNTD([customer_id])" },
+      { icon:"💰", val:"CLV", lbl:"Customer Lifetime Value", def:"Total revenue per customer. Tableau: SUM([total_revenue]) / COUNTD([customer_id])" },
+      { icon:"📱", val:"Device", lbl:"Mobile / Desktop / Tablet", def:"Share of orders by device – important for UX decisions." },
+    ],
+    s4eye: "Visualisation",
+    s4title: "Dashboard: UrbanCart Customer Insights",
+    viz_steps: [
+      {
+        title: "Create a new dashboard",
+        body: "Click <code>+</code> at the bottom left → <code>New Dashboard</code>. Name it: <strong>UrbanCart Customer Insights</strong>. Set size to <code>Automatic</code>.",
+        tip: null
+      },
+      {
+        title: "Embed bar chart & treemap",
+        body: "Drag the bar chart (orders by region) to the left column. Drag the treemap (revenue by region) beside it. Do you see: many orders ≠ high revenue? Then some regions have a high average order value!",
+        tip: "💡 Dashboard tip: Add a Region filter (right-click a region in the bar chart → 'Use as Filter'). A single click then filters all sheets simultaneously."
+      },
+      {
+        title: "Embed & interpret the heatmap",
+        body: "Add the age group × device heatmap. Can you spot a pattern? Typical result: younger customers (18–25) buy more on mobile; older ones (46+) prefer desktop. This has direct implications for the webshop's UX design.",
+        tip: null
+      },
+      {
+        title: "Adjust titles and labels",
+        body: "Click each title and add descriptive labels, e.g. <strong>Orders by Region (sorted)</strong>. Add a dashboard title: <strong>UrbanCart Customer Insights – Demographic Analysis 2023/24</strong>.",
+        tip: "💡 Good Dashboard Practice: Every chart needs a meaningful title and (where necessary) axis labels. No graphic without context!"
+      },
+    ],
+    quizTitle: "Quiz: Lab 02 – Customer Structure & Demographics",
+    quizSub: "15 questions · Complete all before moving to the next lab.",
+    questions: [
+      {
+        q: "What is Customer Lifetime Value (CLV)?",
+        options: [
+          "The number of purchases a customer makes",
+          "The total revenue a customer generates over their entire relationship with the company",
+          "The average price of a product",
+          "The duration of the customer relationship in days"
+        ],
+        correct: 1,
+        explain: "CLV = total revenue generated by a customer over their entire relationship. High CLV = valuable customer → more marketing budget justified."
+      },
+      {
+        q: "What is customer segmentation?",
+        options: [
+          "Dividing the product range into categories",
+          "Grouping customers into homogeneous segments based on shared characteristics",
+          "Analysing order frequencies",
+          "Visualising revenue geographically"
+        ],
+        correct: 1,
+        explain: "Customer segmentation = grouping customers with similar traits (age, region, purchase behaviour). Goal: target measures precisely to each group."
+      },
+      {
+        q: "Which join type returns only customers who have placed at least one order?",
+        options: ["Left Join","Right Join","Inner Join","Full Outer Join"],
+        correct: 2,
+        explain: "Inner Join = only records present in BOTH tables. Customers without orders are excluded. Left Join would keep all customers, even those without orders."
+      },
+      {
+        q: "What does a heatmap in Tableau show?",
+        options: [
+          "Geographic distributions on a map",
+          "Temperature over time",
+          "Values in a matrix where colour encodes the value",
+          "A comparison of two line charts"
+        ],
+        correct: 2,
+        explain: "A heatmap is a matrix (e.g. age group × device) where cell colour encodes the measure. Dark = high, light = low. Ideal for cross-table analysis."
+      },
+      {
+        q: "What does a treemap show?",
+        options: [
+          "A decision tree of rules",
+          "Proportions as differently sized rectangles",
+          "Temporal trends in a tree structure",
+          "Hierarchical data as a pie chart"
+        ],
+        correct: 1,
+        explain: "A treemap represents proportions as rectangular areas. Larger rectangle = higher value. Good for: 'Which region/category has the largest share of total revenue?'"
+      },
+      {
+        q: "UrbanCart data shows: 'Bavaria' has the most orders but not the highest total revenue. What could this mean?",
+        options: [
+          "The data is incorrect",
+          "Bavaria has a low average order value",
+          "Bavaria only buys discounted products",
+          "Bavaria has more returns"
+        ],
+        correct: 1,
+        explain: "Many orders with a low basket value can result in low total revenue despite high order count. This shows: order count ≠ revenue. AOV (Average Order Value) is the decisive metric."
+      },
+      {
+        q: "Which device is most commonly used for purchases according to typical e-commerce studies?",
+        options: ["Desktop PC","Tablet","Smartphone (Mobile)","Smart TV"],
+        correct: 2,
+        explain: "According to current e-commerce studies (e.g. Statista), over 60% of online purchases are made on mobile. Mobile-first design is therefore crucial for conversion success."
+      },
+      {
+        q: "Why is demographic analysis important in e-commerce?",
+        options: [
+          "To circumvent data protection rules",
+          "To direct marketing measures at the right target groups",
+          "To reduce storage costs",
+          "To influence Google's algorithm"
+        ],
+        correct: 1,
+        explain: "Demographic analysis reveals who the customers are (age, region, device). Marketing budgets can then be deployed precisely: e.g. Instagram ads for 18–25, newsletters for 36–55."
+      },
+      {
+        q: "What is the difference between B2C and B2B in e-commerce?",
+        options: [
+          "B2C sells to companies, B2B to end consumers",
+          "B2C sells to end consumers, B2B to business customers",
+          "B2C has higher average order values",
+          "B2B doesn't use online shops"
+        ],
+        correct: 1,
+        explain: "B2C = Business-to-Consumer, B2B = Business-to-Business. UrbanCart is a B2C retailer. B2B often has higher AOV but more complex purchase processes."
+      },
+      {
+        q: "How do you calculate a segment's share of total revenue in Tableau?",
+        options: [
+          "SUM([revenue]) / COUNT([segment])",
+          "SUM([revenue]) / TOTAL(SUM([revenue]))",
+          "AVG([revenue]) * 100",
+          "COUNTD([customer_id]) / SUM([revenue])"
+        ],
+        correct: 1,
+        explain: "TOTAL(SUM([revenue])) gives the total across all segments. Dividing the segment revenue by this yields the percentage share. This 'Table Calculation' is a Tableau standard tool."
+      },
+      {
+        q: "What does 'Conversion Rate' mean in e-commerce?",
+        options: [
+          "The share of visitors who become buyers",
+          "The rate of product returns",
+          "Currency conversion for international shops",
+          "The server's conversion speed"
+        ],
+        correct: 0,
+        explain: "Conversion Rate = buyers ÷ visitors × 100%. A shop with 10,000 visitors and 200 purchases has a CR of 2%. Industry average: 1–3%. Mobile CR is often lower than desktop."
+      },
+      {
+        q: "Which demographic variable is most relevant for UX optimisation of an online shop?",
+        options: ["Age group","Gender","Device Type (Mobile/Desktop/Tablet)","Region"],
+        correct: 2,
+        explain: "Device type has the most direct influence on UX design: mobile requires different navigation, button sizes and load times than desktop. A responsive design is mandatory today."
+      },
+      {
+        q: "What is the advantage of interactive filtering in a Tableau dashboard?",
+        options: [
+          "The dashboard becomes smaller",
+          "Users can dynamically segment data without creating new charts",
+          "Data is updated automatically",
+          "Tableau exports data to Excel automatically"
+        ],
+        correct: 1,
+        explain: "Interactive filters in Tableau connect multiple sheets: clicking 'Bavaria' filters all charts in the dashboard at once. This replaces static individual views and makes presentations more agile."
+      },
+      {
+        q: "The heatmap (age group × device) shows that '46-55 / Mobile' has a very light colour. What does this mean?",
+        options: [
+          "This combination buys the most",
+          "This combination buys the least",
+          "Data is missing for this group",
+          "This group uses exclusively desktop"
+        ],
+        correct: 1,
+        explain: "In a heatmap, colour encodes the value: light/white = low value = few orders. Older customers (46-55) shop less on mobile – a UX hint: the mobile app may need to be optimised for this group."
+      },
+      {
+        q: "Why is the Inner Join between customers.csv and orders.csv appropriate for a revenue analysis?",
+        options: [
+          "Because it includes all customers, even those without orders",
+          "Because it only includes customers with orders and thus avoids null values",
+          "Because it is computed faster than the Left Join",
+          "Because it removes duplicate entries"
+        ],
+        correct: 1,
+        explain: "For revenue analysis, we only care about customers who have actually ordered. The Inner Join delivers exactly that: only customers present in BOTH tables. Customers without orders would produce null values and distort the analysis."
+      },
+    ],
+    nextLab: "Lab 03: RFM Analysis →",
+    prevLab: "← Lab 01: Tableau Basics",
+    aiEye: "AI Outlook",
+    aiTitle: "Customer analysis with Python, pandas & Plotly",
+    aiText: "The demographic analysis in Tableau can be automated and extended with Python. Particularly powerful: choropleth maps for regional distributions and interactive heatmaps with Plotly.",
+    aiPrompt: `# Prompt for ChatGPT / Claude:
+"Create a customer demographics analysis in Python.
+Load 'customers.csv' and 'orders.csv' with pandas.
+Merge the DataFrames on customer_id (inner join).
+
+1. Create a heatmap (Plotly) with:
+   - X-axis: device_type (Mobile/Desktop/Tablet)
+   - Y-axis: age_group
+   - Colour: order count
+   
+2. Create a choropleth map (Plotly Express) with:
+   - Regional revenue distribution (total_revenue)
+   - Germany only (iso_alpha='DEU')
+   
+Colour scheme: Orange #E87722 / Blue #005B9A.
+Show both charts in a Plotly subplot."`,
+  }
+};
+
+function Quiz({ questions, t, lang }) {
+  const [answers, setAnswers] = useState({});
+  const [revealed, setRevealed] = useState({});
+  const done = Object.keys(revealed).length === questions.length;
+  const score = Object.entries(answers).filter(([i, a]) => a === questions[i].correct).length;
+
+  const handleAnswer = (qi, oi) => {
+    if (revealed[qi] !== undefined) return;
+    setAnswers(prev => ({ ...prev, [qi]: oi }));
+    setRevealed(prev => ({ ...prev, [qi]: true }));
+  };
+
+  return (
+    <div className="quiz-section">
+      <h3 className="quiz-title">{t.quizTitle}</h3>
+      <p className="quiz-sub">{t.quizSub}</p>
+      <div className="quiz-progress">{Object.keys(revealed).length} / {questions.length} {lang==='de'?'beantwortet':'answered'}</div>
+      {questions.map((q, qi) => (
+        <div key={qi} className="question-block">
+          <div className="question-num">{lang==='de'?'Frage':'Question'} {qi + 1}</div>
+          <div className="question-text">{q.q}</div>
+          <div className="options">
+            {q.options.map((opt, oi) => {
+              let cls = "option-btn";
+              if (revealed[qi] !== undefined) {
+                cls += " revealed";
+                if (oi === q.correct) cls += " correct";
+                else if (oi === answers[qi]) cls += " wrong";
+              }
+              return (
+                <button key={oi} className={cls} onClick={() => handleAnswer(qi, oi)}>
+                  <span style={{marginRight:'8px', fontWeight:800}}>{String.fromCharCode(65+oi)}.</span>
+                  {opt}
+                </button>
+              );
+            })}
+          </div>
+          {revealed[qi] !== undefined && (
+            <div className={`feedback ${answers[qi] === q.correct ? 'correct' : 'wrong'}`}>
+              {answers[qi] === q.correct
+                ? (lang==='de'?"✓ Richtig! ":"✓ Correct! ")
+                : (lang==='de'?"✗ Nicht ganz. ":"✗ Not quite. ")}
+              {q.explain}
+            </div>
+          )}
+        </div>
+      ))}
+      {done && (
+        <div className="quiz-result">
+          <div className="quiz-result-score">{score}/{questions.length}</div>
+          <div className="quiz-result-label">{lang==='de'?'Punkte':'Points'}</div>
+          <div className="quiz-result-msg">
+            {score >= 13
+              ? (lang==='de'?"🎉 Ausgezeichnet! Weiter zu Lab 03.":"🎉 Excellent! Move on to Lab 03.")
+              : score >= 10
+              ? (lang==='de'?"👍 Gut! Lies die Erklärungen nochmal durch.":"👍 Good! Read through the explanations again.")
+              : (lang==='de'?"💪 Noch einmal! Schau dir die Erklärungen an.":"💪 Try again! Review the explanations.")}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function App() {
+  const [lang, setLang] = useState('de');
+  const t = T[lang];
+
+  useEffect(() => {
+    const els = document.querySelectorAll('.sr');
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.08 });
+    els.forEach(el => obs.observe(el));
+    return () => obs.disconnect();
+  }, [lang]);
+
+  return (
+    <>
+      <nav className="navbar">
+        <div className="nav-brand">
+          <a href="index.html" style={{textDecoration:'none', display:'flex', alignItems:'center', gap:'10px'}}>
+            <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
+              <rect width="28" height="28" rx="3" fill="#005B9A"/>
+              <rect x="6" y="6" width="6" height="6" fill="#E87722"/>
+              <rect x="16" y="6" width="6" height="6" fill="#fff" opacity="0.7"/>
+              <rect x="6" y="16" width="6" height="6" fill="#fff" opacity="0.7"/>
+              <rect x="16" y="16" width="6" height="6" fill="#E87722" opacity="0.5"/>
+            </svg>
+            <span className="nav-brand-text">E-Commerce Labs</span>
+          </a>
+          <span className="nav-lab-badge">{t.labNum}</span>
+        </div>
+        <div className="lang-wrap">
+          <button className={`lang-btn${lang==='de'?' active':''}`} onClick={()=>setLang('de')}>DE</button>
+          <button className={`lang-btn${lang==='en'?' active':''}`} onClick={()=>setLang('en')}>EN</button>
+        </div>
+      </nav>
+
+      <div className="progress-bar">
+        {t.progSteps.map((s, i) => (
+          <React.Fragment key={i}>
+            <div className={`prog-step ${i < 2 ? 'done' : i === 2 ? 'active' : ''}`}>
+              <div className={`prog-dot ${i < 2 ? 'done' : i === 2 ? 'active' : ''}`}>
+                {i < 2 ? '✓' : i + 1}
+              </div>
+              {s}
+            </div>
+            {i < t.progSteps.length - 1 && <div className="prog-arrow">›</div>}
+          </React.Fragment>
+        ))}
+      </div>
+
+      <div className="lab-hero">
+        <div className="lab-hero-inner">
+          <div className="lab-num">{t.labNum}</div>
+          <h1 className="lab-title">{t.labTitle[0]}<span>{t.labTitle[1]}</span></h1>
+          <p className="lab-sub">{t.labSub}</p>
+          <div className="lab-meta">
+            {[["⏱",t.metaDauer],["📊",t.metaLevel],["📁",t.metaData],["🔧",t.metaTool]].map(([icon,val],i) => (
+              <div key={i} className="lab-meta-item">{icon} <strong>{val}</strong></div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="content">
+        <div className="section-block sr">
+          <div className="block-eyebrow">{t.s1eye}</div>
+          <h2 className="block-title">{t.s1title}</h2>
+          <div className="divider"/>
+          <p className="block-lead">{t.s1lead}</p>
+          <div style={{background:'rgba(232,119,34,0.08)', border:'1.5px solid rgba(232,119,34,0.2)', padding:'20px 24px'}}>
+            <div style={{fontSize:'0.72rem', fontWeight:700, textTransform:'uppercase', letterSpacing:'0.1em', color:'#E87722', marginBottom:'8px'}}>{lang==='de'?'Kundendaten im Überblick':'Customer data at a glance'}</div>
+            <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(160px,1fr))', gap:'12px'}}>
+              {[
+                ["👥", lang==='de'?"8.000 Kunden":"8,000 Customers", lang==='de'?"Aus ganz Deutschland":"From across Germany"],
+                ["📱", lang==='de'?"3 Gerätetypen":"3 Device Types", "Mobile · Desktop · Tablet"],
+                ["🗺️", lang==='de'?"10 Regionen":"10 Regions", lang==='de'?"Alle Bundesländer":"All federal states"],
+                ["🎂", lang==='de'?"5 Altersgruppen":"5 Age Groups", "18–25 · 26–35 · 36–45 · 46–55 · 56+"],
+              ].map(([icon,title,sub]) => (
+                <div key={title} style={{background:'#fff', padding:'12px 14px'}}>
+                  <div style={{fontSize:'1.2rem', marginBottom:'4px'}}>{icon}</div>
+                  <div style={{fontSize:'0.84rem', fontWeight:800, color:'#212529'}}>{title}</div>
+                  <div style={{fontSize:'0.72rem', color:'#9ca3af'}}>{sub}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="section-block sr">
+          <div className="block-eyebrow">{t.s2eye}</div>
+          <h2 className="block-title">{t.s2title}</h2>
+          <div className="divider"/>
+          <p className="block-lead">{t.s2lead}</p>
+          <div className="steps">
+            {t.steps.map((step, i) => (
+              <div key={i} className="step-card">
+                <div className="step-header">
+                  <div className="step-num">{i+1}</div>
+                  <div className="step-title">{step.title}</div>
+                </div>
+                <div className="step-body" dangerouslySetInnerHTML={{__html: step.body}}/>
+                {step.tip && <div className="step-tip">{step.tip}</div>}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="section-block sr">
+          <div className="block-eyebrow">{t.s3eye}</div>
+          <h2 className="block-title">{t.s3title}</h2>
+          <div className="divider"/>
+          <p className="block-lead">{t.s3lead}</p>
+          <div className="kpi-grid">
+            {t.kpis.map((k,i) => (
+              <div key={i} className="kpi-card">
+                <div className="kpi-icon">{k.icon}</div>
+                <div className="kpi-val">{k.val}</div>
+                <div className="kpi-lbl">{k.lbl}</div>
+                <div className="kpi-def">{k.def}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="section-block sr">
+          <div className="block-eyebrow">{t.s4eye}</div>
+          <h2 className="block-title">{t.s4title}</h2>
+          <div className="divider"/>
+          <div className="steps">
+            {t.viz_steps.map((step, i) => (
+              <div key={i} className="step-card">
+                <div className="step-header">
+                  <div className="step-num">{i+1}</div>
+                  <div className="step-title">{step.title}</div>
+                </div>
+                <div className="step-body" dangerouslySetInnerHTML={{__html: step.body}}/>
+                {step.tip && <div className="step-tip">{step.tip}</div>}
+                <div className="screenshot-placeholder">
+                  <div className="screenshot-placeholder-icon">📸</div>
+                  <div className="screenshot-placeholder-text">
+                    {lang==='de'?`Dein Ergebnis für Schritt ${i+1}`:`Your result for step ${i+1}`}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="section-block sr">
+          <Quiz questions={t.questions} t={t} lang={lang}/>
+        </div>
+
+        <div className="section-block sr">
+          <div className="ai-section">
+            <div className="ai-eyebrow">{t.aiEye}</div>
+            <h3 className="ai-title">{t.aiTitle}</h3>
+            <p className="ai-text">{t.aiText}</p>
+            <div className="code-block">{t.aiPrompt}</div>
+            <p style={{fontSize:'0.78rem', color:'rgba(255,255,255,0.4)', marginTop:'12px'}}>
+              {lang==='de'
+                ? '→ Nächstes Lab: RFM-Analyse – wer sind deine besten Kunden?'
+                : '→ Next lab: RFM Analysis – who are your best customers?'}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="lab-nav">
+        <a href="lab01.html" className="lab-nav-btn">
+          {t.prevLab}
+        </a>
+        <a href="lab03.html" className="lab-nav-btn primary">
+          {t.nextLab}
+        </a>
+      </div>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

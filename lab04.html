@@ -1,0 +1,1050 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lab 04 – ABC-Analyse & Pareto-Prinzip · UrbanCart · THWS</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif; background:#fff; color:#212529; }
+
+    .top-bar { height:4px; background:#E87722; position:fixed; top:0; left:0; right:0; z-index:200; }
+
+    .navbar {
+      position:sticky; top:4px; z-index:100;
+      background:#fff; border-bottom:1px solid #E9ECEF;
+      box-shadow:0 1px 8px rgba(0,0,0,0.05);
+      height:52px; display:flex; align-items:center;
+      padding:0 32px; justify-content:space-between;
+    }
+    .nav-brand { display:flex; align-items:center; gap:10px; text-decoration:none; }
+    .nav-brand-text { font-size:0.78rem; font-weight:700; color:#005B9A; letter-spacing:0.04em; text-transform:uppercase; }
+    .nav-lab-badge {
+      background:rgba(232,119,34,0.12); color:#E87722;
+      font-size:0.68rem; font-weight:700;
+      padding:3px 10px; letter-spacing:0.06em; text-transform:uppercase;
+    }
+    .lang-wrap { display:flex; gap:4px; }
+    .lang-btn {
+      padding:4px 10px; border-radius:3px;
+      border:1.5px solid #E9ECEF; background:#fff;
+      cursor:pointer; font-weight:700; font-size:0.72rem;
+      color:#6C757D; transition:all 0.15s; font-family:inherit;
+    }
+    .lang-btn.active { background:#E87722; color:#fff; border-color:#E87722; }
+
+    .progress-bar {
+      background:#F1F3F5; padding:12px 32px;
+      display:flex; align-items:center; gap:8px; overflow-x:auto;
+    }
+    .prog-step {
+      display:flex; align-items:center; gap:6px; white-space:nowrap;
+      font-size:0.72rem; font-weight:700; color:#9ca3af;
+    }
+    .prog-step.active { color:#E87722; }
+    .prog-step.done { color:#3D7A56; }
+    .prog-dot {
+      width:24px; height:24px; border-radius:50%;
+      background:#E9ECEF; display:flex; align-items:center;
+      justify-content:center; font-size:0.68rem; font-weight:800;
+      flex-shrink:0;
+    }
+    .prog-dot.active { background:#E87722; color:#fff; }
+    .prog-dot.done { background:#3D7A56; color:#fff; }
+    .prog-arrow { color:#D1D5DB; font-size:0.9rem; }
+
+    .lab-hero {
+      background:#005B9A; padding:48px 32px;
+      position:relative; overflow:hidden;
+    }
+    .lab-hero-inner { max-width:800px; }
+    .lab-num {
+      font-size:0.72rem; font-weight:700; letter-spacing:0.18em;
+      text-transform:uppercase; color:rgba(255,255,255,0.5); margin-bottom:8px;
+    }
+    .lab-title { font-size:clamp(1.8rem,4vw,2.8rem); font-weight:800; color:#fff; line-height:1.1; margin-bottom:12px; }
+    .lab-title span { color:#E87722; }
+    .lab-sub { font-size:1rem; color:rgba(255,255,255,0.75); line-height:1.7; max-width:560px; }
+    .lab-meta { display:flex; gap:16px; flex-wrap:wrap; margin-top:24px; }
+    .lab-meta-item {
+      display:flex; align-items:center; gap:6px;
+      font-size:0.78rem; font-weight:600; color:rgba(255,255,255,0.6);
+    }
+    .lab-meta-item strong { color:#fff; }
+
+    .content { max-width:800px; margin:0 auto; padding:48px 32px; }
+    .section-block { margin-bottom:48px; }
+    .block-eyebrow {
+      font-size:0.68rem; font-weight:700; letter-spacing:0.14em;
+      text-transform:uppercase; color:#E87722; margin-bottom:6px;
+    }
+    .block-title { font-size:1.3rem; font-weight:800; color:#005B9A; margin-bottom:8px; }
+    .block-lead { font-size:0.95rem; color:#6C757D; line-height:1.75; margin-bottom:20px; }
+    .divider { width:40px; height:3px; background:#E87722; margin:8px 0 16px; }
+
+    .steps { display:flex; flex-direction:column; gap:16px; }
+    .step-card {
+      border:1.5px solid #E9ECEF; padding:20px 24px;
+      border-left:3px solid #005B9A;
+      transition:border-color 0.2s;
+    }
+    .step-card:hover { border-left-color:#E87722; }
+    .step-header { display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+    .step-num {
+      width:28px; height:28px; border-radius:50%;
+      background:#005B9A; color:#fff;
+      display:flex; align-items:center; justify-content:center;
+      font-size:0.75rem; font-weight:800; flex-shrink:0;
+    }
+    .step-title { font-size:0.95rem; font-weight:800; color:#212529; }
+    .step-body { font-size:0.87rem; color:#6C757D; line-height:1.7; margin-left:40px; }
+    .step-body code {
+      background:#F1F3F5; padding:1px 6px;
+      font-family:'Consolas','Monaco',monospace; font-size:0.82rem;
+      color:#E87722; border-radius:2px;
+    }
+    .step-tip {
+      background:rgba(0,91,154,0.06); border-left:2px solid #005B9A;
+      padding:10px 14px; margin-top:10px; margin-left:40px;
+      font-size:0.82rem; color:#005B9A; line-height:1.6;
+    }
+
+    .screenshot-placeholder {
+      background:#F1F3F5; border:1.5px dashed #D1D5DB;
+      padding:32px; text-align:center; margin:16px 0;
+      border-radius:2px;
+    }
+    .screenshot-placeholder-icon { font-size:2rem; opacity:0.3; margin-bottom:8px; }
+    .screenshot-placeholder-text { font-size:0.78rem; color:#9ca3af; font-weight:600; }
+
+    .kpi-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:16px; margin:16px 0; }
+    .kpi-card {
+      background:#fff; border:1.5px solid #E9ECEF;
+      border-top:3px solid #E87722; padding:20px 16px; text-align:center;
+    }
+    .kpi-icon { font-size:1.4rem; margin-bottom:8px; }
+    .kpi-val { font-size:1.6rem; font-weight:900; color:#E87722; line-height:1; }
+    .kpi-lbl { font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:#005B9A; margin-top:4px; }
+    .kpi-def { font-size:0.78rem; color:#9ca3af; margin-top:6px; line-height:1.5; }
+
+    .abc-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin:16px 0; }
+    .abc-card {
+      padding:20px 16px; text-align:center; border:1.5px solid;
+    }
+    .abc-a { border-color:#3D7A56; background:rgba(61,122,86,0.08); }
+    .abc-b { border-color:#E87722; background:rgba(232,119,34,0.08); }
+    .abc-c { border-color:#dc2626; background:rgba(239,68,68,0.08); }
+    .abc-label { font-size:2rem; font-weight:900; line-height:1; margin-bottom:6px; }
+    .abc-a .abc-label { color:#3D7A56; }
+    .abc-b .abc-label { color:#E87722; }
+    .abc-c .abc-label { color:#dc2626; }
+    .abc-range { font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; margin-bottom:8px; }
+    .abc-a .abc-range { color:#3D7A56; }
+    .abc-b .abc-range { color:#E87722; }
+    .abc-c .abc-range { color:#dc2626; }
+    .abc-desc { font-size:0.8rem; color:#6C757D; line-height:1.5; }
+
+    .quiz-section { background:#F1F3F5; padding:40px 32px; margin:0 -32px; border-radius:2px; }
+    .quiz-title { font-size:1.1rem; font-weight:800; color:#005B9A; margin-bottom:4px; }
+    .quiz-sub { font-size:0.84rem; color:#6C757D; margin-bottom:24px; }
+    .quiz-progress { font-size:0.72rem; font-weight:700; color:#9ca3af; margin-bottom:20px; text-transform:uppercase; letter-spacing:0.08em; }
+    .question-block { background:#fff; border:1.5px solid #E9ECEF; padding:24px; margin-bottom:16px; }
+    .question-num { font-size:0.68rem; font-weight:700; color:#E87722; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px; }
+    .question-text { font-size:0.95rem; font-weight:700; color:#212529; margin-bottom:16px; line-height:1.5; }
+    .options { display:flex; flex-direction:column; gap:8px; }
+    .option-btn {
+      background:#F9FAFB; border:1.5px solid #E9ECEF;
+      padding:10px 16px; text-align:left;
+      font-size:0.87rem; font-weight:600; color:#374151;
+      cursor:pointer; transition:all 0.15s; font-family:inherit;
+    }
+    .option-btn:hover { border-color:#005B9A; color:#005B9A; background:rgba(0,91,154,0.04); }
+    .option-btn.correct { background:rgba(61,122,86,0.1); border-color:#3D7A56; color:#3D7A56; }
+    .option-btn.wrong   { background:rgba(239,68,68,0.08); border-color:#ef4444; color:#ef4444; }
+    .option-btn.revealed { pointer-events:none; }
+    .feedback {
+      margin-top:10px; padding:10px 14px;
+      font-size:0.84rem; line-height:1.6; font-weight:600;
+    }
+    .feedback.correct { background:rgba(61,122,86,0.1); color:#3D7A56; border-left:2px solid #3D7A56; }
+    .feedback.wrong   { background:rgba(239,68,68,0.08); color:#dc2626; border-left:2px solid #dc2626; }
+    .quiz-result {
+      background:#fff; border:1.5px solid #E9ECEF; border-top:3px solid #E87722;
+      padding:32px; text-align:center; margin-top:16px;
+    }
+    .quiz-result-score { font-size:3rem; font-weight:900; color:#E87722; line-height:1; }
+    .quiz-result-label { font-size:0.84rem; color:#6C757D; margin-top:6px; }
+    .quiz-result-msg { font-size:1rem; font-weight:700; color:#212529; margin-top:16px; }
+
+    .ai-section {
+      background:#0f172a; padding:32px;
+      border-left:3px solid #E87722; margin:32px 0;
+    }
+    .ai-eyebrow { font-size:0.68rem; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:#E87722; margin-bottom:6px; }
+    .ai-title { font-size:1.1rem; font-weight:800; color:#fff; margin-bottom:12px; }
+    .ai-text { font-size:0.87rem; color:rgba(255,255,255,0.65); line-height:1.75; margin-bottom:16px; }
+    .code-block {
+      background:#1e293b; border-left:2px solid #E87722;
+      color:#e2e8f0; font-family:'Consolas','Monaco',monospace;
+      font-size:0.78rem; line-height:1.8; padding:16px 20px; overflow-x:auto;
+      white-space:pre;
+    }
+
+    .lab-nav {
+      border-top:1px solid #E9ECEF; padding:32px;
+      display:flex; justify-content:space-between; align-items:center;
+      max-width:800px; margin:0 auto;
+    }
+    .lab-nav-btn {
+      display:flex; align-items:center; gap:8px;
+      font-size:0.87rem; font-weight:700; color:#005B9A;
+      text-decoration:none; cursor:pointer;
+      transition:color 0.15s;
+    }
+    .lab-nav-btn:hover { color:#E87722; }
+    .lab-nav-btn.primary {
+      background:#E87722; color:#fff;
+      padding:10px 20px; border:2px solid #E87722;
+    }
+    .lab-nav-btn.primary:hover { background:#d06a1a; border-color:#d06a1a; }
+
+    .sr { opacity:0; transform:translateY(12px); transition:opacity 0.5s ease,transform 0.5s ease; }
+    .sr.visible { opacity:1; transform:translateY(0); }
+
+    @media (max-width: 600px) {
+      .abc-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<div class="top-bar"></div>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+const T = {
+  de: {
+    labNum: "Lab 04 von 09",
+    labTitle: ["ABC-Analyse & ", "Pareto-Prinzip"],
+    labSub: "20% der Produkte generieren 80% des Umsatzes – das Pareto-Prinzip im E-Commerce. Du teilst UrbanCarts Sortiment in A-, B- und C-Produkte ein, baust ein Pareto-Diagramm und identifizierst Streichungskandidaten.",
+    metaDauer: "60–90 Min.",
+    metaLevel: "Fortgeschritten",
+    metaData: "order_items.csv · products.csv",
+    metaTool: "Tableau Public (kostenlos)",
+    progSteps: ["Einführung","Daten laden","Analyse","Visualisierung","Quiz","KI-Ausblick"],
+    s1eye: "Theorie",
+    s1title: "Das Pareto-Prinzip im E-Commerce",
+    s1lead: "Vilfredo Pareto beobachtete 1896, dass 80% des Bodens in Italien 20% der Bevölkerung gehörten. Diese Ungleichverteilung findet sich überall – auch im E-Commerce: Typischerweise generieren 20% der Produkte 80% des Umsatzes. Die ABC-Analyse macht diese Konzentration sichtbar und hilft, Prioritäten zu setzen.",
+    abcCards: [
+      {
+        cls: "abc-a",
+        label: "A",
+        range: "0% – 80% Umsatz",
+        title_de: "A-Produkte",
+        desc_de: "Die Umsatz-Stars. Wenige Produkte, große Wirkung. Priorität: Immer auf Lager, starke Platzierung, maximale Sichtbarkeit. Kein Risiko eingehen."
+      },
+      {
+        cls: "abc-b",
+        label: "B",
+        range: "80% – 95% Umsatz",
+        title_de: "B-Produkte",
+        desc_de: "Das Mittelfeld. Solide, aber nicht dominant. Strategie: Optimieren – bessere Platzierung, gezieltes Marketing. Potenzial für Aufstieg zu A."
+      },
+      {
+        cls: "abc-c",
+        label: "C",
+        range: "95% – 100% Umsatz",
+        title_de: "C-Produkte",
+        desc_de: "Longtail und Streichungskandidaten. Wenig Umsatz, aber Listungskosten. Entscheidung: Auslisten, bündeln oder als Ergänzungsprodukt halten."
+      },
+    ],
+    s2eye: "Schritt-für-Schritt",
+    s2title: "ABC-Analyse in Tableau",
+    s2lead: "Für die ABC-Analyse brauchst du die Umsätze pro Produkt, den kumulierten Anteil – und dann das Dual-Axis-Chart, das beides kombiniert.",
+    steps: [
+      {
+        title: "order_items.csv laden und products.csv joinen",
+        body: "Öffne Tableau Public. Lade <code>order_items.csv</code> als Primärtabelle. Ziehe <code>products.csv</code> daneben → Inner Join über <code>Product Id</code>. Du hast jetzt: Produkt + Preis + Kategorie + Bestellmenge in einer Ansicht.",
+        tip: "💡 Prüfe die Join-Verbindung: order_items hat eine Spalte product_id, products ebenfalls. Tableau erkennt dies meist automatisch."
+      },
+      {
+        title: "Umsatz pro Produkt berechnen",
+        body: "Neues Arbeitsblatt. Ziehe <code>Product Name</code> auf Zeilen, <code>Total Price</code> (SUM) auf Spalten. Sortiere absteigend. Du siehst jetzt alle Produkte nach Umsatz gerankt – bereit für die ABC-Analyse.",
+        tip: "💡 Falls total_price fehlt: Berechne es als Calculated Field: <code>Quantity × Unit Price</code>"
+      },
+      {
+        title: "Kumulierten Umsatz-% als Calculated Field",
+        body: "Erstelle ein neues Calculated Field: Name <strong>Kumulierter Anteil %</strong>.<br/>Formel: <code>RUNNING_SUM(SUM([Total Price])) / TOTAL(SUM([Total Price]))</code><br/>Das ergibt den laufenden prozentualen Anteil am Gesamtumsatz. Ziehe dieses Feld auf eine zweite Y-Achse (Dual Axis).",
+        tip: "💡 Table Calculation: RUNNING_SUM ist eine 'Table Calculation' in Tableau – sie berechnet kumulierte Werte über alle Zeilen hinweg. Stelle sicher, dass sie 'Table (down)' als Berechnungsrichtung hat."
+      },
+      {
+        title: "Dual-Axis Chart: Balken + Linie",
+        body: "Du hast jetzt zwei Measures auf der Y-Achse:<br/>• <strong>SUM(Total Price)</strong> → Balkendiagramm (primäre Achse links)<br/>• <strong>Kumulierter Anteil %</strong> → Liniendiagramm (sekundäre Achse rechts)<br/>Rechtsklick auf die rechte Y-Achse → <code>Dual Axis</code>. Dann: rechtsklick auf rechte Achse → <code>Achsen synchronisieren</code>.",
+        tip: "💡 Dual Axis Chart: Ein Chart-Typ mit zwei Y-Achsen. Links: Absolut-Werte (Umsatz). Rechts: Relative Werte (%). Das ist das Standard-Pareto-Diagramm."
+      },
+      {
+        title: "Farbcodierung: A / B / C",
+        body: "Erstelle ein Calculated Field <strong>ABC-Klasse</strong>:<br/><code>IF RUNNING_SUM(SUM([Total Price])) / TOTAL(SUM([Total Price])) &lt;= 0.8 THEN 'A'<br/>ELSEIF RUNNING_SUM(SUM([Total Price])) / TOTAL(SUM([Total Price])) &lt;= 0.95 THEN 'B'<br/>ELSE 'C'<br/>END</code><br/>Ziehe dieses Feld auf <code>Color</code> im Marks-Panel für die Balken. A = Grün (#3D7A56), B = Orange (#E87722), C = Rot (#dc2626).",
+        tip: "💡 Manuelle Farbzuweisung: Klicke auf die Color-Legende → 'Farben bearbeiten' → weise A=Grün, B=Orange, C=Rot manuell zu."
+      },
+    ],
+    s3eye: "Kennzahlen",
+    s3title: "ABC-Kennzahlen im Überblick",
+    s3lead: "Diese Kennzahlen zeigen, wie konzentriert der Umsatz auf wenige Produkte ist.",
+    kpis: [
+      { icon:"🟢", val:"A", lbl:"Umsatz-Treiber", def:"~20% der Produkte. Generieren 80% des Umsatzes. Maximale Verfügbarkeit sicherstellen." },
+      { icon:"🟡", val:"B", lbl:"Mittelfeld", def:"~30% der Produkte. Weitere 15% Umsatz. Optimierungspotenzial vorhanden." },
+      { icon:"🔴", val:"C", lbl:"Longtail", def:"~50% der Produkte. Nur 5% Umsatz. Listungskosten vs. Umsatzbeitrag prüfen." },
+    ],
+    s4eye: "Visualisierung",
+    s4title: "Dashboard: UrbanCart Product Portfolio",
+    viz_steps: [
+      {
+        title: "Pareto-Diagramm fertigstellen",
+        body: "Überprüfe das Dual-Axis-Chart: Linke Achse = Umsatz in €, rechte Achse = Kumulierter % (0–100%). Die 80%-Linie sollte genau erkennbar sein. Füge eine Referenzlinie bei 80% ein: Rechtsklick auf rechte Achse → <code>Referenzlinie hinzufügen</code> → konstanter Wert 0.8.",
+        tip: "💡 Referenzlinien in Tableau: Sehr nützlich für Benchmarks. Du kannst auch eine Linie bei 0.95 für die B/C-Grenze hinzufügen. Beschrifte sie: '80% Umsatz' und '95% Umsatz'."
+      },
+      {
+        title: "ABC-Klassen-Übersicht als Balkendiagramm",
+        body: "Neues Arbeitsblatt. Ziehe <code>ABC-Klasse</code> auf Zeilen, <code>COUNTD([Product Id])</code> auf Spalten. Füge <code>SUM([Total Price])</code> als zweite Kennzahl hinzu. Du siehst: Wie viele Produkte sind in jeder Klasse? Wie viel Umsatz bringen sie?",
+        tip: null
+      },
+      {
+        title: "C-Produkte identifizieren: Streichungsliste",
+        body: "Erstelle ein Arbeitsblatt, das nur C-Produkte zeigt: Filtere auf <code>ABC-Klasse = 'C'</code>. Sortiere nach aufsteigendem Umsatz. Die untersten Produkte sind die Streichungskandidaten. Wie hoch sind Listungskosten vs. Umsatzbeitrag?",
+        tip: "💡 Listungskosten: Jedes Produkt im Sortiment kostet: Lagerhaltung, Foto, Beschreibung, SEO. Wenn ein Produkt €5 Jahresumsatz bringt aber €50 Listungskosten hat, ist die Streichentscheidung einfach."
+      },
+      {
+        title: "Dashboard zusammenbauen",
+        body: "Neues Dashboard: <strong>UrbanCart Product Portfolio</strong>. Kombiniere Pareto-Chart, ABC-Übersicht und C-Produkte-Tabelle. Füge einen Kategorie-Filter hinzu – so lässt sich die ABC-Analyse pro Produktkategorie durchführen.",
+        tip: "💡 Action: Klicke auf 'A', 'B' oder 'C' in der ABC-Übersicht und filtere das Pareto-Chart automatisch. Das ist interaktives Business Intelligence!"
+      },
+    ],
+    quizTitle: "Quiz: Lab 04 – ABC-Analyse & Pareto",
+    quizSub: "15 Fragen · Beantworte alle, bevor du zum nächsten Lab gehst.",
+    questions: [
+      {
+        q: "Was besagt das Pareto-Prinzip (80/20-Regel)?",
+        options: [
+          "80% der Kosten entstehen durch 20% der Mitarbeiter",
+          "Etwa 80% der Ergebnisse werden durch 20% der Ursachen erzeugt",
+          "80% der Kunden kommen aus 20% der Regionen",
+          "20% der Fehler verursachen 80% der Retouren"
+        ],
+        correct: 1,
+        explain: "Das Pareto-Prinzip besagt: ca. 80% der Wirkung kommen von 20% der Ursachen. Im E-Commerce: 80% des Umsatzes kommen von 20% der Produkte. Diese Regel ist überraschend robust in vielen Bereichen."
+      },
+      {
+        q: "Was sind A-Produkte in der ABC-Analyse?",
+        options: [
+          "Die ältesten Produkte im Sortiment",
+          "Die teuersten Einzelprodukte",
+          "Die wenigen Produkte, die ~80% des Umsatzes generieren",
+          "Produkte in der Kategorie 'Aktionsware'"
+        ],
+        correct: 2,
+        explain: "A-Produkte = Umsatz-Treiber. Sie machen typischerweise nur 20% des Sortiments aus, generieren aber ~80% des Umsatzes. Maximale Verfügbarkeit und Sichtbarkeit sind Pflicht."
+      },
+      {
+        q: "Was sind C-Produkte in der ABC-Analyse?",
+        options: [
+          "Neue Produkte, die noch nicht bekannt sind",
+          "Produkte mit geringem Umsatzbeitrag (oft 50% des Sortiments, 5% Umsatz)",
+          "Produkte der Kategorie C (dritte Ebene)",
+          "Saisonale Produkte"
+        ],
+        correct: 1,
+        explain: "C-Produkte: viele Produkte, geringer Umsatzbeitrag. Typisch: 50% des Sortiments, aber nur 5% des Umsatzes. Jedes C-Produkt verursacht Listungskosten (Lager, Foto, SEO). Streichungsprüfung ist angebracht."
+      },
+      {
+        q: "Was ist ein Pareto-Diagramm?",
+        options: [
+          "Ein Kreisdiagramm mit 80/20-Aufteilung",
+          "Ein Dual-Axis-Chart: Balken (Werte) + Linie (kumulierter Anteil %)",
+          "Ein Balkendiagramm mit zwei Farben",
+          "Eine Heatmap der Produktkategorien"
+        ],
+        correct: 1,
+        explain: "Ein Pareto-Diagramm kombiniert: 1) Balkendiagramm (Produkte nach Umsatz sortiert) + 2) Linie (kumulierter %-Anteil am Gesamtumsatz). Der Schnittpunkt der 80%-Linie zeigt: bis hier sind A-Produkte."
+      },
+      {
+        q: "Was ist ein Dual-Axis-Chart in Tableau?",
+        options: [
+          "Ein Chart mit zwei X-Achsen",
+          "Ein Chart mit zwei Y-Achsen, die verschiedene Maßeinheiten haben",
+          "Ein Chart mit zwei Datenquellen",
+          "Ein Chart mit zwei Farbpaletten"
+        ],
+        correct: 1,
+        explain: "Dual Axis = zwei Y-Achsen. Links: Absolutwerte (z.B. € Umsatz). Rechts: Relative Werte (z.B. kumulierter %). Ermöglicht, zwei verschiedene Maßeinheiten in einem Chart zu kombinieren – ideal für Pareto-Diagramme."
+      },
+      {
+        q: "Du hast 500 Produkte. Wie viele sind typischerweise A-Produkte (nach Pareto)?",
+        options: ["ca. 50","ca. 100","ca. 250","ca. 400"],
+        correct: 1,
+        explain: "Nach dem Pareto-Prinzip sind ~20% der Produkte A-Produkte. Bei 500 Produkten: ca. 100 A-Produkte generieren ~80% des Umsatzes. 250 C-Produkte (50%) bringen zusammen nur ~5%."
+      },
+      {
+        q: "Welche Tableau-Formel berechnet den kumulierten Umsatzanteil?",
+        options: [
+          "SUM([Total Price]) / TOTAL(SUM([Total Price]))",
+          "RUNNING_SUM(SUM([Total Price])) / TOTAL(SUM([Total Price]))",
+          "CUMSUM([Total Price]) / SUM([Total Price])",
+          "RANK(SUM([Total Price])) / COUNT([Product Id])"
+        ],
+        correct: 1,
+        explain: "RUNNING_SUM() berechnet den laufenden kumulativen Wert. Dividiert durch TOTAL() (Gesamtsumme) ergibt den kumulierten Prozentanteil. Diese Table Calculation ist das Herzstück der Pareto-Analyse in Tableau."
+      },
+      {
+        q: "Was tun mit C-Produkten, die hohe Listungskosten und minimalen Umsatz haben?",
+        options: [
+          "Immer sofort auslisten",
+          "Preis verdoppeln",
+          "Kosten-Nutzen-Analyse: ggf. auslisten, bündeln oder als Ergänzungsprodukt behalten",
+          "In die A-Kategorie hochstufen"
+        ],
+        correct: 2,
+        explain: "C-Produkte pauschal auslisten ist zu simpel. Zunächst: Listungskosten vs. Umsatzbeitrag vergleichen. Manche C-Produkte haben strategischen Wert (Sortimentsvollständigkeit, Ergänzungsprodukte, SEO-Longtail). Eine Kosten-Nutzen-Analyse ist der richtige Schritt."
+      },
+      {
+        q: "Wie berechnet sich der kumulierte Anteil eines Produkts?",
+        options: [
+          "Umsatz des Produkts × Gesamtprodukte",
+          "Summe der Umsätze aller Produkte bis zu diesem Rang ÷ Gesamtumsatz × 100%",
+          "Umsatz ÷ Anzahl Bestellungen",
+          "Rank des Produkts ÷ Gesamtprodukte × 100%"
+        ],
+        correct: 1,
+        explain: "Kumulierter Anteil = laufende Summe aller Umsätze (nach absteigendem Rang sortiert) ÷ Gesamtumsatz × 100%. Wenn die ersten 100 Produkte €800.000 von €1.000.000 Gesamtumsatz haben, beträgt ihr kumulierter Anteil 80%."
+      },
+      {
+        q: "Warum werden Produkte in der ABC-Analyse nach absteigendem Umsatz sortiert?",
+        options: [
+          "Für eine alphabetische Sortierung",
+          "Damit die kumulierte Kurve von links nach rechts ansteigt und die 80%-Grenze sichtbar wird",
+          "Weil Tableau keine andere Sortierung unterstützt",
+          "Um die Lagerkosten absteigend darzustellen"
+        ],
+        correct: 1,
+        explain: "Die absteigende Sortierung ist das Herzstück der Pareto-Analyse: Das Produkt mit dem höchsten Umsatz steht links. Die kumulierte Linie steigt dann steil an (A-Produkte) und flacht ab (C-Produkte). So ist die 80%-Grenze sofort erkennbar."
+      },
+      {
+        q: "Was bedeutet 'Listungskosten' im E-Commerce?",
+        options: [
+          "Die Kosten für die Aufnahme eines Produkts in das Sortiment (Foto, Beschreibung, Lager, SEO)",
+          "Die Kosten für das Listing auf der Börse",
+          "Die Versandkosten",
+          "Die Retourenquote"
+        ],
+        correct: 0,
+        explain: "Listungskosten = alle Kosten, die entstehen, um ein Produkt im Online-Shop anzubieten: Produktfoto, Texterstellung, SEO-Optimierung, Lagerhaltungskosten, Systemverwaltung. Für C-Produkte übersteigen diese oft den Umsatzbeitrag."
+      },
+      {
+        q: "Ein Produkt hat einen kumulierten Umsatzanteil von 91%. Welcher ABC-Klasse gehört es an?",
+        options: ["A-Klasse","B-Klasse","C-Klasse","Außerhalb der ABC-Analyse"],
+        correct: 1,
+        explain: "91% liegt zwischen 80% und 95%: das ist die B-Klasse. B-Produkte sind das Mittelfeld – sie tragen 15% des Umsatzes (von 80% auf 95%) bei. Optimierungspotenzial vorhanden, um in die A-Klasse aufzusteigen."
+      },
+      {
+        q: "Welche der folgenden Maßnahmen passt zu A-Produkten?",
+        options: [
+          "Aus dem Sortiment nehmen",
+          "Rabattaktionen zur Abverkaufsunterstützung",
+          "Maximale Lagerverfügbarkeit, prominente Platzierung, keine Lieferengpässe",
+          "Zusammen mit C-Produkten bündeln"
+        ],
+        correct: 2,
+        explain: "A-Produkte sind Umsatztreiber – kein Risiko! Maximale Lagerverfügbarkeit (kein Out-of-Stock), prominente Platzierung auf der Website, aktive SEO-Optimierung und gezielte Werbung. Lieferengpässe bei A-Produkten kosten direkt Umsatz."
+      },
+      {
+        q: "Warum ist die ABC-Analyse für das Lagermanagement wichtig?",
+        options: [
+          "Weil A-Produkte weniger Platz brauchen",
+          "Weil C-Produkte häufiger retoruniert werden",
+          "Weil A-Produkte höchste Verfügbarkeit brauchen und C-Produkte Lagerkosten verursachen",
+          "Weil B-Produkte die teuersten sind"
+        ],
+        correct: 2,
+        explain: "Im Lagermanagement (Logistik) bestimmt die ABC-Klasse die Lagerstrategie: A-Produkte = schnelle Zugänglichkeit, hohe Bestandssicherheit (kein Out-of-Stock). C-Produkte = möglichst geringe Lagermengen oder Just-in-Time, da die Kapitalbindung die Umsätze übersteigt."
+      },
+      {
+        q: "Du erstellst eine ABC-Analyse und findest: 15% der Produkte generieren 85% des Umsatzes. Was schlussfolgert du?",
+        options: [
+          "Die Daten sind fehlerhaft",
+          "Das Sortiment ist stärker konzentriert als das typische 80/20-Muster – wenige Produkte dominieren stark",
+          "Die Analyse muss wiederholt werden",
+          "Alle Produkte sollten gleich stark beworben werden"
+        ],
+        correct: 1,
+        explain: "85% Umsatz durch 15% Produkte = noch stärker konzentriert als Pareto (80/20). Das ist kein Fehler, sondern ein Hinweis: Das Sortiment hat extreme Bestseller. Fokus maximieren, Longtail kritisch prüfen."
+      },
+    ],
+    nextLab: "Lab 05 →",
+    prevLab: "← Lab 03: RFM-Analyse",
+    aiEye: "KI-Ausblick",
+    aiTitle: "ABC-Analyse mit Python & Pareto-Chart in Plotly",
+    aiText: "In Python lässt sich die ABC-Analyse vollständig automatisieren. Besonders elegant: Ein Pareto-Chart mit doppelter Y-Achse in Plotly – Balken und Linie in einem Chart, farbkodiert nach ABC-Klasse.",
+    aiPrompt: `# Prompt für ChatGPT / Claude:
+"Erstelle eine ABC-Analyse für E-Commerce-Produktdaten.
+
+Lade 'order_items.csv' und 'products.csv' mit pandas.
+Merge über product_id (inner join).
+
+1. Berechne Umsatz pro Produkt:
+   df_grouped = df.groupby('product_name')['total_price'].sum()
+   df_grouped = df_grouped.sort_values(ascending=False).reset_index()
+
+2. Kumulierten Anteil berechnen:
+   df_grouped['cumulative_pct'] = (
+       df_grouped['total_price'].cumsum() / 
+       df_grouped['total_price'].sum()
+   )
+
+3. ABC-Klasse zuweisen:
+   df_grouped['abc_class'] = df_grouped['cumulative_pct'].apply(
+       lambda x: 'A' if x <= 0.80 else ('B' if x <= 0.95 else 'C')
+   )
+
+4. Pareto-Chart mit Plotly (Dual Axis):
+   - Balken: Umsatz pro Produkt (Farbe: A=grün, B=orange, C=rot)
+   - Linie: kumulierter % (sekundäre Y-Achse, 0-100%)
+   - Referenzlinien: 80% und 95%
+   
+Farbschema: A=#3D7A56, B=#E87722, C=#dc2626."`,
+  },
+  en: {
+    labNum: "Lab 04 of 09",
+    labTitle: ["ABC Analysis & ", "Pareto Principle"],
+    labSub: "20% of products generate 80% of revenue – the Pareto principle in e-commerce. You divide UrbanCart's assortment into A, B and C products, build a Pareto chart and identify candidates for delisting.",
+    metaDauer: "60–90 min.",
+    metaLevel: "Intermediate",
+    metaData: "order_items.csv · products.csv",
+    metaTool: "Tableau Public (free)",
+    progSteps: ["Introduction","Load Data","Analysis","Visualisation","Quiz","AI Outlook"],
+    s1eye: "Theory",
+    s1title: "The Pareto Principle in E-Commerce",
+    s1lead: "In 1896, Vilfredo Pareto observed that 80% of the land in Italy was owned by 20% of the population. This unequal distribution appears everywhere – including in e-commerce: typically 20% of products generate 80% of revenue. The ABC analysis makes this concentration visible and helps set priorities.",
+    abcCards: [
+      {
+        cls: "abc-a",
+        label: "A",
+        range: "0% – 80% Revenue",
+        title_de: "A Products",
+        desc_de: "The revenue stars. Few products, big impact. Priority: always in stock, strong placement, maximum visibility. Take no risks."
+      },
+      {
+        cls: "abc-b",
+        label: "B",
+        range: "80% – 95% Revenue",
+        title_de: "B Products",
+        desc_de: "The middle field. Solid but not dominant. Strategy: optimise – better placement, targeted marketing. Potential to rise to A."
+      },
+      {
+        cls: "abc-c",
+        label: "C",
+        range: "95% – 100% Revenue",
+        title_de: "C Products",
+        desc_de: "Long tail and delisting candidates. Low revenue but listing costs. Decision: delist, bundle or keep as complementary product."
+      },
+    ],
+    s2eye: "Step by Step",
+    s2title: "ABC Analysis in Tableau",
+    s2lead: "For the ABC analysis you need revenue per product, the cumulative share – and then the Dual-Axis chart that combines both.",
+    steps: [
+      {
+        title: "Load order_items.csv and join products.csv",
+        body: "Open Tableau Public. Load <code>order_items.csv</code> as primary table. Drag <code>products.csv</code> next to it → Inner Join on <code>Product Id</code>. You now have: Product + Price + Category + Order quantity in one view.",
+        tip: "💡 Check the join: order_items has a product_id column, as does products. Tableau usually detects this automatically."
+      },
+      {
+        title: "Calculate revenue per product",
+        body: "New worksheet. Drag <code>Product Name</code> to Rows, <code>Total Price</code> (SUM) to Columns. Sort descending. You now see all products ranked by revenue – ready for ABC analysis.",
+        tip: "💡 If total_price is missing: calculate it as a Calculated Field: <code>Quantity × Unit Price</code>"
+      },
+      {
+        title: "Cumulative revenue % as Calculated Field",
+        body: "Create a new Calculated Field: name <strong>Cumulative Share %</strong>.<br/>Formula: <code>RUNNING_SUM(SUM([Total Price])) / TOTAL(SUM([Total Price]))</code><br/>This gives the running percentage share of total revenue. Drag this field to a second Y-axis (Dual Axis).",
+        tip: "💡 Table Calculation: RUNNING_SUM is a 'Table Calculation' in Tableau – it calculates cumulative values across all rows. Make sure it uses 'Table (down)' as calculation direction."
+      },
+      {
+        title: "Dual-Axis Chart: Bar + Line",
+        body: "You now have two measures on the Y-axis:<br/>• <strong>SUM(Total Price)</strong> → Bar chart (primary axis, left)<br/>• <strong>Cumulative Share %</strong> → Line chart (secondary axis, right)<br/>Right-click the right Y-axis → <code>Dual Axis</code>. Then: right-click right axis → <code>Synchronise Axes</code>.",
+        tip: "💡 Dual Axis Chart: a chart type with two Y-axes. Left: absolute values (revenue). Right: relative values (%). This is the standard Pareto chart."
+      },
+      {
+        title: "Colour coding: A / B / C",
+        body: "Create a Calculated Field <strong>ABC Class</strong>:<br/><code>IF RUNNING_SUM(SUM([Total Price])) / TOTAL(SUM([Total Price])) &lt;= 0.8 THEN 'A'<br/>ELSEIF RUNNING_SUM(SUM([Total Price])) / TOTAL(SUM([Total Price])) &lt;= 0.95 THEN 'B'<br/>ELSE 'C'<br/>END</code><br/>Drag this field to <code>Color</code> in the Marks panel for the bars. A = Green (#3D7A56), B = Orange (#E87722), C = Red (#dc2626).",
+        tip: "💡 Manual colour assignment: click the Color legend → 'Edit Colours' → assign A=Green, B=Orange, C=Red manually."
+      },
+    ],
+    s3eye: "Key Metrics",
+    s3title: "ABC KPIs at a glance",
+    s3lead: "These metrics show how concentrated revenue is on a few products.",
+    kpis: [
+      { icon:"🟢", val:"A", lbl:"Revenue Drivers", def:"~20% of products. Generate 80% of revenue. Ensure maximum availability." },
+      { icon:"🟡", val:"B", lbl:"Middle Field", def:"~30% of products. Additional 15% of revenue. Optimisation potential available." },
+      { icon:"🔴", val:"C", lbl:"Long Tail", def:"~50% of products. Only 5% of revenue. Review listing costs vs. revenue contribution." },
+    ],
+    s4eye: "Visualisation",
+    s4title: "Dashboard: UrbanCart Product Portfolio",
+    viz_steps: [
+      {
+        title: "Finalise the Pareto chart",
+        body: "Review the Dual-Axis chart: left axis = revenue in €, right axis = cumulative % (0–100%). The 80% line should be clearly visible. Add a reference line at 80%: right-click the right axis → <code>Add Reference Line</code> → constant value 0.8.",
+        tip: "💡 Reference lines in Tableau: very useful for benchmarks. You can also add a line at 0.95 for the B/C boundary. Label them: '80% Revenue' and '95% Revenue'."
+      },
+      {
+        title: "ABC class overview as bar chart",
+        body: "New worksheet. Drag <code>ABC Class</code> to Rows, <code>COUNTD([Product Id])</code> to Columns. Add <code>SUM([Total Price])</code> as a second measure. You see: how many products are in each class? How much revenue do they generate?",
+        tip: null
+      },
+      {
+        title: "Identify C products: delisting list",
+        body: "Create a worksheet showing only C products: filter on <code>ABC Class = 'C'</code>. Sort by ascending revenue. The products at the bottom are delisting candidates. How do listing costs compare to revenue contribution?",
+        tip: "💡 Listing costs: every product in the assortment has a cost: storage, photo, description, SEO. If a product generates €5 per year but costs €50 in listing fees, the delisting decision is easy."
+      },
+      {
+        title: "Assemble the dashboard",
+        body: "New dashboard: <strong>UrbanCart Product Portfolio</strong>. Combine the Pareto chart, ABC overview and C products table. Add a category filter – this allows the ABC analysis to be performed per product category.",
+        tip: "💡 Action: Click on 'A', 'B' or 'C' in the ABC overview to automatically filter the Pareto chart. That's interactive Business Intelligence!"
+      },
+    ],
+    quizTitle: "Quiz: Lab 04 – ABC Analysis & Pareto",
+    quizSub: "15 questions · Complete all before moving to the next lab.",
+    questions: [
+      {
+        q: "What does the Pareto Principle (80/20 rule) state?",
+        options: [
+          "80% of costs are caused by 20% of employees",
+          "Approximately 80% of effects come from 20% of causes",
+          "80% of customers come from 20% of regions",
+          "20% of defects cause 80% of returns"
+        ],
+        correct: 1,
+        explain: "The Pareto Principle states: approximately 80% of effects come from 20% of causes. In e-commerce: 80% of revenue comes from 20% of products. This rule is surprisingly robust across many domains."
+      },
+      {
+        q: "What are A-products in the ABC analysis?",
+        options: [
+          "The oldest products in the assortment",
+          "The most expensive individual products",
+          "The few products that generate ~80% of revenue",
+          "Products in the 'promotional goods' category"
+        ],
+        correct: 2,
+        explain: "A products = revenue drivers. They typically make up only 20% of the assortment but generate ~80% of revenue. Maximum availability and visibility are mandatory."
+      },
+      {
+        q: "What are C-products in the ABC analysis?",
+        options: [
+          "New products not yet well-known",
+          "Products with low revenue contribution (often 50% of assortment, 5% revenue)",
+          "Products in category C (third level)",
+          "Seasonal products"
+        ],
+        correct: 1,
+        explain: "C products: many products, low revenue contribution. Typical: 50% of assortment but only 5% of revenue. Each C product incurs listing costs (storage, photo, SEO). Delisting review is appropriate."
+      },
+      {
+        q: "What is a Pareto chart?",
+        options: [
+          "A pie chart with an 80/20 split",
+          "A Dual-Axis chart: bars (values) + line (cumulative share %)",
+          "A bar chart with two colours",
+          "A heatmap of product categories"
+        ],
+        correct: 1,
+        explain: "A Pareto chart combines: 1) bar chart (products sorted by revenue) + 2) line (cumulative % share of total revenue). The intersection with the 80% line shows: up to here are A-products."
+      },
+      {
+        q: "What is a Dual-Axis chart in Tableau?",
+        options: [
+          "A chart with two X-axes",
+          "A chart with two Y-axes having different units of measurement",
+          "A chart with two data sources",
+          "A chart with two colour palettes"
+        ],
+        correct: 1,
+        explain: "Dual Axis = two Y-axes. Left: absolute values (e.g. € revenue). Right: relative values (e.g. cumulative %). Allows combining two different units of measurement in one chart – ideal for Pareto charts."
+      },
+      {
+        q: "You have 500 products. How many are typically A-products (according to Pareto)?",
+        options: ["approx. 50","approx. 100","approx. 250","approx. 400"],
+        correct: 1,
+        explain: "According to the Pareto principle, ~20% of products are A-products. With 500 products: approx. 100 A-products generate ~80% of revenue. 250 C-products (50%) together contribute only ~5%."
+      },
+      {
+        q: "Which Tableau formula calculates the cumulative revenue share?",
+        options: [
+          "SUM([Total Price]) / TOTAL(SUM([Total Price]))",
+          "RUNNING_SUM(SUM([Total Price])) / TOTAL(SUM([Total Price]))",
+          "CUMSUM([Total Price]) / SUM([Total Price])",
+          "RANK(SUM([Total Price])) / COUNT([Product Id])"
+        ],
+        correct: 1,
+        explain: "RUNNING_SUM() calculates the running cumulative value. Divided by TOTAL() (the grand total) gives the cumulative percentage share. This Table Calculation is the core of Pareto analysis in Tableau."
+      },
+      {
+        q: "What should you do with C-products that have high listing costs and minimal revenue?",
+        options: [
+          "Always delist immediately",
+          "Double the price",
+          "Cost-benefit analysis: potentially delist, bundle or keep as complementary product",
+          "Promote them to the A category"
+        ],
+        correct: 2,
+        explain: "Simply delisting all C-products is too simplistic. First: compare listing costs vs. revenue contribution. Some C-products have strategic value (assortment completeness, complementary products, SEO longtail). A cost-benefit analysis is the right approach."
+      },
+      {
+        q: "How is the cumulative share of a product calculated?",
+        options: [
+          "Product revenue × total products",
+          "Sum of revenues of all products up to this rank ÷ total revenue × 100%",
+          "Revenue ÷ number of orders",
+          "Product rank ÷ total products × 100%"
+        ],
+        correct: 1,
+        explain: "Cumulative share = running sum of all revenues (sorted by descending rank) ÷ total revenue × 100%. If the top 100 products have €800,000 of €1,000,000 total revenue, their cumulative share is 80%."
+      },
+      {
+        q: "Why are products sorted in descending order in the ABC analysis?",
+        options: [
+          "For alphabetical sorting",
+          "So the cumulative curve rises from left to right and the 80% boundary becomes visible",
+          "Because Tableau doesn't support any other sorting",
+          "To display storage costs in descending order"
+        ],
+        correct: 1,
+        explain: "Descending sorting is the core of Pareto analysis: the highest-revenue product is on the left. The cumulative line then rises steeply (A-products) and flattens (C-products). This makes the 80% boundary immediately visible."
+      },
+      {
+        q: "What are 'listing costs' in e-commerce?",
+        options: [
+          "The costs of including a product in the assortment (photo, description, storage, SEO)",
+          "The costs of listing on the stock exchange",
+          "Shipping costs",
+          "The return rate"
+        ],
+        correct: 0,
+        explain: "Listing costs = all costs of offering a product in the online shop: product photo, copywriting, SEO optimisation, storage costs, system administration. For C-products, these often exceed the revenue contribution."
+      },
+      {
+        q: "A product has a cumulative revenue share of 91%. Which ABC class does it belong to?",
+        options: ["A class","B class","C class","Outside the ABC analysis"],
+        correct: 1,
+        explain: "91% falls between 80% and 95%: that's the B class. B-products are the middle field – they contribute 15% of revenue (from 80% to 95%). Optimisation potential exists to rise to the A class."
+      },
+      {
+        q: "Which measure best fits A-products?",
+        options: [
+          "Remove from assortment",
+          "Discount promotions to support sell-through",
+          "Maximum stock availability, prominent placement, no supply shortages",
+          "Bundle together with C-products"
+        ],
+        correct: 2,
+        explain: "A-products are revenue drivers – take no risks! Maximum stock availability (no out-of-stock), prominent website placement, active SEO optimisation and targeted advertising. Supply shortages for A-products directly cost revenue."
+      },
+      {
+        q: "Why is ABC analysis important for inventory management?",
+        options: [
+          "Because A-products need less space",
+          "Because C-products are returned more often",
+          "Because A-products need highest availability and C-products generate storage costs",
+          "Because B-products are the most expensive"
+        ],
+        correct: 2,
+        explain: "In inventory management (logistics), the ABC class determines the storage strategy: A-products = fast accessibility, high stock security (no out-of-stock). C-products = minimum stock levels or just-in-time, since the capital tied up exceeds the revenue."
+      },
+      {
+        q: "You run an ABC analysis and find: 15% of products generate 85% of revenue. What do you conclude?",
+        options: [
+          "The data is incorrect",
+          "The assortment is more concentrated than the typical 80/20 pattern – a few products strongly dominate",
+          "The analysis needs to be repeated",
+          "All products should receive equal marketing attention"
+        ],
+        correct: 1,
+        explain: "85% revenue from 15% of products = even more concentrated than Pareto (80/20). This is not an error, but a signal: the assortment has extreme bestsellers. Maximise focus, critically review the long tail."
+      },
+    ],
+    nextLab: "Lab 05 →",
+    prevLab: "← Lab 03: RFM Analysis",
+    aiEye: "AI Outlook",
+    aiTitle: "ABC Analysis with Python & Pareto Chart in Plotly",
+    aiText: "In Python, the ABC analysis can be fully automated. Particularly elegant: a Pareto chart with a dual Y-axis in Plotly – bars and line in one chart, colour-coded by ABC class.",
+    aiPrompt: `# Prompt for ChatGPT / Claude:
+"Create an ABC analysis for e-commerce product data.
+
+Load 'order_items.csv' and 'products.csv' with pandas.
+Merge on product_id (inner join).
+
+1. Calculate revenue per product:
+   df_grouped = df.groupby('product_name')['total_price'].sum()
+   df_grouped = df_grouped.sort_values(ascending=False).reset_index()
+
+2. Calculate cumulative share:
+   df_grouped['cumulative_pct'] = (
+       df_grouped['total_price'].cumsum() / 
+       df_grouped['total_price'].sum()
+   )
+
+3. Assign ABC class:
+   df_grouped['abc_class'] = df_grouped['cumulative_pct'].apply(
+       lambda x: 'A' if x <= 0.80 else ('B' if x <= 0.95 else 'C')
+   )
+
+4. Pareto chart with Plotly (Dual Axis):
+   - Bars: revenue per product (colour: A=green, B=orange, C=red)
+   - Line: cumulative % (secondary Y-axis, 0-100%)
+   - Reference lines: 80% and 95%
+   
+Colour scheme: A=#3D7A56, B=#E87722, C=#dc2626."`,
+  }
+};
+
+function Quiz({ questions, t, lang }) {
+  const [answers, setAnswers] = useState({});
+  const [revealed, setRevealed] = useState({});
+  const done = Object.keys(revealed).length === questions.length;
+  const score = Object.entries(answers).filter(([i, a]) => a === questions[i].correct).length;
+
+  const handleAnswer = (qi, oi) => {
+    if (revealed[qi] !== undefined) return;
+    setAnswers(prev => ({ ...prev, [qi]: oi }));
+    setRevealed(prev => ({ ...prev, [qi]: true }));
+  };
+
+  return (
+    <div className="quiz-section">
+      <h3 className="quiz-title">{t.quizTitle}</h3>
+      <p className="quiz-sub">{t.quizSub}</p>
+      <div className="quiz-progress">{Object.keys(revealed).length} / {questions.length} {lang==='de'?'beantwortet':'answered'}</div>
+      {questions.map((q, qi) => (
+        <div key={qi} className="question-block">
+          <div className="question-num">{lang==='de'?'Frage':'Question'} {qi + 1}</div>
+          <div className="question-text">{q.q}</div>
+          <div className="options">
+            {q.options.map((opt, oi) => {
+              let cls = "option-btn";
+              if (revealed[qi] !== undefined) {
+                cls += " revealed";
+                if (oi === q.correct) cls += " correct";
+                else if (oi === answers[qi]) cls += " wrong";
+              }
+              return (
+                <button key={oi} className={cls} onClick={() => handleAnswer(qi, oi)}>
+                  <span style={{marginRight:'8px', fontWeight:800}}>{String.fromCharCode(65+oi)}.</span>
+                  {opt}
+                </button>
+              );
+            })}
+          </div>
+          {revealed[qi] !== undefined && (
+            <div className={`feedback ${answers[qi] === q.correct ? 'correct' : 'wrong'}`}>
+              {answers[qi] === q.correct
+                ? (lang==='de'?"✓ Richtig! ":"✓ Correct! ")
+                : (lang==='de'?"✗ Nicht ganz. ":"✗ Not quite. ")}
+              {q.explain}
+            </div>
+          )}
+        </div>
+      ))}
+      {done && (
+        <div className="quiz-result">
+          <div className="quiz-result-score">{score}/{questions.length}</div>
+          <div className="quiz-result-label">{lang==='de'?'Punkte':'Points'}</div>
+          <div className="quiz-result-msg">
+            {score >= 13
+              ? (lang==='de'?"🎉 Ausgezeichnet! Weiter zu Lab 05.":"🎉 Excellent! Move on to Lab 05.")
+              : score >= 10
+              ? (lang==='de'?"👍 Gut! Lies die Erklärungen nochmal durch.":"👍 Good! Read through the explanations again.")
+              : (lang==='de'?"💪 Noch einmal! Schau dir die Erklärungen an.":"💪 Try again! Review the explanations.")}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function App() {
+  const [lang, setLang] = useState('de');
+  const t = T[lang];
+
+  useEffect(() => {
+    const els = document.querySelectorAll('.sr');
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.08 });
+    els.forEach(el => obs.observe(el));
+    return () => obs.disconnect();
+  }, [lang]);
+
+  return (
+    <>
+      <nav className="navbar">
+        <div className="nav-brand">
+          <a href="index.html" style={{textDecoration:'none', display:'flex', alignItems:'center', gap:'10px'}}>
+            <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
+              <rect width="28" height="28" rx="3" fill="#005B9A"/>
+              <rect x="6" y="6" width="6" height="6" fill="#E87722"/>
+              <rect x="16" y="6" width="6" height="6" fill="#fff" opacity="0.7"/>
+              <rect x="6" y="16" width="6" height="6" fill="#fff" opacity="0.7"/>
+              <rect x="16" y="16" width="6" height="6" fill="#E87722" opacity="0.5"/>
+            </svg>
+            <span className="nav-brand-text">E-Commerce Labs</span>
+          </a>
+          <span className="nav-lab-badge">{t.labNum}</span>
+        </div>
+        <div className="lang-wrap">
+          <button className={`lang-btn${lang==='de'?' active':''}`} onClick={()=>setLang('de')}>DE</button>
+          <button className={`lang-btn${lang==='en'?' active':''}`} onClick={()=>setLang('en')}>EN</button>
+        </div>
+      </nav>
+
+      <div className="progress-bar">
+        {t.progSteps.map((s, i) => (
+          <React.Fragment key={i}>
+            <div className={`prog-step ${i < 4 ? 'done' : i === 4 ? 'active' : ''}`}>
+              <div className={`prog-dot ${i < 4 ? 'done' : i === 4 ? 'active' : ''}`}>
+                {i < 4 ? '✓' : i + 1}
+              </div>
+              {s}
+            </div>
+            {i < t.progSteps.length - 1 && <div className="prog-arrow">›</div>}
+          </React.Fragment>
+        ))}
+      </div>
+
+      <div className="lab-hero">
+        <div className="lab-hero-inner">
+          <div className="lab-num">{t.labNum}</div>
+          <h1 className="lab-title">{t.labTitle[0]}<span>{t.labTitle[1]}</span></h1>
+          <p className="lab-sub">{t.labSub}</p>
+          <div className="lab-meta">
+            {[["⏱",t.metaDauer],["📊",t.metaLevel],["📁",t.metaData],["🔧",t.metaTool]].map(([icon,val],i) => (
+              <div key={i} className="lab-meta-item">{icon} <strong>{val}</strong></div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="content">
+        <div className="section-block sr">
+          <div className="block-eyebrow">{t.s1eye}</div>
+          <h2 className="block-title">{t.s1title}</h2>
+          <div className="divider"/>
+          <p className="block-lead">{t.s1lead}</p>
+          <div className="abc-grid">
+            {t.abcCards.map((card, i) => (
+              <div key={i} className={`abc-card ${card.cls}`}>
+                <div className="abc-label">{card.label}</div>
+                <div className="abc-range">{card.range}</div>
+                <div style={{fontWeight:800, fontSize:'0.87rem', color:'#212529', marginBottom:'6px'}}>{card.title_de}</div>
+                <div className="abc-desc">{card.desc_de}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="section-block sr">
+          <div className="block-eyebrow">{t.s2eye}</div>
+          <h2 className="block-title">{t.s2title}</h2>
+          <div className="divider"/>
+          <p className="block-lead">{t.s2lead}</p>
+          <div className="steps">
+            {t.steps.map((step, i) => (
+              <div key={i} className="step-card">
+                <div className="step-header">
+                  <div className="step-num">{i+1}</div>
+                  <div className="step-title">{step.title}</div>
+                </div>
+                <div className="step-body" dangerouslySetInnerHTML={{__html: step.body}}/>
+                {step.tip && <div className="step-tip">{step.tip}</div>}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="section-block sr">
+          <div className="block-eyebrow">{t.s3eye}</div>
+          <h2 className="block-title">{t.s3title}</h2>
+          <div className="divider"/>
+          <p className="block-lead">{t.s3lead}</p>
+          <div className="kpi-grid">
+            {t.kpis.map((k,i) => (
+              <div key={i} className="kpi-card">
+                <div className="kpi-icon">{k.icon}</div>
+                <div className="kpi-val">{k.val}</div>
+                <div className="kpi-lbl">{k.lbl}</div>
+                <div className="kpi-def">{k.def}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="section-block sr">
+          <div className="block-eyebrow">{t.s4eye}</div>
+          <h2 className="block-title">{t.s4title}</h2>
+          <div className="divider"/>
+          <div className="steps">
+            {t.viz_steps.map((step, i) => (
+              <div key={i} className="step-card">
+                <div className="step-header">
+                  <div className="step-num">{i+1}</div>
+                  <div className="step-title">{step.title}</div>
+                </div>
+                <div className="step-body" dangerouslySetInnerHTML={{__html: step.body}}/>
+                {step.tip && <div className="step-tip">{step.tip}</div>}
+                <div className="screenshot-placeholder">
+                  <div className="screenshot-placeholder-icon">📸</div>
+                  <div className="screenshot-placeholder-text">
+                    {lang==='de'?`Dein Ergebnis für Schritt ${i+1}`:`Your result for step ${i+1}`}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="section-block sr">
+          <Quiz questions={t.questions} t={t} lang={lang}/>
+        </div>
+
+        <div className="section-block sr">
+          <div className="ai-section">
+            <div className="ai-eyebrow">{t.aiEye}</div>
+            <h3 className="ai-title">{t.aiTitle}</h3>
+            <p className="ai-text">{t.aiText}</p>
+            <div className="code-block">{t.aiPrompt}</div>
+            <p style={{fontSize:'0.78rem', color:'rgba(255,255,255,0.4)', marginTop:'12px'}}>
+              {lang==='de'
+                ? '→ Nächstes Lab: Kanalanalyse – welcher Marketingkanal bringt den besten ROI?'
+                : '→ Next lab: Channel analysis – which marketing channel delivers the best ROI?'}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="lab-nav">
+        <a href="lab03.html" className="lab-nav-btn">
+          {t.prevLab}
+        </a>
+        <a href="lab05.html" className="lab-nav-btn primary">
+          {t.nextLab}
+        </a>
+      </div>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

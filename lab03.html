@@ -1,0 +1,1022 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lab 03 – RFM-Analyse · UrbanCart · THWS</title>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif; background:#fff; color:#212529; }
+
+    .top-bar { height:4px; background:#E87722; position:fixed; top:0; left:0; right:0; z-index:200; }
+
+    .navbar {
+      position:sticky; top:4px; z-index:100;
+      background:#fff; border-bottom:1px solid #E9ECEF;
+      box-shadow:0 1px 8px rgba(0,0,0,0.05);
+      height:52px; display:flex; align-items:center;
+      padding:0 32px; justify-content:space-between;
+    }
+    .nav-brand { display:flex; align-items:center; gap:10px; text-decoration:none; }
+    .nav-brand-text { font-size:0.78rem; font-weight:700; color:#005B9A; letter-spacing:0.04em; text-transform:uppercase; }
+    .nav-lab-badge {
+      background:rgba(232,119,34,0.12); color:#E87722;
+      font-size:0.68rem; font-weight:700;
+      padding:3px 10px; letter-spacing:0.06em; text-transform:uppercase;
+    }
+    .lang-wrap { display:flex; gap:4px; }
+    .lang-btn {
+      padding:4px 10px; border-radius:3px;
+      border:1.5px solid #E9ECEF; background:#fff;
+      cursor:pointer; font-weight:700; font-size:0.72rem;
+      color:#6C757D; transition:all 0.15s; font-family:inherit;
+    }
+    .lang-btn.active { background:#E87722; color:#fff; border-color:#E87722; }
+
+    .progress-bar {
+      background:#F1F3F5; padding:12px 32px;
+      display:flex; align-items:center; gap:8px; overflow-x:auto;
+    }
+    .prog-step {
+      display:flex; align-items:center; gap:6px; white-space:nowrap;
+      font-size:0.72rem; font-weight:700; color:#9ca3af;
+    }
+    .prog-step.active { color:#E87722; }
+    .prog-step.done { color:#3D7A56; }
+    .prog-dot {
+      width:24px; height:24px; border-radius:50%;
+      background:#E9ECEF; display:flex; align-items:center;
+      justify-content:center; font-size:0.68rem; font-weight:800;
+      flex-shrink:0;
+    }
+    .prog-dot.active { background:#E87722; color:#fff; }
+    .prog-dot.done { background:#3D7A56; color:#fff; }
+    .prog-arrow { color:#D1D5DB; font-size:0.9rem; }
+
+    .lab-hero {
+      background:#005B9A; padding:48px 32px;
+      position:relative; overflow:hidden;
+    }
+    .lab-hero-inner { max-width:800px; }
+    .lab-num {
+      font-size:0.72rem; font-weight:700; letter-spacing:0.18em;
+      text-transform:uppercase; color:rgba(255,255,255,0.5); margin-bottom:8px;
+    }
+    .lab-title { font-size:clamp(1.8rem,4vw,2.8rem); font-weight:800; color:#fff; line-height:1.1; margin-bottom:12px; }
+    .lab-title span { color:#E87722; }
+    .lab-sub { font-size:1rem; color:rgba(255,255,255,0.75); line-height:1.7; max-width:560px; }
+    .lab-meta { display:flex; gap:16px; flex-wrap:wrap; margin-top:24px; }
+    .lab-meta-item {
+      display:flex; align-items:center; gap:6px;
+      font-size:0.78rem; font-weight:600; color:rgba(255,255,255,0.6);
+    }
+    .lab-meta-item strong { color:#fff; }
+
+    .content { max-width:800px; margin:0 auto; padding:48px 32px; }
+    .section-block { margin-bottom:48px; }
+    .block-eyebrow {
+      font-size:0.68rem; font-weight:700; letter-spacing:0.14em;
+      text-transform:uppercase; color:#E87722; margin-bottom:6px;
+    }
+    .block-title { font-size:1.3rem; font-weight:800; color:#005B9A; margin-bottom:8px; }
+    .block-lead { font-size:0.95rem; color:#6C757D; line-height:1.75; margin-bottom:20px; }
+    .divider { width:40px; height:3px; background:#E87722; margin:8px 0 16px; }
+
+    .steps { display:flex; flex-direction:column; gap:16px; }
+    .step-card {
+      border:1.5px solid #E9ECEF; padding:20px 24px;
+      border-left:3px solid #005B9A;
+      transition:border-color 0.2s;
+    }
+    .step-card:hover { border-left-color:#E87722; }
+    .step-header { display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+    .step-num {
+      width:28px; height:28px; border-radius:50%;
+      background:#005B9A; color:#fff;
+      display:flex; align-items:center; justify-content:center;
+      font-size:0.75rem; font-weight:800; flex-shrink:0;
+    }
+    .step-title { font-size:0.95rem; font-weight:800; color:#212529; }
+    .step-body { font-size:0.87rem; color:#6C757D; line-height:1.7; margin-left:40px; }
+    .step-body code {
+      background:#F1F3F5; padding:1px 6px;
+      font-family:'Consolas','Monaco',monospace; font-size:0.82rem;
+      color:#E87722; border-radius:2px;
+    }
+    .step-tip {
+      background:rgba(0,91,154,0.06); border-left:2px solid #005B9A;
+      padding:10px 14px; margin-top:10px; margin-left:40px;
+      font-size:0.82rem; color:#005B9A; line-height:1.6;
+    }
+
+    .screenshot-placeholder {
+      background:#F1F3F5; border:1.5px dashed #D1D5DB;
+      padding:32px; text-align:center; margin:16px 0;
+      border-radius:2px;
+    }
+    .screenshot-placeholder-icon { font-size:2rem; opacity:0.3; margin-bottom:8px; }
+    .screenshot-placeholder-text { font-size:0.78rem; color:#9ca3af; font-weight:600; }
+
+    .kpi-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:16px; margin:16px 0; }
+    .kpi-card {
+      background:#fff; border:1.5px solid #E9ECEF;
+      border-top:3px solid #E87722; padding:20px 16px; text-align:center;
+    }
+    .kpi-icon { font-size:1.4rem; margin-bottom:8px; }
+    .kpi-val { font-size:1.6rem; font-weight:900; color:#E87722; line-height:1; }
+    .kpi-lbl { font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:#005B9A; margin-top:4px; }
+    .kpi-def { font-size:0.78rem; color:#9ca3af; margin-top:6px; line-height:1.5; }
+
+    .quiz-section { background:#F1F3F5; padding:40px 32px; margin:0 -32px; border-radius:2px; }
+    .quiz-title { font-size:1.1rem; font-weight:800; color:#005B9A; margin-bottom:4px; }
+    .quiz-sub { font-size:0.84rem; color:#6C757D; margin-bottom:24px; }
+    .quiz-progress { font-size:0.72rem; font-weight:700; color:#9ca3af; margin-bottom:20px; text-transform:uppercase; letter-spacing:0.08em; }
+    .question-block { background:#fff; border:1.5px solid #E9ECEF; padding:24px; margin-bottom:16px; }
+    .question-num { font-size:0.68rem; font-weight:700; color:#E87722; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px; }
+    .question-text { font-size:0.95rem; font-weight:700; color:#212529; margin-bottom:16px; line-height:1.5; }
+    .options { display:flex; flex-direction:column; gap:8px; }
+    .option-btn {
+      background:#F9FAFB; border:1.5px solid #E9ECEF;
+      padding:10px 16px; text-align:left;
+      font-size:0.87rem; font-weight:600; color:#374151;
+      cursor:pointer; transition:all 0.15s; font-family:inherit;
+    }
+    .option-btn:hover { border-color:#005B9A; color:#005B9A; background:rgba(0,91,154,0.04); }
+    .option-btn.correct { background:rgba(61,122,86,0.1); border-color:#3D7A56; color:#3D7A56; }
+    .option-btn.wrong   { background:rgba(239,68,68,0.08); border-color:#ef4444; color:#ef4444; }
+    .option-btn.revealed { pointer-events:none; }
+    .feedback {
+      margin-top:10px; padding:10px 14px;
+      font-size:0.84rem; line-height:1.6; font-weight:600;
+    }
+    .feedback.correct { background:rgba(61,122,86,0.1); color:#3D7A56; border-left:2px solid #3D7A56; }
+    .feedback.wrong   { background:rgba(239,68,68,0.08); color:#dc2626; border-left:2px solid #dc2626; }
+    .quiz-result {
+      background:#fff; border:1.5px solid #E9ECEF; border-top:3px solid #E87722;
+      padding:32px; text-align:center; margin-top:16px;
+    }
+    .quiz-result-score { font-size:3rem; font-weight:900; color:#E87722; line-height:1; }
+    .quiz-result-label { font-size:0.84rem; color:#6C757D; margin-top:6px; }
+    .quiz-result-msg { font-size:1rem; font-weight:700; color:#212529; margin-top:16px; }
+
+    .ai-section {
+      background:#0f172a; padding:32px;
+      border-left:3px solid #E87722; margin:32px 0;
+    }
+    .ai-eyebrow { font-size:0.68rem; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:#E87722; margin-bottom:6px; }
+    .ai-title { font-size:1.1rem; font-weight:800; color:#fff; margin-bottom:12px; }
+    .ai-text { font-size:0.87rem; color:rgba(255,255,255,0.65); line-height:1.75; margin-bottom:16px; }
+    .code-block {
+      background:#1e293b; border-left:2px solid #E87722;
+      color:#e2e8f0; font-family:'Consolas','Monaco',monospace;
+      font-size:0.78rem; line-height:1.8; padding:16px 20px; overflow-x:auto;
+      white-space:pre;
+    }
+
+    .rfm-table { width:100%; border-collapse:collapse; font-size:0.84rem; margin:16px 0; }
+    .rfm-table th { background:#005B9A; color:#fff; padding:10px 14px; text-align:left; font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; }
+    .rfm-table td { padding:10px 14px; border-bottom:1px solid #E9ECEF; color:#374151; }
+    .rfm-table tr:nth-child(even) td { background:#F9FAFB; }
+    .rfm-table .seg-badge { display:inline-block; padding:2px 8px; border-radius:2px; font-size:0.72rem; font-weight:700; }
+    .seg-champion { background:rgba(61,122,86,0.15); color:#3D7A56; }
+    .seg-loyal { background:rgba(0,91,154,0.12); color:#005B9A; }
+    .seg-risk { background:rgba(239,68,68,0.1); color:#dc2626; }
+    .seg-lost { background:#F1F3F5; color:#6C757D; }
+    .seg-new { background:rgba(232,119,34,0.12); color:#E87722; }
+
+    .lab-nav {
+      border-top:1px solid #E9ECEF; padding:32px;
+      display:flex; justify-content:space-between; align-items:center;
+      max-width:800px; margin:0 auto;
+    }
+    .lab-nav-btn {
+      display:flex; align-items:center; gap:8px;
+      font-size:0.87rem; font-weight:700; color:#005B9A;
+      text-decoration:none; cursor:pointer;
+      transition:color 0.15s;
+    }
+    .lab-nav-btn:hover { color:#E87722; }
+    .lab-nav-btn.primary {
+      background:#E87722; color:#fff;
+      padding:10px 20px; border:2px solid #E87722;
+    }
+    .lab-nav-btn.primary:hover { background:#d06a1a; border-color:#d06a1a; }
+
+    .sr { opacity:0; transform:translateY(12px); transition:opacity 0.5s ease,transform 0.5s ease; }
+    .sr.visible { opacity:1; transform:translateY(0); }
+  </style>
+</head>
+<body>
+<div class="top-bar"></div>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+const T = {
+  de: {
+    labNum: "Lab 03 von 09",
+    labTitle: ["RFM-Analyse: ", "Kundenwert messen"],
+    labSub: "Nicht jeder Kunde ist gleich viel wert. Die RFM-Analyse teilt UrbanCarts 8.000 Kunden in Segmente ein – von Champions bis Hibernating. Du berechnest Scores, visualisierst Cluster und leitest konkrete Marketingmaßnahmen ab.",
+    metaDauer: "75–100 Min.",
+    metaLevel: "Fortgeschritten",
+    metaData: "orders.csv · customers.csv",
+    metaTool: "Tableau Public (kostenlos)",
+    progSteps: ["Einführung","Daten laden","Analyse","Visualisierung","Quiz","KI-Ausblick"],
+    s1eye: "Theorie",
+    s1title: "Was ist die RFM-Analyse?",
+    s1lead: "RFM steht für Recency, Frequency und Monetary – die drei Dimensionen, die den Wert eines Kunden beschreiben. Die Methode stammt ursprünglich aus dem Direktmarketing und wird heute von Amazon, Netflix und jedem professionellen E-Commerce-Team eingesetzt.",
+    rfmSegments: [
+      { seg: "Champions", r:"5", f:"5", m:"5", desc: "Kaufen oft, viel, kürzlich. Deine besten Kunden – belohne sie.", css:"seg-champion" },
+      { seg: "Loyal Customers", r:"3–5", f:"3–5", m:"3–5", desc: "Kaufen regelmäßig. Cross-Selling und Loyalty-Programme funktionieren hier.", css:"seg-loyal" },
+      { seg: "At Risk", r:"2–3", f:"3–4", m:"3–4", desc: "Früher aktiv, jetzt ruhiger. Reaktivierungskampagnen nötig!", css:"seg-risk" },
+      { seg: "Hibernating", r:"1–2", f:"1–2", m:"1–2", desc: "Lange nicht mehr aktiv. Win-back mit starkem Angebot versuchen.", css:"seg-lost" },
+      { seg: "New Customers", r:"4–5", f:"1", m:"1–2", desc: "Erst kürzlich gekauft, aber selten. Onboarding und zweiten Kauf triggern.", css:"seg-new" },
+    ],
+    s2eye: "Schritt-für-Schritt",
+    s2title: "RFM in Tableau berechnen",
+    s2lead: "Tableau kann RFM-Scores direkt über berechnete Felder (Calculated Fields) ermitteln. Du brauchst keine Programmierkenntnisse – nur das Verständnis der Logik.",
+    steps: [
+      {
+        title: "Daten laden: orders.csv + customers.csv",
+        body: "Öffne Tableau. Lade <code>orders.csv</code> als Primärquelle. Ziehe <code>customers.csv</code> daneben → Inner Join über <code>Customer Id</code>. Aggregationsebene: ein Datensatz pro Kunde.",
+        tip: "💡 Wichtig: Wechsle zur Arbeitsblattebene und stelle sicher, dass du auf der Ebene 'pro Kunde' arbeitest (Customer Id auf der Detailebene)."
+      },
+      {
+        title: "Recency berechnen: Tage seit letztem Kauf",
+        body: "Erstelle ein Calculated Field: Rechtsklick auf Datenfeldbereich → <code>Berechnetes Feld erstellen</code>. Name: <strong>Recency (Tage)</strong>.<br/>Formel: <code>DATEDIFF('day', MAX([Order Date]), TODAY())</code><br/>Aggregation: pro Customer Id → nimm <code>MIN(Recency)</code> (= letzter Kauf).",
+        tip: "💡 Recency Logik: Kleinere Zahl = kürzlicher Kauf = besser. Ein Kunde mit Recency 5 hat vor 5 Tagen gekauft. Einer mit Recency 365 kaufte vor einem Jahr – ist er noch aktiv?"
+      },
+      {
+        title: "Frequency berechnen: Anzahl Bestellungen",
+        body: "Neues Calculated Field. Name: <strong>Frequency</strong>.<br/>Formel: <code>COUNTD([Order Id])</code><br/>Aggregiert pro Customer Id: Wie oft hat der Kunde bestellt?",
+        tip: null
+      },
+      {
+        title: "Monetary berechnen: Gesamtumsatz pro Kunde",
+        body: "Neues Calculated Field. Name: <strong>Monetary</strong>.<br/>Formel: <code>SUM([Total Revenue])</code><br/>Aggregiert pro Customer Id: Wie viel hat der Kunde insgesamt ausgegeben?",
+        tip: "💡 Tipp: Tableau aggregiert automatisch – stelle sicher, dass der Berechnungskontext auf 'Tabelle (quer)' steht, damit jeder Kunde seinen eigenen Wert bekommt."
+      },
+      {
+        title: "RFM-Scores (1–5) als berechnete Felder",
+        body: "Erstelle drei Score-Felder. Beispiel für <strong>R-Score</strong>:<br/><code>IF MIN([Recency (Tage)]) &lt;= 30 THEN 5<br/>ELSEIF MIN([Recency (Tage)]) &lt;= 60 THEN 4<br/>ELSEIF MIN([Recency (Tage)]) &lt;= 120 THEN 3<br/>ELSEIF MIN([Recency (Tage)]) &lt;= 180 THEN 2<br/>ELSE 1<br/>END</code><br/>Analog: F-Score (Quintile nach Bestellanzahl), M-Score (Quintile nach Umsatz).",
+        tip: "💡 Quintile: 5 = Top 20% (bester), 1 = Bottom 20% (schlechtester). Tableau bietet für Quintile alternativ NTILE(5) in Custom SQL, aber IF/ELSEIF mit festen Schwellwerten ist transparent und nachvollziehbarer."
+      },
+    ],
+    s3eye: "RFM-Dimensionen",
+    s3title: "Recency · Frequency · Monetary",
+    s3lead: "Jede Dimension misst einen anderen Aspekt des Kundenwerts. Erst zusammen ergeben sie das vollständige Bild.",
+    kpis: [
+      { icon:"🕐", val:"R", lbl:"Recency", def:"Tage seit dem letzten Kauf. Niedrig = gut. Kunden, die kürzlich gekauft haben, kaufen eher wieder." },
+      { icon:"🔄", val:"F", lbl:"Frequency", def:"Anzahl der Bestellungen. Hoch = gut. Häufige Käufer sind loyaler und haben höheres CLV-Potenzial." },
+      { icon:"💶", val:"M", lbl:"Monetary", def:"Gesamtumsatz pro Kunde. Hoch = gut. Zeigt den bisherigen wirtschaftlichen Beitrag des Kunden." },
+    ],
+    s4eye: "Visualisierung",
+    s4title: "Dashboard: UrbanCart RFM Segmentation",
+    viz_steps: [
+      {
+        title: "Histogramme für R, F und M",
+        body: "Erstelle für jede Dimension ein eigenes Histogramm: Dimension (kontinuierlich) auf Spalten, <code>Anzahl Datensätze</code> auf Zeilen. Verwende <code>Show Me → Histogramm</code>. Erkennst du eine Normalverteilung oder Skewness?",
+        tip: "💡 Skewness in E-Commerce: Monetary ist meist stark rechtsschief – die meisten Kunden kaufen wenig, sehr wenige kaufen sehr viel. Das ist normal!"
+      },
+      {
+        title: "Scatter Plot: Frequency vs. Monetary",
+        body: "Neues Arbeitsblatt. Ziehe <code>Frequency</code> auf Spalten, <code>Monetary</code> auf Zeilen. Eine Zeile pro Kunde: Klicke <code>Customer Id</code> → auf <code>Detail</code> im Marks-Panel ziehen. Färbe nach <code>R-Score</code>: Orange = 5 (sehr aktuell), Dunkelgrau = 1 (inaktiv).",
+        tip: "💡 Im Scatter Plot siehst du Cluster: Champions oben rechts (hohe Frequency, hohes Monetary), Lost Customers unten links. Das ist RFM-Segmentierung visuell!"
+      },
+      {
+        title: "Segment-Tabelle erstellen",
+        body: "Erstelle ein Calculated Field <strong>RFM-Segment</strong>:<br/><code>IF [R-Score] >= 4 AND [F-Score] >= 4 THEN 'Champion'<br/>ELSEIF [R-Score] >= 3 AND [F-Score] >= 3 THEN 'Loyal Customer'<br/>ELSEIF [R-Score] &lt;= 2 AND [F-Score] >= 3 THEN 'At Risk'<br/>ELSEIF [R-Score] &lt;= 2 AND [F-Score] &lt;= 2 THEN 'Hibernating'<br/>ELSE 'New/Promising'<br/>END</code><br/>Erstelle ein Balkendiagramm: Segmente auf Zeilen, COUNT auf Spalten.",
+        tip: null
+      },
+      {
+        title: "Dashboard zusammenbauen",
+        body: "Neues Dashboard: <strong>UrbanCart RFM Segmentation</strong>. Kombiniere Scatter Plot, Segment-Balkendiagramm und eine Kennzahlen-Zusammenfassung. Füge einen Filter für RFM-Segment hinzu – so kann Marketing direkt auf ein Segment klicken.",
+        tip: "💡 Actionable Dashboard: Füge einen Hinweistext pro Segment ein (Tooltip oder Annotation): z.B. 'Champions → Exklusive Previews anbieten'. Ein gutes Dashboard beantwortet die Frage 'Was tun wir jetzt?'."
+      },
+    ],
+    quizTitle: "Quiz: Lab 03 – RFM-Analyse",
+    quizSub: "15 Fragen · Beantworte alle, bevor du zum nächsten Lab gehst.",
+    questions: [
+      {
+        q: "Was steht das 'R' in RFM?",
+        options: [
+          "Revenue – der Umsatz des Kunden",
+          "Recency – wie lange der letzte Kauf zurückliegt",
+          "Rank – die Rangfolge der Kunden",
+          "Retention – die Kundenbindungsrate"
+        ],
+        correct: 1,
+        explain: "R = Recency = Aktualität des letzten Kaufs in Tagen. Niedriger R-Wert = kürzlicher Kauf = gutes Zeichen. Kunden, die kürzlich gekauft haben, kaufen wahrscheinlicher wieder."
+      },
+      {
+        q: "Was steht das 'F' in RFM?",
+        options: [
+          "Frequency – die Anzahl der Bestellungen",
+          "Financial – der finanzielle Wert",
+          "Flow – der Bestellfluss pro Monat",
+          "Funnel – die Konversionsrate"
+        ],
+        correct: 0,
+        explain: "F = Frequency = Häufigkeit der Käufe. Wie oft hat der Kunde in einem bestimmten Zeitraum bestellt? Hohe Frequency = treuer, engagierter Kunde."
+      },
+      {
+        q: "Was steht das 'M' in RFM?",
+        options: [
+          "Marketing – Ausgaben für Werbung",
+          "Monetary – der Gesamtumsatz des Kunden",
+          "Margin – die Gewinnmarge",
+          "Mobile – ob der Kunde mobil kauft"
+        ],
+        correct: 1,
+        explain: "M = Monetary = Gesamtumsatz, den der Kunde generiert hat. Hoher M-Wert = wirtschaftlich wertvoller Kunde. Zusammen mit R und F ergibt sich das vollständige Bild."
+      },
+      {
+        q: "Ein Kunde hat R=5, F=5, M=5. Welchem Segment gehört er an?",
+        options: [
+          "At Risk",
+          "Hibernating",
+          "New Customer",
+          "Champion"
+        ],
+        correct: 3,
+        explain: "Champions haben die höchsten Scores in allen drei Dimensionen: kauften kürzlich (R=5), kaufen oft (F=5) und geben viel aus (M=5). Das sind die wertvollsten Kunden – sie verdienen besondere Aufmerksamkeit."
+      },
+      {
+        q: "Ein Kunde hat R=1, F=4, M=4. Was bedeutet das?",
+        options: [
+          "Er ist ein Champion",
+          "Er ist ein neuer Kunde",
+          "Er ist 'At Risk' – früher aktiv, aber lange nicht mehr gekauft",
+          "Er ist ein Hibernate-Kunde mit niedrigem Wert"
+        ],
+        correct: 2,
+        explain: "Hohe Frequency und hohes Monetary zeigen: Der Kunde war früher wertvoll. Niedrige Recency (=langer Zeitraum seit letztem Kauf) signalisiert: Er wird inaktiv. Das ist ein klassischer 'At Risk'-Kunde – sofort reaktivieren!"
+      },
+      {
+        q: "Welche Maßnahme empfiehlt sich für 'Hibernating'-Kunden?",
+        options: [
+          "Exklusive Previews neuer Produkte anbieten",
+          "Win-back-Kampagne mit starkem Rabattangebot",
+          "Loyalty-Programm-Einladung",
+          "Cross-Selling-E-Mails"
+        ],
+        correct: 1,
+        explain: "Hibernating-Kunden sind seit langer Zeit inaktiv und kauften früher wenig und günstig. Win-back-Kampagnen mit starken Anreizen (z.B. 20% Rabatt, kostenloser Versand) können sie reaktivieren – sind aber teuer. Wenn sie nicht reagieren: Abmelden."
+      },
+      {
+        q: "Wie wird Recency in Tableau berechnet?",
+        options: [
+          "SUM([order_date])",
+          "DATEDIFF('day', MAX([Order Date]), TODAY())",
+          "COUNT([Order Date])",
+          "AVG([Order Date])"
+        ],
+        correct: 1,
+        explain: "DATEDIFF('day', MAX([Order Date]), TODAY()) berechnet die Anzahl der Tage zwischen dem letzten Kauf (MAX des Bestelldatums) und heute. Das ergibt den Recency-Wert pro Kunde."
+      },
+      {
+        q: "Welche Tableau-Funktion gibt die Anzahl eindeutiger Bestellungen pro Kunde zurück?",
+        options: [
+          "SUM([Order Id])",
+          "COUNT([Customer Id])",
+          "COUNTD([Order Id])",
+          "AVG([Order Id])"
+        ],
+        correct: 2,
+        explain: "COUNTD([Order Id]) zählt jede Bestellung genau einmal pro Kunde. Das ist die Frequency-Dimension der RFM-Analyse. COUNTD verhindert Doppelzählungen bei mehreren Bestellpositionen."
+      },
+      {
+        q: "Was ist ein RFM-Score von 1–5?",
+        options: [
+          "Eine absolute Kennzahl wie Umsatz oder Tage",
+          "Eine relative Bewertung – 5 = bestes Quintil, 1 = schlechtestes Quintil",
+          "Eine Bewertung von 1 (sehr gut) bis 5 (sehr schlecht)",
+          "Ein Kundenzufriedenheitswert"
+        ],
+        correct: 1,
+        explain: "RFM-Scores sind relative Bewertungen: 5 = bestes 20% (Quintil) aller Kunden in dieser Dimension, 1 = schlechtestes 20%. Die Absolut-Werte variieren – Scores machen sie vergleichbar."
+      },
+      {
+        q: "Warum ist der Scatter Plot (Frequency vs. Monetary) in der RFM-Analyse nützlich?",
+        options: [
+          "Er zeigt die zeitliche Entwicklung der Kundenzahl",
+          "Er macht Kundensegmente als Cluster visuell sichtbar",
+          "Er berechnet den CLV automatisch",
+          "Er ersetzt die Heatmap"
+        ],
+        correct: 1,
+        explain: "Im Scatter Plot (F auf X, M auf Y, Farbe = R-Score) werden Kundensegmente als natürliche Cluster sichtbar: Champions oben rechts, Lost Customers unten links. Das ist die mächtigste Visualisierung der RFM-Analyse."
+      },
+      {
+        q: "Wann gilt ein Kunde in der RFM-Analyse als 'churned' (abgewandert)?",
+        options: [
+          "Wenn er seit 7 Tagen nichts bestellt hat",
+          "Wenn er weniger als 3 Bestellungen hat",
+          "Wenn seine Recency sehr hoch ist und er lange inaktiv war",
+          "Wenn er nur über Mobile kauft"
+        ],
+        correct: 2,
+        explain: "Ein Kunde gilt als abgewandert (churned), wenn er seit sehr langer Zeit nicht mehr gekauft hat (hohe Recency in Tagen). Was 'lang' bedeutet, hängt von der Branche ab: Im Fashion-E-Commerce könnte das 90–180 Tage sein."
+      },
+      {
+        q: "Du hast 8.000 Kunden in 5 Quintile aufgeteilt. Wie viele Kunden sind im 'R5'-Segment (Top-Quintil)?",
+        options: [
+          "500",
+          "800",
+          "1.600",
+          "4.000"
+        ],
+        correct: 2,
+        explain: "8.000 Kunden ÷ 5 Quintile = 1.600 Kunden pro Quintil. Das oberste Quintil (R5) enthält also die 1.600 Kunden mit der niedrigsten Recency – die 20% mit dem kürzlichsten Kauf."
+      },
+      {
+        q: "Welches RFM-Segment hat das höchste Marketingpotenzial für Cross-Selling?",
+        options: [
+          "Hibernating",
+          "Lost Customers",
+          "Champions und Loyal Customers",
+          "New Customers"
+        ],
+        correct: 2,
+        explain: "Champions und Loyal Customers kaufen regelmäßig und geben viel aus. Sie sind offen für neue Produkte und reagieren gut auf Cross-Selling (ähnliche Produkte) und Upselling (Premium-Versionen). Ihr CLV-Potenzial ist am höchsten."
+      },
+      {
+        q: "Was ist der Nachteil von absoluten Schwellwerten bei der RFM-Score-Berechnung (statt Quintilen)?",
+        options: [
+          "Sie sind zu kompliziert zu berechnen",
+          "Sie sind von Tableau nicht unterstützt",
+          "Sie sind nicht auf andere Zeiträume oder Unternehmen übertragbar",
+          "Sie zeigen keine Farbunterschiede im Dashboard"
+        ],
+        correct: 2,
+        explain: "Feste Schwellwerte (z.B. Recency ≤30 → Score 5) funktionieren nur für den aktuellen Datensatz. Bei einem anderen Zeitraum oder Unternehmen müssen sie neu kalibriert werden. Quintile (NTILE) sind automatisch anpassbar, aber schwieriger in Tableau ohne SQL."
+      },
+      {
+        q: "Welche Marketingmaßnahme passt am besten zu 'New Customers' (R=5, F=1)?",
+        options: [
+          "Win-back-Kampagne mit 30% Rabatt",
+          "Onboarding-E-Mail-Sequenz und Trigger für den zweiten Kauf",
+          "Kündigung des Newsletters",
+          "Premium-Loyalty-Programm-Einladung"
+        ],
+        correct: 1,
+        explain: "New Customers haben kürzlich zum ersten Mal gekauft (R=5) aber nur einmal (F=1). Ziel: Den zweiten Kauf triggern! Onboarding-Sequenzen (Willkommens-E-Mail, Produktempfehlungen, Folgeangebot nach 7 Tagen) erhöhen die Chance auf eine langfristige Kundenbeziehung."
+      },
+    ],
+    nextLab: "Lab 04: ABC-Analyse →",
+    prevLab: "← Lab 02: Kundenstruktur",
+    aiEye: "KI-Ausblick",
+    aiTitle: "RFM-Analyse mit Python, pandas & 3D-Scatter Plot",
+    aiText: "In Python lässt sich die RFM-Analyse vollständig automatisieren – inklusive NTILE-Äquivalent via pd.qcut() und einem 3D-Scatter-Plot mit Plotly für die dreidimensionale Kundensegmentierung.",
+    aiPrompt: `# Prompt für ChatGPT / Claude:
+"Erstelle eine vollständige RFM-Analyse in Python.
+
+Lade 'orders.csv' mit pandas.
+Referenzdatum: Datum des letzten Kaufs + 1 Tag.
+
+1. Berechne pro customer_id:
+   - Recency: Tage seit letztem Kauf
+   - Frequency: Anzahl Bestellungen (COUNTD order_id)
+   - Monetary: Gesamtumsatz (SUM total_revenue)
+
+2. Weise Scores 1-5 zu via pd.qcut():
+   df['R_Score'] = pd.qcut(df['Recency'], 5, labels=[5,4,3,2,1])
+   df['F_Score'] = pd.qcut(df['Frequency'].rank(method='first'), 5, labels=[1,2,3,4,5])
+   df['M_Score'] = pd.qcut(df['Monetary'], 5, labels=[1,2,3,4,5])
+
+3. Erstelle einen 3D Scatter Plot (Plotly):
+   - X: Recency, Y: Frequency, Z: Monetary
+   - Farbe: RFM_Segment
+   - Hover: customer_id, alle drei Werte
+
+Farbschema: Grün=#3D7A56 (Champions), Blau=#005B9A (Loyal),
+Rot=#dc2626 (At Risk), Grau=#9ca3af (Hibernating)."`,
+  },
+  en: {
+    labNum: "Lab 03 of 09",
+    labTitle: ["RFM Analysis: ", "Measuring Customer Value"],
+    labSub: "Not every customer is equally valuable. The RFM analysis divides UrbanCart's 8,000 customers into segments – from Champions to Hibernating. You calculate scores, visualise clusters and derive concrete marketing actions.",
+    metaDauer: "75–100 min.",
+    metaLevel: "Intermediate",
+    metaData: "orders.csv · customers.csv",
+    metaTool: "Tableau Public (free)",
+    progSteps: ["Introduction","Load Data","Analysis","Visualisation","Quiz","AI Outlook"],
+    s1eye: "Theory",
+    s1title: "What is RFM Analysis?",
+    s1lead: "RFM stands for Recency, Frequency and Monetary – the three dimensions that describe a customer's value. The method originates from direct marketing and is used today by Amazon, Netflix and every professional e-commerce team.",
+    rfmSegments: [
+      { seg: "Champions", r:"5", f:"5", m:"5", desc: "Buy often, spend a lot, bought recently. Your best customers – reward them.", css:"seg-champion" },
+      { seg: "Loyal Customers", r:"3–5", f:"3–5", m:"3–5", desc: "Buy regularly. Cross-selling and loyalty programmes work well here.", css:"seg-loyal" },
+      { seg: "At Risk", r:"2–3", f:"3–4", m:"3–4", desc: "Previously active, now quieter. Reactivation campaigns needed!", css:"seg-risk" },
+      { seg: "Hibernating", r:"1–2", f:"1–2", m:"1–2", desc: "Long inactive. Try a win-back with a strong offer.", css:"seg-lost" },
+      { seg: "New Customers", r:"4–5", f:"1", m:"1–2", desc: "Bought recently but rarely. Trigger onboarding and a second purchase.", css:"seg-new" },
+    ],
+    s2eye: "Step by Step",
+    s2title: "Calculate RFM in Tableau",
+    s2lead: "Tableau can calculate RFM scores directly via calculated fields. No programming knowledge required – just understanding the logic.",
+    steps: [
+      {
+        title: "Load data: orders.csv + customers.csv",
+        body: "Open Tableau. Load <code>orders.csv</code> as primary source. Drag <code>customers.csv</code> next to it → Inner Join on <code>Customer Id</code>. Aggregation level: one record per customer.",
+        tip: "💡 Important: Switch to the worksheet level and make sure you are working at the 'per customer' level (Customer Id on the Detail level)."
+      },
+      {
+        title: "Calculate Recency: days since last purchase",
+        body: "Create a Calculated Field: right-click on the data pane → <code>Create Calculated Field</code>. Name: <strong>Recency (Days)</strong>.<br/>Formula: <code>DATEDIFF('day', MAX([Order Date]), TODAY())</code><br/>Aggregation: per Customer Id → use <code>MIN(Recency)</code> (= last purchase).",
+        tip: "💡 Recency logic: Smaller number = more recent purchase = better. A customer with Recency 5 bought 5 days ago. One with Recency 365 bought a year ago – are they still active?"
+      },
+      {
+        title: "Calculate Frequency: number of orders",
+        body: "New Calculated Field. Name: <strong>Frequency</strong>.<br/>Formula: <code>COUNTD([Order Id])</code><br/>Aggregated per Customer Id: how many times has the customer ordered?",
+        tip: null
+      },
+      {
+        title: "Calculate Monetary: total revenue per customer",
+        body: "New Calculated Field. Name: <strong>Monetary</strong>.<br/>Formula: <code>SUM([Total Revenue])</code><br/>Aggregated per Customer Id: how much has the customer spent in total?",
+        tip: "💡 Tip: Tableau aggregates automatically – make sure the calculation context is set to 'Table (across)' so each customer gets their own value."
+      },
+      {
+        title: "RFM scores (1–5) as calculated fields",
+        body: "Create three score fields. Example for <strong>R-Score</strong>:<br/><code>IF MIN([Recency (Days)]) &lt;= 30 THEN 5<br/>ELSEIF MIN([Recency (Days)]) &lt;= 60 THEN 4<br/>ELSEIF MIN([Recency (Days)]) &lt;= 120 THEN 3<br/>ELSEIF MIN([Recency (Days)]) &lt;= 180 THEN 2<br/>ELSE 1<br/>END</code><br/>Analogously: F-Score (quintiles by order count), M-Score (quintiles by revenue).",
+        tip: "💡 Quintiles: 5 = top 20% (best), 1 = bottom 20% (worst). Tableau offers NTILE(5) in Custom SQL for quintiles, but IF/ELSEIF with fixed thresholds is more transparent and easier to follow."
+      },
+    ],
+    s3eye: "RFM Dimensions",
+    s3title: "Recency · Frequency · Monetary",
+    s3lead: "Each dimension measures a different aspect of customer value. Only together do they provide the complete picture.",
+    kpis: [
+      { icon:"🕐", val:"R", lbl:"Recency", def:"Days since last purchase. Low = good. Customers who bought recently are more likely to buy again." },
+      { icon:"🔄", val:"F", lbl:"Frequency", def:"Number of orders. High = good. Frequent buyers are more loyal and have higher CLV potential." },
+      { icon:"💶", val:"M", lbl:"Monetary", def:"Total revenue per customer. High = good. Shows the customer's economic contribution to date." },
+    ],
+    s4eye: "Visualisation",
+    s4title: "Dashboard: UrbanCart RFM Segmentation",
+    viz_steps: [
+      {
+        title: "Histograms for R, F and M",
+        body: "Create a separate histogram for each dimension: dimension (continuous) on Columns, <code>Count of Records</code> on Rows. Use <code>Show Me → Histogram</code>. Can you see a normal distribution or skewness?",
+        tip: "💡 Skewness in e-commerce: Monetary is usually strongly right-skewed – most customers buy little, very few buy a lot. This is normal!"
+      },
+      {
+        title: "Scatter plot: Frequency vs. Monetary",
+        body: "New worksheet. Drag <code>Frequency</code> to Columns, <code>Monetary</code> to Rows. One row per customer: drag <code>Customer Id</code> → to <code>Detail</code> in the Marks panel. Colour by <code>R-Score</code>: Orange = 5 (very recent), Dark grey = 1 (inactive).",
+        tip: "💡 In the scatter plot you see clusters: Champions top right (high Frequency, high Monetary), Lost Customers bottom left. This is RFM segmentation made visual!"
+      },
+      {
+        title: "Create a segment table",
+        body: "Create a Calculated Field <strong>RFM Segment</strong>:<br/><code>IF [R-Score] >= 4 AND [F-Score] >= 4 THEN 'Champion'<br/>ELSEIF [R-Score] >= 3 AND [F-Score] >= 3 THEN 'Loyal Customer'<br/>ELSEIF [R-Score] &lt;= 2 AND [F-Score] >= 3 THEN 'At Risk'<br/>ELSEIF [R-Score] &lt;= 2 AND [F-Score] &lt;= 2 THEN 'Hibernating'<br/>ELSE 'New/Promising'<br/>END</code><br/>Create a bar chart: segments on Rows, COUNT on Columns.",
+        tip: null
+      },
+      {
+        title: "Assemble the dashboard",
+        body: "New dashboard: <strong>UrbanCart RFM Segmentation</strong>. Combine scatter plot, segment bar chart and a KPI summary. Add a filter for RFM Segment – so marketing can click directly on a segment.",
+        tip: "💡 Actionable Dashboard: Add a hint text per segment (tooltip or annotation): e.g. 'Champions → Offer exclusive previews'. A good dashboard answers the question: what do we do now?"
+      },
+    ],
+    quizTitle: "Quiz: Lab 03 – RFM Analysis",
+    quizSub: "15 questions · Complete all before moving to the next lab.",
+    questions: [
+      {
+        q: "What does 'R' stand for in RFM?",
+        options: [
+          "Revenue – the customer's sales",
+          "Recency – how long ago the last purchase was",
+          "Rank – the ranking of customers",
+          "Retention – the customer retention rate"
+        ],
+        correct: 1,
+        explain: "R = Recency = how many days ago the last purchase occurred. Low R value = recent purchase = good sign. Customers who bought recently are more likely to buy again."
+      },
+      {
+        q: "What does 'F' stand for in RFM?",
+        options: [
+          "Frequency – the number of orders",
+          "Financial – the financial value",
+          "Flow – the order flow per month",
+          "Funnel – the conversion rate"
+        ],
+        correct: 0,
+        explain: "F = Frequency = how often the customer has ordered in a given period. High Frequency = loyal, engaged customer."
+      },
+      {
+        q: "What does 'M' stand for in RFM?",
+        options: [
+          "Marketing – advertising spend",
+          "Monetary – the customer's total revenue",
+          "Margin – the profit margin",
+          "Mobile – whether the customer shops on mobile"
+        ],
+        correct: 1,
+        explain: "M = Monetary = total revenue generated by the customer. High M = economically valuable customer. Together with R and F, this gives the complete picture."
+      },
+      {
+        q: "A customer has R=5, F=5, M=5. Which segment do they belong to?",
+        options: ["At Risk","Hibernating","New Customer","Champion"],
+        correct: 3,
+        explain: "Champions have the highest scores in all three dimensions: bought recently (R=5), buy often (F=5) and spend a lot (M=5). These are the most valuable customers – they deserve special attention."
+      },
+      {
+        q: "A customer has R=1, F=4, M=4. What does this mean?",
+        options: [
+          "They are a Champion",
+          "They are a new customer",
+          "They are 'At Risk' – previously active but not bought for a long time",
+          "They are a Hibernating customer with low value"
+        ],
+        correct: 2,
+        explain: "High Frequency and high Monetary show: this customer was formerly valuable. Low Recency (= long time since last purchase) signals they are becoming inactive. This is a classic 'At Risk' customer – reactivate immediately!"
+      },
+      {
+        q: "Which measure is recommended for 'Hibernating' customers?",
+        options: [
+          "Offer exclusive previews of new products",
+          "Win-back campaign with a strong discount offer",
+          "Loyalty programme invitation",
+          "Cross-selling emails"
+        ],
+        correct: 1,
+        explain: "Hibernating customers have been inactive for a long time and previously bought little and cheaply. Win-back campaigns with strong incentives (e.g. 20% discount, free shipping) can reactivate them – but are expensive. If they don't respond: unsubscribe them."
+      },
+      {
+        q: "How is Recency calculated in Tableau?",
+        options: [
+          "SUM([order_date])",
+          "DATEDIFF('day', MAX([Order Date]), TODAY())",
+          "COUNT([Order Date])",
+          "AVG([Order Date])"
+        ],
+        correct: 1,
+        explain: "DATEDIFF('day', MAX([Order Date]), TODAY()) calculates the number of days between the last purchase (MAX of order date) and today. This gives the Recency value per customer."
+      },
+      {
+        q: "Which Tableau function returns the number of unique orders per customer?",
+        options: [
+          "SUM([Order Id])",
+          "COUNT([Customer Id])",
+          "COUNTD([Order Id])",
+          "AVG([Order Id])"
+        ],
+        correct: 2,
+        explain: "COUNTD([Order Id]) counts each order exactly once per customer. This is the Frequency dimension of the RFM analysis. COUNTD prevents double-counting with multiple order items."
+      },
+      {
+        q: "What is an RFM score of 1–5?",
+        options: [
+          "An absolute metric like revenue or days",
+          "A relative rating – 5 = best quintile, 1 = worst quintile",
+          "A rating from 1 (very good) to 5 (very bad)",
+          "A customer satisfaction score"
+        ],
+        correct: 1,
+        explain: "RFM scores are relative ratings: 5 = best 20% (quintile) of all customers in this dimension, 1 = worst 20%. Absolute values vary – scores make them comparable."
+      },
+      {
+        q: "Why is the scatter plot (Frequency vs. Monetary) useful in RFM analysis?",
+        options: [
+          "It shows the temporal development of the number of customers",
+          "It makes customer segments visually apparent as clusters",
+          "It automatically calculates CLV",
+          "It replaces the heatmap"
+        ],
+        correct: 1,
+        explain: "In the scatter plot (F on X, M on Y, colour = R-Score), customer segments become visible as natural clusters: Champions top right, Lost Customers bottom left. This is the most powerful visualisation of RFM analysis."
+      },
+      {
+        q: "When is a customer considered 'churned' in RFM analysis?",
+        options: [
+          "When they haven't ordered for 7 days",
+          "When they have fewer than 3 orders",
+          "When their Recency is very high and they have been inactive for a long time",
+          "When they only buy on mobile"
+        ],
+        correct: 2,
+        explain: "A customer is considered churned when they haven't bought for a very long time (high Recency in days). What 'long' means depends on the industry: in fashion e-commerce it might be 90–180 days."
+      },
+      {
+        q: "You have 8,000 customers divided into 5 quintiles. How many customers are in the 'R5' segment (top quintile)?",
+        options: ["500","800","1,600","4,000"],
+        correct: 2,
+        explain: "8,000 customers ÷ 5 quintiles = 1,600 customers per quintile. The top quintile (R5) therefore contains the 1,600 customers with the lowest Recency – the 20% who bought most recently."
+      },
+      {
+        q: "Which RFM segment has the highest marketing potential for cross-selling?",
+        options: [
+          "Hibernating",
+          "Lost Customers",
+          "Champions and Loyal Customers",
+          "New Customers"
+        ],
+        correct: 2,
+        explain: "Champions and Loyal Customers buy regularly and spend a lot. They are receptive to new products and respond well to cross-selling (similar products) and upselling (premium versions). Their CLV potential is the highest."
+      },
+      {
+        q: "What is the disadvantage of absolute thresholds for RFM score calculation (instead of quintiles)?",
+        options: [
+          "They are too complex to calculate",
+          "They are not supported by Tableau",
+          "They cannot be transferred to other time periods or companies",
+          "They don't show colour differences in the dashboard"
+        ],
+        correct: 2,
+        explain: "Fixed thresholds (e.g. Recency ≤30 → Score 5) only work for the current dataset. For a different time period or company they need to be recalibrated. Quintiles (NTILE) are automatically adaptive, but harder in Tableau without SQL."
+      },
+      {
+        q: "Which marketing measure best suits 'New Customers' (R=5, F=1)?",
+        options: [
+          "Win-back campaign with 30% discount",
+          "Onboarding email sequence and trigger for the second purchase",
+          "Unsubscribe from newsletter",
+          "Premium loyalty programme invitation"
+        ],
+        correct: 1,
+        explain: "New Customers bought recently for the first time (R=5) but only once (F=1). Goal: trigger the second purchase! Onboarding sequences (welcome email, product recommendations, follow-up offer after 7 days) increase the chance of a long-term customer relationship."
+      },
+    ],
+    nextLab: "Lab 04: ABC Analysis →",
+    prevLab: "← Lab 02: Customer Structure",
+    aiEye: "AI Outlook",
+    aiTitle: "RFM Analysis with Python, pandas & 3D Scatter Plot",
+    aiText: "In Python, the RFM analysis can be fully automated – including the NTILE equivalent via pd.qcut() and a 3D scatter plot with Plotly for three-dimensional customer segmentation.",
+    aiPrompt: `# Prompt for ChatGPT / Claude:
+"Create a complete RFM analysis in Python.
+
+Load 'orders.csv' with pandas.
+Reference date: date of last purchase + 1 day.
+
+1. Calculate per customer_id:
+   - Recency: days since last purchase
+   - Frequency: number of orders (COUNTD order_id)
+   - Monetary: total revenue (SUM total_revenue)
+
+2. Assign scores 1-5 via pd.qcut():
+   df['R_Score'] = pd.qcut(df['Recency'], 5, labels=[5,4,3,2,1])
+   df['F_Score'] = pd.qcut(df['Frequency'].rank(method='first'), 5, labels=[1,2,3,4,5])
+   df['M_Score'] = pd.qcut(df['Monetary'], 5, labels=[1,2,3,4,5])
+
+3. Create a 3D scatter plot (Plotly):
+   - X: Recency, Y: Frequency, Z: Monetary
+   - Colour: RFM_Segment
+   - Hover: customer_id, all three values
+
+Colour scheme: Green=#3D7A56 (Champions), Blue=#005B9A (Loyal),
+Red=#dc2626 (At Risk), Grey=#9ca3af (Hibernating)."`,
+  }
+};
+
+function Quiz({ questions, t, lang }) {
+  const [answers, setAnswers] = useState({});
+  const [revealed, setRevealed] = useState({});
+  const done = Object.keys(revealed).length === questions.length;
+  const score = Object.entries(answers).filter(([i, a]) => a === questions[i].correct).length;
+
+  const handleAnswer = (qi, oi) => {
+    if (revealed[qi] !== undefined) return;
+    setAnswers(prev => ({ ...prev, [qi]: oi }));
+    setRevealed(prev => ({ ...prev, [qi]: true }));
+  };
+
+  return (
+    <div className="quiz-section">
+      <h3 className="quiz-title">{t.quizTitle}</h3>
+      <p className="quiz-sub">{t.quizSub}</p>
+      <div className="quiz-progress">{Object.keys(revealed).length} / {questions.length} {lang==='de'?'beantwortet':'answered'}</div>
+      {questions.map((q, qi) => (
+        <div key={qi} className="question-block">
+          <div className="question-num">{lang==='de'?'Frage':'Question'} {qi + 1}</div>
+          <div className="question-text">{q.q}</div>
+          <div className="options">
+            {q.options.map((opt, oi) => {
+              let cls = "option-btn";
+              if (revealed[qi] !== undefined) {
+                cls += " revealed";
+                if (oi === q.correct) cls += " correct";
+                else if (oi === answers[qi]) cls += " wrong";
+              }
+              return (
+                <button key={oi} className={cls} onClick={() => handleAnswer(qi, oi)}>
+                  <span style={{marginRight:'8px', fontWeight:800}}>{String.fromCharCode(65+oi)}.</span>
+                  {opt}
+                </button>
+              );
+            })}
+          </div>
+          {revealed[qi] !== undefined && (
+            <div className={`feedback ${answers[qi] === q.correct ? 'correct' : 'wrong'}`}>
+              {answers[qi] === q.correct
+                ? (lang==='de'?"✓ Richtig! ":"✓ Correct! ")
+                : (lang==='de'?"✗ Nicht ganz. ":"✗ Not quite. ")}
+              {q.explain}
+            </div>
+          )}
+        </div>
+      ))}
+      {done && (
+        <div className="quiz-result">
+          <div className="quiz-result-score">{score}/{questions.length}</div>
+          <div className="quiz-result-label">{lang==='de'?'Punkte':'Points'}</div>
+          <div className="quiz-result-msg">
+            {score >= 13
+              ? (lang==='de'?"🎉 Ausgezeichnet! Weiter zu Lab 04.":"🎉 Excellent! Move on to Lab 04.")
+              : score >= 10
+              ? (lang==='de'?"👍 Gut! Lies die Erklärungen nochmal durch.":"👍 Good! Read through the explanations again.")
+              : (lang==='de'?"💪 Noch einmal! Schau dir die Erklärungen an.":"💪 Try again! Review the explanations.")}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function App() {
+  const [lang, setLang] = useState('de');
+  const t = T[lang];
+
+  useEffect(() => {
+    const els = document.querySelectorAll('.sr');
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.08 });
+    els.forEach(el => obs.observe(el));
+    return () => obs.disconnect();
+  }, [lang]);
+
+  return (
+    <>
+      <nav className="navbar">
+        <div className="nav-brand">
+          <a href="index.html" style={{textDecoration:'none', display:'flex', alignItems:'center', gap:'10px'}}>
+            <svg width="24" height="24" viewBox="0 0 28 28" fill="none">
+              <rect width="28" height="28" rx="3" fill="#005B9A"/>
+              <rect x="6" y="6" width="6" height="6" fill="#E87722"/>
+              <rect x="16" y="6" width="6" height="6" fill="#fff" opacity="0.7"/>
+              <rect x="6" y="16" width="6" height="6" fill="#fff" opacity="0.7"/>
+              <rect x="16" y="16" width="6" height="6" fill="#E87722" opacity="0.5"/>
+            </svg>
+            <span className="nav-brand-text">E-Commerce Labs</span>
+          </a>
+          <span className="nav-lab-badge">{t.labNum}</span>
+        </div>
+        <div className="lang-wrap">
+          <button className={`lang-btn${lang==='de'?' active':''}`} onClick={()=>setLang('de')}>DE</button>
+          <button className={`lang-btn${lang==='en'?' active':''}`} onClick={()=>setLang('en')}>EN</button>
+        </div>
+      </nav>
+
+      <div className="progress-bar">
+        {t.progSteps.map((s, i) => (
+          <React.Fragment key={i}>
+            <div className={`prog-step ${i < 3 ? 'done' : i === 3 ? 'active' : ''}`}>
+              <div className={`prog-dot ${i < 3 ? 'done' : i === 3 ? 'active' : ''}`}>
+                {i < 3 ? '✓' : i + 1}
+              </div>
+              {s}
+            </div>
+            {i < t.progSteps.length - 1 && <div className="prog-arrow">›</div>}
+          </React.Fragment>
+        ))}
+      </div>
+
+      <div className="lab-hero">
+        <div className="lab-hero-inner">
+          <div className="lab-num">{t.labNum}</div>
+          <h1 className="lab-title">{t.labTitle[0]}<span>{t.labTitle[1]}</span></h1>
+          <p className="lab-sub">{t.labSub}</p>
+          <div className="lab-meta">
+            {[["⏱",t.metaDauer],["📊",t.metaLevel],["📁",t.metaData],["🔧",t.metaTool]].map(([icon,val],i) => (
+              <div key={i} className="lab-meta-item">{icon} <strong>{val}</strong></div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="content">
+        <div className="section-block sr">
+          <div className="block-eyebrow">{t.s1eye}</div>
+          <h2 className="block-title">{t.s1title}</h2>
+          <div className="divider"/>
+          <p className="block-lead">{t.s1lead}</p>
+          <table className="rfm-table">
+            <thead>
+              <tr>
+                <th>{lang==='de'?'Segment':'Segment'}</th>
+                <th>R-Score</th>
+                <th>F-Score</th>
+                <th>M-Score</th>
+                <th>{lang==='de'?'Maßnahme':'Action'}</th>
+              </tr>
+            </thead>
+            <tbody>
+              {t.rfmSegments.map((seg, i) => (
+                <tr key={i}>
+                  <td><span className={`seg-badge ${seg.css}`}>{seg.seg}</span></td>
+                  <td>{seg.r}</td>
+                  <td>{seg.f}</td>
+                  <td>{seg.m}</td>
+                  <td style={{fontSize:'0.8rem', color:'#6C757D'}}>{seg.desc}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div className="section-block sr">
+          <div className="block-eyebrow">{t.s2eye}</div>
+          <h2 className="block-title">{t.s2title}</h2>
+          <div className="divider"/>
+          <p className="block-lead">{t.s2lead}</p>
+          <div className="steps">
+            {t.steps.map((step, i) => (
+              <div key={i} className="step-card">
+                <div className="step-header">
+                  <div className="step-num">{i+1}</div>
+                  <div className="step-title">{step.title}</div>
+                </div>
+                <div className="step-body" dangerouslySetInnerHTML={{__html: step.body}}/>
+                {step.tip && <div className="step-tip">{step.tip}</div>}
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="section-block sr">
+          <div className="block-eyebrow">{t.s3eye}</div>
+          <h2 className="block-title">{t.s3title}</h2>
+          <div className="divider"/>
+          <p className="block-lead">{t.s3lead}</p>
+          <div className="kpi-grid">
+            {t.kpis.map((k,i) => (
+              <div key={i} className="kpi-card">
+                <div className="kpi-icon">{k.icon}</div>
+                <div className="kpi-val">{k.val}</div>
+                <div className="kpi-lbl">{k.lbl}</div>
+                <div className="kpi-def">{k.def}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="section-block sr">
+          <div className="block-eyebrow">{t.s4eye}</div>
+          <h2 className="block-title">{t.s4title}</h2>
+          <div className="divider"/>
+          <div className="steps">
+            {t.viz_steps.map((step, i) => (
+              <div key={i} className="step-card">
+                <div className="step-header">
+                  <div className="step-num">{i+1}</div>
+                  <div className="step-title">{step.title}</div>
+                </div>
+                <div className="step-body" dangerouslySetInnerHTML={{__html: step.body}}/>
+                {step.tip && <div className="step-tip">{step.tip}</div>}
+                <div className="screenshot-placeholder">
+                  <div className="screenshot-placeholder-icon">📸</div>
+                  <div className="screenshot-placeholder-text">
+                    {lang==='de'?`Dein Ergebnis für Schritt ${i+1}`:`Your result for step ${i+1}`}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="section-block sr">
+          <Quiz questions={t.questions} t={t} lang={lang}/>
+        </div>
+
+        <div className="section-block sr">
+          <div className="ai-section">
+            <div className="ai-eyebrow">{t.aiEye}</div>
+            <h3 className="ai-title">{t.aiTitle}</h3>
+            <p className="ai-text">{t.aiText}</p>
+            <div className="code-block">{t.aiPrompt}</div>
+            <p style={{fontSize:'0.78rem', color:'rgba(255,255,255,0.4)', marginTop:'12px'}}>
+              {lang==='de'
+                ? '→ Nächstes Lab: ABC-Analyse – welche Produkte tragen 80% des Umsatzes?'
+                : '→ Next lab: ABC Analysis – which products contribute 80% of revenue?'}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="lab-nav">
+        <a href="lab02.html" className="lab-nav-btn">
+          {t.prevLab}
+        </a>
+        <a href="lab04.html" className="lab-nav-btn primary">
+          {t.nextLab}
+        </a>
+      </div>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
