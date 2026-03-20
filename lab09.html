@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Lab 09 – Executive Dashboard · UrbanCart · THWS</title>
+  <title>Lab 09 – Executive Dashboard & Data Storytelling · UrbanCart · THWS</title>
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -13,47 +13,20 @@
     html { scroll-behavior: smooth; }
     body { font-family: 'Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif; background:#fff; color:#212529; }
     .top-bar { height:4px; background:#E87722; position:fixed; top:0; left:0; right:0; z-index:200; }
-    .navbar {
-      position:sticky; top:4px; z-index:100;
-      background:#fff; border-bottom:1px solid #E9ECEF;
-      box-shadow:0 1px 8px rgba(0,0,0,0.05);
-      height:52px; display:flex; align-items:center;
-      padding:0 32px; justify-content:space-between;
-    }
+    .navbar { position:sticky; top:4px; z-index:100; background:#fff; border-bottom:1px solid #E9ECEF; box-shadow:0 1px 8px rgba(0,0,0,0.05); height:52px; display:flex; align-items:center; padding:0 32px; justify-content:space-between; }
     .nav-brand { display:flex; align-items:center; gap:10px; text-decoration:none; }
     .nav-brand-text { font-size:0.78rem; font-weight:700; color:#005B9A; letter-spacing:0.04em; text-transform:uppercase; }
-    .nav-lab-badge {
-      background:rgba(232,119,34,0.12); color:#E87722;
-      font-size:0.68rem; font-weight:700;
-      padding:3px 10px; letter-spacing:0.06em; text-transform:uppercase;
-    }
+    .nav-lab-badge { background:rgba(232,119,34,0.12); color:#E87722; font-size:0.68rem; font-weight:700; padding:3px 10px; letter-spacing:0.06em; text-transform:uppercase; }
     .lang-wrap { display:flex; gap:4px; }
-    .lang-btn {
-      padding:4px 10px; border-radius:3px;
-      border:1.5px solid #E9ECEF; background:#fff;
-      cursor:pointer; font-weight:700; font-size:0.72rem;
-      color:#6C757D; transition:all 0.15s; font-family:inherit;
-    }
+    .lang-btn { padding:4px 10px; border-radius:3px; border:1.5px solid #E9ECEF; background:#fff; cursor:pointer; font-weight:700; font-size:0.72rem; color:#6C757D; transition:all 0.15s; font-family:inherit; }
     .lang-btn.active { background:#E87722; color:#fff; border-color:#E87722; }
-    .progress-bar {
-      background:#F1F3F5; padding:12px 32px;
-      display:flex; align-items:center; gap:8px; overflow-x:auto;
-    }
-    .prog-step {
-      display:flex; align-items:center; gap:6px; white-space:nowrap;
-      font-size:0.72rem; font-weight:700; color:#9ca3af;
-    }
-    .prog-step.active { color:#E87722; }
-    .prog-step.done { color:#3D7A56; }
-    .prog-dot {
-      width:24px; height:24px; border-radius:50%;
-      background:#E9ECEF; display:flex; align-items:center;
-      justify-content:center; font-size:0.68rem; font-weight:800; flex-shrink:0;
-    }
-    .prog-dot.active { background:#E87722; color:#fff; }
-    .prog-dot.done { background:#3D7A56; color:#fff; }
+    .progress-bar { background:#F1F3F5; padding:12px 32px; display:flex; align-items:center; gap:8px; overflow-x:auto; }
+    .prog-step { display:flex; align-items:center; gap:6px; white-space:nowrap; font-size:0.72rem; font-weight:700; color:#9ca3af; }
+    .prog-step.active { color:#E87722; } .prog-step.done { color:#3D7A56; }
+    .prog-dot { width:24px; height:24px; border-radius:50%; background:#E9ECEF; display:flex; align-items:center; justify-content:center; font-size:0.68rem; font-weight:800; flex-shrink:0; }
+    .prog-dot.active { background:#E87722; color:#fff; } .prog-dot.done { background:#3D7A56; color:#fff; }
     .prog-arrow { color:#D1D5DB; font-size:0.9rem; }
-    .lab-hero { background:#005B9A; padding:48px 32px; position:relative; overflow:hidden; }
+    .lab-hero { background:linear-gradient(135deg, #005B9A 0%, #003d6b 100%); padding:48px 32px; position:relative; overflow:hidden; }
     .lab-hero-inner { max-width:800px; }
     .lab-num { font-size:0.72rem; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:rgba(255,255,255,0.5); margin-bottom:8px; }
     .lab-title { font-size:clamp(1.8rem,4vw,2.8rem); font-weight:800; color:#fff; line-height:1.1; margin-bottom:12px; }
@@ -79,11 +52,32 @@
     .step-tip { background:rgba(0,91,154,0.06); border-left:2px solid #005B9A; padding:10px 14px; margin-top:10px; margin-left:40px; font-size:0.82rem; color:#005B9A; line-height:1.6; }
     .screenshot-placeholder { background:#F1F3F5; border:1.5px dashed #D1D5DB; padding:32px; text-align:center; margin:16px 0; border-radius:2px; }
     .screenshot-placeholder-text { font-size:0.78rem; color:#9ca3af; font-weight:600; }
-    .kpi-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:16px; margin:16px 0; }
-    .kpi-card { background:#fff; border:1.5px solid #E9ECEF; border-top:3px solid #E87722; padding:20px 16px; text-align:center; }
-    .kpi-val { font-size:1.6rem; font-weight:900; color:#E87722; line-height:1; }
-    .kpi-lbl { font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:#005B9A; margin-top:4px; }
-    .kpi-def { font-size:0.78rem; color:#9ca3af; margin-top:6px; line-height:1.5; }
+    .kpi-grid-8 { display:grid; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); gap:12px; margin:16px 0; }
+    .kpi-card { background:#fff; border:1.5px solid #E9ECEF; border-top:3px solid #E87722; padding:16px 12px; text-align:center; }
+    .kpi-val { font-size:1.4rem; font-weight:900; color:#E87722; line-height:1; }
+    .kpi-lbl { font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:#005B9A; margin-top:4px; }
+    .kpi-def { font-size:0.72rem; color:#9ca3af; margin-top:4px; line-height:1.4; }
+    .story-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(140px,1fr)); gap:8px; margin:16px 0; }
+    .story-card { background:#F1F3F5; border:1.5px solid #E9ECEF; padding:16px; text-align:center; border-radius:2px; }
+    .story-num { width:32px; height:32px; border-radius:50%; background:#E87722; color:#fff; display:flex; align-items:center; justify-content:center; font-size:0.84rem; font-weight:900; margin:0 auto 8px; }
+    .story-title { font-size:0.78rem; font-weight:700; color:#212529; margin-bottom:4px; }
+    .story-desc { font-size:0.68rem; color:#9ca3af; }
+    .peer-section { background:rgba(0,91,154,0.04); border:1.5px solid rgba(0,91,154,0.15); padding:24px; margin:24px 0; }
+    .peer-title { font-size:0.84rem; font-weight:800; color:#005B9A; margin-bottom:16px; text-transform:uppercase; letter-spacing:0.08em; }
+    .peer-table { width:100%; border-collapse:collapse; font-size:0.82rem; }
+    .peer-table th { background:#005B9A; color:#fff; padding:8px 12px; text-align:left; font-weight:700; font-size:0.75rem; text-transform:uppercase; }
+    .peer-table td { padding:8px 12px; border-bottom:1px solid #E9ECEF; vertical-align:top; }
+    .peer-table tr:nth-child(even) td { background:rgba(0,91,154,0.03); }
+    .concept-card { border:1.5px solid #E9ECEF; padding:20px 24px; border-left:3px solid #E87722; margin-bottom:16px; }
+    .concept-title { font-size:0.95rem; font-weight:800; color:#212529; margin-bottom:8px; }
+    .concept-body { font-size:0.87rem; color:#6C757D; line-height:1.7; }
+    .concept-tip { background:rgba(232,119,34,0.06); border-left:2px solid #E87722; padding:10px 14px; margin-top:10px; font-size:0.82rem; color:#92400e; line-height:1.6; }
+    .completion-section { background:linear-gradient(135deg, rgba(61,122,86,0.08) 0%, rgba(0,91,154,0.08) 100%); border:2px solid #3D7A56; padding:32px; text-align:center; margin:32px 0; }
+    .completion-trophy { font-size:3rem; margin-bottom:12px; }
+    .completion-title { font-size:1.4rem; font-weight:900; color:#3D7A56; margin-bottom:8px; }
+    .completion-sub { font-size:0.95rem; color:#6C757D; line-height:1.7; max-width:500px; margin:0 auto; }
+    .completion-labs { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-top:16px; }
+    .completion-lab-tag { background:#3D7A56; color:#fff; padding:4px 12px; font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; }
     .quiz-section { background:#F1F3F5; padding:40px 32px; margin:0 -32px; border-radius:2px; }
     .quiz-title { font-size:1.1rem; font-weight:800; color:#005B9A; margin-bottom:4px; }
     .quiz-sub { font-size:0.84rem; color:#6C757D; margin-bottom:24px; }
@@ -112,453 +106,263 @@
     .lab-nav { border-top:1px solid #E9ECEF; padding:32px; display:flex; justify-content:space-between; align-items:center; max-width:800px; margin:0 auto; }
     .lab-nav-btn { display:flex; align-items:center; gap:8px; font-size:0.87rem; font-weight:700; color:#005B9A; text-decoration:none; cursor:pointer; transition:color 0.15s; }
     .lab-nav-btn:hover { color:#E87722; }
-    .lab-nav-btn.primary { background:#E87722; color:#fff; padding:10px 20px; border:2px solid #E87722; }
-    .lab-nav-btn.primary:hover { background:#d06a1a; border-color:#d06a1a; }
+    .lab-nav-btn.primary { background:#3D7A56; color:#fff; padding:10px 20px; border:2px solid #3D7A56; }
+    .lab-nav-btn.primary:hover { background:#2d5c40; border-color:#2d5c40; }
     .sr { opacity:0; transform:translateY(12px); transition:opacity 0.5s ease,transform 0.5s ease; }
     .sr.visible { opacity:1; transform:translateY(0); }
-  </style>
-  <style>
-    .peer-table { width:100%; border-collapse:collapse; margin:16px 0; font-size:0.87rem; }
-    .peer-table th { background:#005B9A; color:#fff; padding:10px 14px; text-align:left; font-weight:700; font-size:0.78rem; text-transform:uppercase; letter-spacing:0.06em; }
-    .peer-table td { padding:10px 14px; border-bottom:1px solid #E9ECEF; color:#374151; }
-    .peer-table tr:last-child td { border-bottom:none; }
-    .peer-table tr:nth-child(even) td { background:#F9FAFB; }
-    .peer-table .score-cell { text-align:center; font-weight:800; color:#005B9A; }
-
-    /* Confetti-CSS-Abschluss */
-    .course-complete { position:relative; overflow:hidden; background:linear-gradient(135deg,#005B9A 0%,#0077c8 50%,#005B9A 100%); padding:56px 32px; text-align:center; margin:0 -32px; }
-    .course-complete::before,
-    .course-complete::after {
-      content:'';
-      position:absolute;
-      width:300px; height:300px;
-      border-radius:50%;
-      opacity:0.08;
-    }
-    .course-complete::before { background:#E87722; top:-80px; left:-80px; animation:float1 6s ease-in-out infinite; }
-    .course-complete::after { background:#fff; bottom:-80px; right:-80px; animation:float2 8s ease-in-out infinite; }
-    @keyframes float1 { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(-20px) scale(1.05)} }
-    @keyframes float2 { 0%,100%{transform:translateY(0) scale(1)} 50%{transform:translateY(20px) scale(1.08)} }
-    .confetti-strip { display:flex; justify-content:center; gap:8px; margin-bottom:24px; flex-wrap:wrap; }
-    .confetti-dot { width:12px; height:12px; border-radius:2px; animation:confDrop 3s ease-in-out infinite; }
-    .confetti-dot:nth-child(odd) { border-radius:50%; }
-    @keyframes confDrop {
-      0%,100%{transform:translateY(0) rotate(0deg); opacity:1}
-      50%{transform:translateY(-12px) rotate(180deg); opacity:0.7}
-    }
-    .confetti-dot:nth-child(1){background:#E87722; animation-delay:0s;}
-    .confetti-dot:nth-child(2){background:#fff; animation-delay:0.2s;}
-    .confetti-dot:nth-child(3){background:#f0c040; animation-delay:0.4s;}
-    .confetti-dot:nth-child(4){background:#E87722; animation-delay:0.6s;}
-    .confetti-dot:nth-child(5){background:#a8e6cf; animation-delay:0.8s;}
-    .confetti-dot:nth-child(6){background:#fff; animation-delay:1.0s;}
-    .confetti-dot:nth-child(7){background:#f0c040; animation-delay:1.2s;}
-    .confetti-dot:nth-child(8){background:#E87722; animation-delay:1.4s;}
-    .confetti-dot:nth-child(9){background:#a8e6cf; animation-delay:1.6s;}
-    .confetti-dot:nth-child(10){background:#fff; animation-delay:1.8s;}
-    .course-complete-title { font-size:clamp(1.8rem,4vw,3rem); font-weight:900; color:#fff; margin-bottom:12px; line-height:1.1; position:relative; z-index:1; }
-    .course-complete-title span { color:#E87722; }
-    .course-complete-sub { font-size:1rem; color:rgba(255,255,255,0.8); margin-bottom:28px; max-width:560px; margin-left:auto; margin-right:auto; position:relative; z-index:1; line-height:1.7; }
-    .course-complete-badge { display:inline-flex; align-items:center; gap:8px; background:rgba(255,255,255,0.12); border:1.5px solid rgba(255,255,255,0.25); padding:10px 24px; margin-bottom:28px; position:relative; z-index:1; }
-    .course-complete-badge span { font-size:0.87rem; font-weight:700; color:#fff; letter-spacing:0.06em; text-transform:uppercase; }
-    .course-complete-link { display:inline-flex; align-items:center; gap:8px; background:#E87722; color:#fff; padding:12px 28px; font-size:0.87rem; font-weight:700; text-decoration:none; transition:background 0.15s; position:relative; z-index:1; }
-    .course-complete-link:hover { background:#d06a1a; }
-    .complete-kpis { display:flex; gap:32px; justify-content:center; flex-wrap:wrap; margin-bottom:28px; position:relative; z-index:1; }
-    .complete-kpi { text-align:center; }
-    .complete-kpi-val { font-size:2rem; font-weight:900; color:#E87722; line-height:1; }
-    .complete-kpi-lbl { font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.7); margin-top:4px; }
   </style>
 </head>
 <body>
 <div class="top-bar"></div>
 <div id="root"></div>
-
 <script type="text/babel">
+
 const { useState, useEffect } = React;
+const LOGO = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAARgAAABtCAYAAAB6Fn5KAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAABmJLR0QAAAAAAAD5Q7t/AAAACXBIWXMAAC4jAAAuIwF4pT92AAAAB3RJTUUH6gMUERgZGETRggAAABBjYU52AAABGAAAAMwAAAAAAAAAMrYZErEAAEPZSURBVHja7Z13eBzV1YffO7N9tbvq1ZLcewNsMJjeewiEUEIKgTQCaR9JIAWcRkIKhBQgJBAIoYROqMZ0MNjGBfcqq1q9rbaXmfv9MbMryZZsuUg2zv6eR7ZWO3PbnHvm9CuklH7ASwYZZJDBgUVSOdgjyCCDDA5fZBhMBhlkMGzIMJgMMshg2JBhMBlkkMGwIcNgMsggg2GD5WAPYCQQjcXx9wRJJjXjDwJUVUUgUBSB1+PGbrMe7GFmkMFhh8OawURjcV55aylPvfQONQ3NvQwGk8EIUBWVsRUlXHbBKZx2wlHYrIf1kmSQwYhCHK5xMPFEgrv+8TR//ddzhCMxhCIQfb6XfX6RUuLJcvG9r1zK1666AIuqHuzhZ5DB4YDDNw7m7Q8+5t5H/ks0FsdiUVEVBaXPj5r6URUsFpVQOMKf//kMS1asP9hDzyCDwwaHJYPRNJ3nX1tMTzCMogxtioqi0Nkd4IVFHyKlHNI9GWSQwe5xWDKYcCRKdX0zQoi9vndb7Q6isfjBnkIGGRwWOCwZjK7raJrGXrMXAYlEEl3XD/YUMsjgsMBhyWD2D3sv9WSQQQYDI8NgMsggg2FDhsFkkEEGw4ZMVNlO2Ae78EGHlBIpJbou0XUdXc94wTIARRFYrZZ9cnYcKGQYzE7QNO0Ts0FjsTgr127lnaWrqalvJp5IEI0liCUSB3toGRwCsNusjCkv5uR5szn2qGlkuZ0jPoYMg+kDRQha2rvp6PLjyXId7OHsFo0t7dz59yd5/rUP6A4E+4QmZ5BBfzz63Buccuxs/u9rlzFt4ugR7TvDYPpACEFjSzsL31nO16664GAPZ1C0dXTzw9vu47V3P0IoSia1IYPdIhqL8+IbS6iqa+QPP/kGc2ZNHrG+M0bePhBCoOk69z3yAm99sOqQjOjVdck/Hn2JRe8tN9IePolGowxGFEIIVIvKxq11/OR3D1C3o2XE+lYXLFhwM2A/2ItwIBGJxnjihbdoae9GUfZuAwoh6AmGWPzROkLhKC6ng3gigT8Qwh8IEQxFCIYiBIJh4okENqt1yOkIBwLVdU384q6H6QmGRrTfDD7ZEBi03dTaiZBw0rzZe7039gH6YakipTwq+wpFUWhu6+T3f3uCfzz2ElkuJwjjISmKkrbKOx12jpw+gS9+5ixmTBk7Itb6j9dvo7G146B6BjL4ZEIIgRCS5xd9wGUXnsL0yWOHvc/DksEcCCiKgpQSfyBEd09wwGukhPVbanj/o7X87sdf58R5s4Z9XHWNLSSTSdSM3SWDfYAQgpb2Ll5/f+WIMJiMjL0bGBxf9Cvz0K/kg1nqobq+md/c/Sit7V3DPqZ4PJlxGA0BhhSrHxJ2tP0dS+r+AzEfIQRSSpau2jgiSb0ZBnMAoKoKazdVs2TlhoM9lAwwNqTTbqOkIJcsl/OgMRlpjsWb5aK4IBe7zbrXY5FSIoSgpDCPyrIiLKq6/0xGEdTtaKHbH9yvdoaCDIM5ABBCEEskqKptPNhDyQCjHtBJx8zivw/8issvOOXgZcebEdZfueI8nrnv58yaMg5tH8aiqgo/ueEq7v3198jJ9rC//FIgCITCBILhYV+CjA3mACJ+CEfQGukEIKVB4H2N1anvhMA0jsu0hyq1OVPXS+MGJIbRO/W9GMBlnlYNMIIYUypnKrVh588gEIJBr9HNv+3SltmfMPsEiMbjtHb6CUWigNhpjruuQe94jfkLoSAE6Xt2vm7w9er9nBpfMBShrdNPPJE01kxKc6ygSz1dfH6gsUgkFqmS7c0iL9dn9mP0n/p+oPt3ByEgFk+aazO8yDCYA4pD07OT2qz5OT5GlRagazq1O1rwB0IIIbDbrPg8biLROBWlhaiqwpbqBgAmjhmFBKpqdhCKxlCEcQqDqijEE0nGlBdjtVio2dFMR1dPP6bl82QxurwIq8VCQ1MbzW1dgCTL5cTtctDdEyQWT2C1WMjxZaFpOl3+ALqUZLmduJ3GNdFYHJvVSuWoIrxZLto7/TQ0tRkbVQhyPG4kEE8k8bidhCNRPlqzmRt++ic6u3uMkyOyXFgtFhLJJGPKSwCoqm0kEDKqHuq6jstpZ/SoEuw2K3WNrfQEQuRmewiFo4Qi0TTDsFosZHuziMZilBTm4XY62Fqzg2g8zsTRo7DbrFTVNeIPhBFC8OTL7/Lau8tpautEVdX0XG1WC5VlRQTDEarqmkgkkggh0HUdp8PO2IoSnHY7O1ra+9ndpAS7zcLoUcXk+LLo8gepaWgmlkgOOS4qFIlQXdfE7Gnjh5X2MgzmMEfqjX7mCXO48euXUVFahESyYXMNv/zzwyxfs4WjZ03mVz+4hvZOPzOnjsNqsfDcq+9jsaicf/qxALz0xhIW3Pkg/kCIb119MXNnTiIQjjBn1mQsqsKmbXX86s//ZvHydQAcc8QUbrruSmZMHouiCBqa2rj7oed4/IW3OGneLH70zSv53X1P8MSLb3PcUdP4zU1fobW9m+tv+RPNbZ1879pLmT9nGtf9+C46/QFuuu4Kzj75aGw2K8FQhH8//Rr3PvICmqbz4xuuorQoD03TmTpxNA8+tZBV67Zy2w+v5a77n+Y/L7zFlz97DmeeOJeeYIgjZ0xECMF7S1fzk989QENzG8WFedz67S9w4jEzQQi21zWycs0Wzjr5aP70wDM88vzrWFQVXUpGjyrij7dejz8QZOrE0WS5XSx69yPaOrr5zPknY7NaeX/ZGm6+/e80NLVz6bknctmFp/KtW//Mlu31/OrGa8jL8eLxuJg0toJILMbjz7/J7+97glAkSllRPj++4SpOP/5IrFYLVTWN+LzutJHX53Hzo+s/x/mnzcNmsxJPJHlh0Qf85u5H6QmG9yjJCCGIJ5K89u5HnGe2MVzI2GA+YdB0fa/yjnQpGVdRys9vvJp4PMkPfnUvv7zrYSrLi/nxDZ/H63HjsNuYOK6ccaPL+PsjL7J6QxWf/8yZHHvUVP764LOs2bidS847kflzpqPpOvm5PuYeMYWKsiL++uCzPPb8m0waV8Gt3/kihfk5lBTm8avvX8O0iaP59zOL+NMDz2C1WljwvS9x3FHT2F7XRF6ujxOPnolFVTnmiClMGFvOkTMnMnHMKLxZbk4+djZJTae1s5uvXnk+F59zIg8/s4jrf3IXHy5fz7e+fAlnnjgHXUqK8nM46djZ2GxWXn17GZur6nC7HIyrLMXncSOlJDfbyxEzJpDt83DH35/kvWVrOPuUY/jMeSeh6ToXnTmf808/lgf+8wrfXfAX3E4Hn7/kTFas3ULtjj7lVyXYrFbGVpYyc+p4Hn32Dd758GM+ddbxXHjmfB54/BXeXbKaM0+ayzknH4Om6+RmexlTUYLDbkMIQXFRHifMm0VLWxe/vecxGhrbuPqyczhm9hQEcN0XPsXF55zAso83cfvdj9He5aeirAhpZsvPnzONz336dBa9v4Kv/+hOFr27nLNPPprZU8cP2cajKgqvL17JoveWDyu9ZiSYA4iRUJA6u3r26nqpS+YdOZVRJYU8+eLb7GhuR1EEq9Zt5dT5RzC+shRd11GEwrOvvMdv7nmMT2+vZ/7c6Ty3cDG33/M4W2t2cOxRU6koLUwzt0QyyS//9DAvvv4hNpsVi6pw1cVnMnPyWFxOB9MmjeGvDz3HL//0MMmkRlVtI/fc9l3OPWUev/7rI2zaVsesqeMoKczlqBkT2Va9A5/Hzexp4+kJhqkoK+TBJ15FVRTOPHEOtQ3NLF25gVA4yrvL1nDOqcdw6nFHsPCdjxBC0NbRzU2/uY9tNY1IKdOSV9+Hk0xq/O7ex3npzSXMmjKOeUdOZfqkMVgtFgpys4nGE7z23nJWb6jiorNPIDfby2/ufpT6xtZd4o5UVeH195Zz292PcPSsyZwy/wjeWbKa39z9KMccMYVTjjuCylHFA6osihDsaGrjlj/8ky3VDTS3d3H3r77D+DFlrNtczanzj2BzVT0/uO1v1DW28tIbS3jsrz/FZrUiJTjsNlTVOBUjmUjynxfe5KGnFrK9vgl1iNHdQggCwTC/uOthHHYbJx87e1hiqw5LBqPrEk0bYc+BhESfg92GA93+IBu21u5dzRoBBXnZWCwqX7nyfK7+7DkAWCwq8XjSiFLGUKV6goZNJhyNoWk6wXAEoQgi0Ri67DVkCiHw94TYXFWPalFJJJOs2bgdVVUoyPWR5XYiEKzZuB1N11FVlY1ba+kJhigtziMSi7Nk5Qauvuwcjj1yKhPGjOLZV99n2sTRzJk5iXgiicVi4YMV63E6bHizXBTm53D3r74DwjjfSlUUnA67saEERKJxQuEoiiIY7CUei8dp7ejCoqqEIlFisQR2U6p4d9kaPn/JGfzy+9dQu6OF0084ig8+Wkdnd2DQlIyeYBgkxOIJkkmNQDhi9pMgqWuDhuILIejuMVJPLBYVf08QTdNRVQVPloscn4cPlq+jtaMbm9VCc3sXNXVNTJpQiaoIFi9fz6J3l3PBGcdx4ZnzicXivPPham6545/0mHa1oUBRFGoamrnhlj9z3qnHMH/OdHyeLHY5QExg2qeKKczP2aso8sOSwTS3ddLe7R/xcPrqesNQZx2m0yE/WLGODdtq9y4HSRpSj6bp/OOxl3j7w9WoqkKuz4PNamHDtlpmpiM6hfnvTuu2i3cIstxORhXns6W6AYuqMK6yFCkl3T0hg9EKGFtRAhKSukZFWSFZLicdXT0kkxpLVm3gmivO4/ILT8XjdvH+R2sJR6J86dKzycvx0tjczoattcTiCYLhKD01O/jZnQ8RicZw2G3k5/hoaG5LqwRCDDDuASF2+dViUTly+gTCkRhISVlRHo8/9wb3/+cVwpHo7tfb7Ldv/0Mhu/7X9K57OBIlGIpQVlyAN8tFa0c3xdleSorzDa+aIgiHotz2l0f4+6MvkuPzcP7px3LhmfN568OPeeS519kb8lAUhU5/gIeefo1Hn39z0Mx8i0WlvKSAz198BldcdBoup2NI7R92DEZKyctvLDE9GiPXr6IoLP14I6s3VDFn1qQD3n5DYyt3/+t5wpEYqjp0ChKKYOnHG2lp62TekdP4cOUGnA47X/nc+XT7g7z54ce91w65VYnDbuOH37ySwvwcigtyuezCU9le28i6zdVGdHNdE1+69GxC4SjdPQGuufxckprOG++vNIzM2+pobG7npGNnU1Wzg83b6xHAt6+5hJKiPJ55+V3aOrrRpeSdJau58qLTmDy+gqWrNnLq/CM579R5/Paex4YsqYrdzMVmtTB/zjS6/AGeeOFtEskk0VicgjwfrR1dxOKJEXlZpcL4P1i+nkvPP4mf3HAVb32witNPOIppE0dT09CMrksuv+AUrrniXB74z6u8veRjjmhuN934+ya1K0IgFBVd14kPIv7FEwk2bqtlwZ0P0dbp53tf/eyQjlk+rBiMruu89MYSHnr6NaRkJLJF01AUQWtHN7+5+1F+/5OvM9p0hR4IVNc1cesd/2T5mi17PSdFCLZsr+fXf32UH3z9ch6682aEMGrK/OOxl+kOBNE0zXAHx+MIIUgkk4YLOZZAAMlkkm6/4S5O7dR4PIHP4+YPP/0GVqvhhr797sdoaG4D4Bd3PcyPrr+SW77zBQC6e4L88e9P8taHq7CoKu2dfpas3MCo0kJWrN1CZ1cPW2t2sK16B6PLi3lv2RriiSSKIrjv0RcYVVLA979+uWEvUgQvv7GUxSvWI4QgFIrSEwiZG0wAkkTCGHMsngAB4WiM7p6QwZDM+BV/T4hQOEoikWRbTSPHzZnOD6+7Ak3XsVot2KwW7rr/ae7593/TMTkAmq7h7wkSicYQ5ufunhCRaMyw9Wg6/p4QkYjxORKL4+8JktQ0pIRAKIzWJ+w/mVrveJxEMslfH3qWsuJ8PnvBKXz2glNoaevk4/XbjPw4XfL+8nV8+uwTuOm6K/jOtZdgtVh45a1lvP3hx/ucYW9Mbfe0paoqiaTG3x97iSOnT+DMk+buud2DdTa1lJJwJEp3T4hYPL7f0YmdXT288tZSHn/hLTP2YeQdZKl4k5mTx/KFz5zFkdMn4LDb9il3SAiIRuN8sHwd/372dTZV1aWDy/ZlXABjykuYPK4cKSUbttZS19gKQJbLSUVZEa0dXbR1+PFkOaksLaKlo4u2jm48WS7jc3sX7V1+/vSzGzh1/hF8+f9+i9vlwGG3sWlbHdUNzX36hPKSAqZOqMRqUamqa2RL9Q50XU/HkxTm5VCUn017l5+m1k5URaFyVBFOu526xhYCoUg6LsTjdjFz8ljyc300t3WydnM14UgMRRFUlBZit1kNFdW0g3mzXJSXFtLc2kl7dw+lBblk+zzUNDQTicawWS2MKS8hFImiKgpP3buA1Ruq+O29j5PUNHJ9Hv644HpaO7r53Ld+ZTATc9wOu40x5cV094Roau3AabcxuryE7p6g8dlh2Cu6ewI0tXZSlJ9DXo6XmoYWotGYYfxVBDUNzWiajsftpMJc7/ZOP1JK8rK9zJwyDrfLwZbt9QTDETxuF9VmadTCvGymTRyDz+OmrbObtZuqzZNMh/+lmkxqXHD6sdxz23f35OJOjjiD0TSd9ZureeH1D1i2ehPNrV0Gg9nPdsORqBn6LEZUctkZqQhMi0Ul2+PGsh/2mETCeLNpup6OXt2fcfUtY5GK/ExHyerSTOzc8+e7FlzPqfOP5IKrf8SW7fVm8qfoxwB37i91b985pOI6UgmlqWhdJANGtqZd9MIw8vaN+JU73ZMesyJQTCbV95p0pKyUVJYV8Z97bsFmtbJ05QY0TSfL7eTk42bz/GuL+f4v70UzGWO/tkVv1v3uPvftG4zQAeiNbt55fVPX6FoqSlqkI39T408VeDcu6F2PkYCu61SUFvL0335OeVnh7i5NjqiKFApHuf/xl7j/8ZdpautML/KBQIq4D3adFCEEqmoQdIc/wH6JZn08JgdqfQZqKjXmPX1OSUKrN1Sh6zrhaBSLRR1QWtxdfynsfJ8QAnWQ5yeEGNAAOdgz33kOA/ZlzmlHSzs//d0DXHTW8em4GYCHnlzIQ08tJKlp/e4f6noN1vfOc9z5ejD2hWIZ3G2sKAJFOTglO4QQ+INhOv2BPTGYkVORYvEEv7/3ce55+L+7PLAMPlkwNjVpCeBgM/X9RUqCUFWlD11KkkmdvnlGGRiQUuJxu/jPPbdwxLQJu7t05CSYV95cyj8ef5mkrmce2CccfbOTP+nMJTWHlDSjaVqfv4MQGVodEEN87CPCYPyBEA899SqhSDRTAf8wwOHAVP6X5nUwMSLsef3matZuqj4gtoQMMsjgk4MR2fFrN1UTNMOoM8ggg/8djIiK1NjSbrpu98TPJFIKDC04FT4tUfhknhmdnpUEw1zYCwVQRKpsUwbDj8OTtg51jAiDCUdiQ7pOl4Jca4KTsruwCR0hoD7q4MMeH1KKTyQhGJXPJJOcUfKtiXQluJqog6aY7RM5p08idCnIM2nLatJWXdTBkk8wbR1UDDH6YkQYzFCLFEugxBbnhxW1eC0JVCF5tSOfpT0+hjdPeXghgKuLmzg3vxVNChTg9/WV/Ku5+PDK1RhhpCTDvjAkkl0lQwmU2uP8sLIGj5pEFZKX2gtY2uPLnNKwl5CA1aJit+65UNUhR9+y7488fF4rVkXHoWgkTQZjyZD1fkFKUIVknCOKSzXYTFxXqI7aievKwBKJNO5L0VbmCewbpC4pzM+hMC97j9cecgzmcEVK31cxbC8ZkXz/YVd0bqqsZlZWEAnsiDm4bvNkmuK2jGVrmJA6iuX4uTPIy/Xt8foMgxkhbIu4+dCfjYYhwTTF7JlNsJ8QgEvV8KgJJAK3msww7mGGpmmMqyzhyotOG1Lc0CeKwaRMOX017INBUH3HQZ+xpM6v7gcBEsEDTSU82FSc/nNKVdrXvvZm3oOZwPaljX0Zh+xz4/7MY7DGJfuv7qRUpwM6tgOIA0EHu2+/N2l0wO+NhaayrIhbv/slpkyoHFK7nwgGIwENsAuJW9WwCElcKoQ0Jb1RBzTs7eQeFgxmBJRoO+nk6i7XGW7OVMURl2rYVBQgIQVhTSUujeREQe+DN/NvieopJcn43N9N3deF2tt/ajwuVcepaEggrKlEdAUh9+Tm7h0vgEPRcSg6AohLhYimoMnBjaKpNnSzDZuQuFQdmzDOOYrqChFd3W0baXsHYFckTkXDKiQ6goimENEV9D2OYdf5GAxLkNzpmUkp0CRoUqCb36Se+WBItTe0Ne5djxQGCjcYKCxhYNrbtT2BYVvqSxe6ea9zNzS3ryEPqTwsp8NGSWEeTodtQA+Rw2Fj1pRxXPGp05gxZehnWh/yDEYHslSNE7O7OSW7iwpHBLuiE9ZUqiIu3u7OYbHfR0hT+y2ylGBVJGfldlBsMw7fCmgWXmrPJ6ipaQZgcGzBidndTHEF0TEI97XOfBpjNozseeNBq0JyVFaQU3M6meIOkWN6uqK6SlPMzoqAlze6cmiI2cE8mCu1GY719jAzqwcdgS4Fb3TlUht1oAjDhVpoi3N2bgd2RScpBQs781CAC/Pbmev1k2eNo0tBW8LG0h4fr3TkscNUs3Z9i0nT9SqZ7gpzSk4XM9xB8qwJBJKAZmFbxMW73dl81OMloisDEKhB/DnWJCdnd3Gcz0+5PYJb1dCloEezUGW2saTHR1hTdll/CYyyxzgtp4s5Xj8ltlh6fl0JKxvDWbzZlcPqYBaaOd7BNomUAqsiOTu3gyJbFInAKnQKbfE0E/NYklxZ1EyPppobWlITdfFGVw76AA4DCZTb45yX187RO63xsh4fL/dZYwOC+b5uprkNOgFY7M9mY8iN0oeeFCE5I6eT0Y4IxrFqkua4g4WdeST0Xpe4LgVjnRFOye40SjsgqYq4eKs7x1w/gVVIjvAEODWni8kug+YUIYnoKo0xO8t7fLzZnUNjzDYILQyOlHf32COn8tXPnc/saeNx2GwDXmu1WnC5HHsdjX9IMxgJ5FuT3DK6mtNzO7ALvR9znZUV4Jy8Nt7uzuPO+gpqo/Y+3N94615R2MIcbzcSaIg6ea87h4BJgH1xZm4nlxc2kZSCqK6yMeShIWZDwSBup6pzbUkjVxQ1kWNJpMeXwgx3gNNz27m4wM0f6it5tzu7n1pwck4XXy5pQDPfvNVRF9VRh9E+UGxLcMOoejxqgoiuYlckp2R3MjMrYL7LDEwmxHxfF2fldvDr2jGsDGSZCkL/t6Jb1fhCcTOXFzVRaI33a0MA87zdfDq/hde78vhzQzkNMXs/iUqXgsmuMD+oqGGu149VyF1ebHM9fi7Mb2VhZz531FfQFreiCJn2/p2U3c33ymuZ4Aql50mfMRzn6+bighYeaynhH02lRDRltxvEJnSuKGrmKI8fzexDhzTz8FkSfLW0IX29KiRvdObzdlcOyZ3a0oHxzgh3jN/CNPdga9zOr2vHsCLgQRGSpBSMcUT5bnlduv37G0exMeROn/QoAZ9F4xtlO5jqDqBLgSIkdVEnKwOefgxLAqfndPF/FTXp6/7cUMnrXbkoGC/Wr5Xu4NLCZrItyV1obqY7wBm5HXw65Ob39aP50O9Nv9j2uLdMleiME+bw2x99jZKivL3dnkPCCCUH7ZuGrAMzswKcndeO1WQuKRUkpTbZFJ1zcttYMKaKElvcJDaZ7lXHEJkNsXk3lVnTojXosv/fAS4taOXa0np8lgSa2XZSCuJSSfcjgUmuED+urGaSK9xP9JVSpMVhbQAXqQRDvMeQlL5Y3MiMrMAuOneq7xnuADdXVlNqj/d7O0spsCs63yxr4LqyOgqsvW/4hBQkpGLMEXCoGp/Kb+XWMdsptCXSa5cKSrupsobjfF0oQqbnF5eGWpoai13RuCi/hW+WNWBTekX6Sa4wPx5dzSRXKN2/jrFeqflrGEzh2tJ6LiloNT0Ue6akvj+7+353lKdLwQRXiKnuwdd4ujvITZU1lNlj6KYqsjLooTNhNZ+XYHpWkCxV69f/aEeUUnuUpElzSSnIt8aZ4IykaUJKQ22cmRVIr1kgaWF5jzc9niuLWri6ZAdeS3JQmgPJNHeQH1duZ6wzOuSdliq09aPrPzdszAVGQIJJJJJ07OVZPr2LILAIgy0YUoWb2qgTl6oxzR2kzB5NE+qx3m6+VNLE7+oqBhSH9xUSKLAluLigxbQfQFRTebmjgA97fMR0hXJHlAvz2pjsDqIBlc4w5+e3s7muYp/6VIXEa0pJDTEna4NZxKXCBGeISa4QipBowDR3gPPy2rmvsTQdMawjODO3kyuKmk2JBFrjdl7pyGdNyENSCiY4w5yb18ZYZxgNmO/r4qqiJv7YUJEm9uN9fkNSMGvlV0dcPNNWSE3UiU3ROcoT4IK8Vjzmm/Ws3HaebitkTdCNAlyQ306FPZIOzV8R8PJiez6tCRseVeOk7C5Oy+nAqhh2nUsKWni1I4+2hHXQ14COoC1uY0fMgSYNhpBnTWBTjK2WlIKOhA1N9q5jR9I68Kbr00lDzMG6oIfYoGvcwd8aS1Ewon+roi7mWv0mM4lQao+xOexK282muYN41GSf15xhA5uZFeSt7uy0+lhgjTPBGU7bWOpjTrZGnAigxB7nooJWVJPmwpqFF9sLWBbwEtcVKh1RPpXfygRXCA0Y7wxzbl47f2kYlZamBt9XhjH3vNPmDdlYu68YdgbT0NzGhq21+1zGUgAdCRt31VeysDM3bWupdES5flQDZ+a2Y9q4OSe3jefaCtgYdh0w0UwCZbYYJfYYOobx9e3uXH5RO4aopoCpEqwJerh93FY8ahJFSMY4ojgUnZi+j0WYgfe6c/ltXSU1UQcSQa4lwfWjGri0sJmUoXi+r5tHWoqJaApSCrItGp8tbMGpaOhAc9zOT7ePZ7Hfl357LiSHN7tyuH3cVia4QgCcm9fOs22FabVtmjuI1dxkMV3hjw2VvNKRm1ajFnbmEdEULitqNuwnwBhHhNXBLByKxhR3MD2PlriNn9eMZUPIlVah3ujKwapIjvF2o0uBR9UotsdpTQweHRrTBb+sHY3NVNdcisavx21jutuIg2mP27lx2wRaEr1xMFFdGTAKXCAHXOMcS4Lryxr4bNHOa1xEWFMJaiqrAl7megwGk21JMMUVZlPYhZSGWj47K4CCIY2mJDIhJDOyArgUnahuSJETnBEKbTEkBoNZE8yiy2SI5fYoRbZemlvUmcevakcTl4ayKaVgQ8jNbeO24VI0VCEZ44hgUyQJfc97zemwMX/O9AO0SwbH8DIYCc8vXEx9Y+s+1doQwvDuPNBUxpNtBWn1SJOCrREnt9dWUmaPMsMdQAcKbHHm+fxsDLsO5BSwKTpqn/dgyoCYomIhJGuCbq7bMhm7MLZxRFfTqsRezxtoT9j4U0M5WyOudN+tCSsPNpVwvK+LUnsUHSi1R8mxJAhr9rSKNtllSFICeLatiHe6s1GF7CcZrA25eaqtiJsqqwFJsS3GbE+AqqgDFSOIre+I+vrAQJKU8EBTKa925qXH3By3oSBRhEx7m1JQ6O1fEZKApnJbzWjyzPwsiaA+ah/0xSBMY3hb3JZ+Lm5VI95nM2kImuN2dsRt/doZ6Cmk1vjPDeVsDbtM2x20Jaw82FzC8dldlPVb4yQhTUUHlge8fF5XsZtesVlZAf7bno8Ecq3JtFqoSVgX9DLFHUARknHOMEW2ODVRBwKYmRXEoejoQFwKPurxkTQXzSqkQWP0qnlKH0OREJIVAQ9f3zwFm0lzIdOrNxQ4HXYK83L2iT73BsPKYN5cvJJ/PvFKv1MB9wYCqIs6ebUjbxdXnAVJY9zGS+0FTHMHSb1tprlDWIQ8YGpSihADmgWnqqEBJ+V0cttYWNrjozluozNppTthoT5qJ6SpCHMzK6kG9tIEpQBbw26qIk5UeqN+VWlIA/UxB6NM4ncqOi5FT9sdJrvCuFXNtLkoBJIWZmUF2ankK5o0VNCEbnhnLEIywRlGwdDtd8Qc6WHbFI3/K69lmjvElrCL9oSVrqSFzoSVDSE3CdPDlnoBxHSF5rgdgaGyFdri/HxsFa935lETddCRsNKdtNCRsLI25E4bOPfkrhZ94oxkyr3d7wqz0Dawi8C80zNQgG1hl7HGYoA1jjoo77vGqp6WNLaEXeyI2RnvDKdVIq8lSVfCwlhHhGJTKglrKk+3FXKdLUaJPUqeNcEkV5jtUSduRWOGacBP0dj6kDttDG9PWAlpFuxKHB04M7cdi5AsD3gNmjPXsNakufT6sWcjb9qWOQKBPvvEYAZKXkwNVtd1uv1BXn5zCXfe/zTN7V37XGhKAaqjTtrTennfBTF+Xx9yE9EUnKahrdAax65IwtqBWTwFaIjZWdLj46L8VjTAoWick9fGWXntJHRBVFcIahbqYw7e6MzjxY48upMWRB+Pyt6iO6mSGODepBn/0HcVUptJAYpscVM8BxXJN0fVplWYfs8QsAiDsaSQZzVcoJoUvO/3cWWRnSJbDE0Kyh0RvlpanzYyRjSV7qSFdaEsnm0rZHnAYxhChSQhBW905XFajuF2l0hmuAPMcAdISEHMjKFpj9tYHvDydFshm9NS58hFt3UnLcQHWGNNCiJ6/zUWfX5vT1hYF/IwwbRhlTuilNtjdCSszMgK4lI1BNAYN7K1z81rp8wexS50ZmUFeKUzjyJbnHF97C+bQlk0mikOqWz7jwI+zskzEmSdqsYF+a2cl99m0pxKQFOpizpZ1JnLy5359CTVIcQTjSz2isHsaG7nzcUrWb+lJn3olMSoem+xGE2FwhG2VDewuaqeeCKx31XsAkkL2mBvNCCoqcSlghPNDOjqr87sL4SQxHXBfY2jKLPHmOPxA71+KqsisSo6XkuSUfYocz1+jvT08MvaMXQmLCP+qB1KyrdgbHa3qu12DL3itzTKGGASfNjN3TvK+U55LbmWRFpCUoTEITScikaeNc54Z5gTfF3cUT+aZ9oKkGbg41td2TzSUsrnihpxmmqAxDC8ulQNt6pRYI0z1R3k+OxuFlSPZVmPdyeX+/BCDvG7fu51YXjjPurxckFeK0JIfJYkU90hNobdzDLtLwAbQ252xGysDWVxnK8LgOlZQVyKxkRXOK0eptSuqK6YkqYkqivcs2MUJbYYs7J6+oyjL80lKLdHOdrbzWxPgF/XjsaftHAQT+3ZBUNmMG9/sIpf/fkR1m+pJjnAcZ2pKAnjnF5hHquw/6ZWl6qhIAdlMi7V0IONvg1dVjugBGqI79sjDn6wbQKfLmjj+Owuim0xXIqGXdGxKUawuobBkM7Oa2NT2M19jaUHcBx7hgQiplFZmIbAtoSN6BAMzaqQ7Ig50xKXlPB0WwF1UQcXFbQyzR0k25LEqWjYFJkOG9DMGj7XldWzNpTF5rChcsR0hb80jGJDyM15ee2Mc4bxWJI4TK+RJeX6loKxjhA3jKrnhi2T8Ccth1SI/kAQwNpgFh0JKwW2OAqGu/kDvy/tFdKl4OOgh4QUrAlmEdMVbIrOaEeEcnuMmVlB7EJHw3iJrgp6+vWgCMmWsJMbTZqb7+umqA/NWfvQnCIkF+S1sTGUxUPNxXv0Io0khsRgVqzZzPdv+xu1DS2oqoLFMjKFuyUwxhkhx5qkLW7dRd+WKExyhXEqvX6C9riNuN6rEvR9+1iFjlXsyhwV800/4Bj65Lo0xGz8pWEUDzcXk2tN4LNo+CwJSmxxzsjtYJ6328iUBk7O7uSxliKC2sgVOZcYSZR6n8/3NY5iUVfugOUh9J1yeKK6kv6c2iTv+30sC3jJsyTItibxqUlyTFvCRfmtaWNziT3KMV4/m8LOtKs7rCv8tz2fRZ255FsT+CxJfJYkedYER/Rxc2sIprqDTHGHWez3YhkghB4GSt84OEipzVsjborMSOLJrhBzvQEKbHEA/JolbVPZGnbRlrBRZo+SbUlwlDfANNPzpQA1USfVEUdvIkkfmquNOriroZyHmkvItSTwWpJkW5KU2uKcmdfO0R4/QkhUITk5p5Mn2wqJaIdO7es9MphINMZfH3qO2oaWEWMsKehApSPCqdldPNZaiDBjPaQZwJRvTXBuXns6VkACG8OG0TGVrxE0o3Z1wGtJUuGIUhVxIkx1QEdQYkswyRVCH2AMQkjK7XE8puFUAvVROzVRB9BbW+QDv4+/T95ApSOCxLBnZKkagRFkMALYHHYR1Cy41SQW03PxaEvRLtdKjOJeudZk2urXFLOl83Iq7FEU06ga1hRqow5aE70xJa925NGVsHJz5XaEaWAssRlqs8+SpNQeT4+pM2mhMWajMW5Ly7mvduZhFTqXFzabeWY6RVbjHl0KxjujnJzTlWaBmhS83pVLXdS+WxUgFWOSCpYcFlYkDOa5IuBlvq8LHSMl4oK8NqMSI1AbddIQc6AKSWvCytawi3J7FIuQnJvbzmjTQKwAHwc9+M0ThFKpBqPscbJSNCehNuagug/N6VKwLODlvkkbKDXjwQqscdyKRlhTDhkrzB4ZzIYtNSxevh5VPRhnPRv5Jl8tbaAzaeHd7myiumISc5zryho4IqsnnYDYmbCytMeXvj+uC2qjznRbTkXj8sIWNofdNMeNeItcS5JrShoZbTKGXSG4uriR8/Lb0uHpf22o4F8txWC6Xg3bRG9YdEpVSxzAgL+hQMFgMBtDWUZ8CXB2bjtLerJ5vTOnTzyIYJwjws/HVjHBJPSQZuHGbRNYEfBQbItzx4Qt5JrBfo1xO9/bOpGqiNOIYzFb6et9ATPmRApmZQX51dhtqMJwWa/o8fHDqvF0Jy3m/dK8v/de3bw/9ftkV4jvltekXbUJqVAVcVLTx5W9c8RutiXJLE+QqN+bHldCF4R0BQ7gs0i1tCLgIaipuFSNLDXJHK8/7UFcF8wikFTNIFGFNSEPp+R0IoHZHn/aWxTTFZYHvGiARZglVoGvle7g9Nx2M+pZcEd9JU+0FEKfcINUSEAKMV0hMYBB/2Bijwxm3eZqeoKhgzI4YRJziT3KL8duY3mPj+qoA5eic6Snh/HOsCkyGw/lja48NoZc6ULOmoQlfh+fLWzGbgaenZjdyZ8nxvk44DFSEdxBpmcF0u3sDE3C9qiTLDMyUwGuLW3ArWqsCnqI6ArFtjiXFLSkI4sVJFvCbsOewL4mSuzbevVoKk+0FjEjK4Bd0cixJrhldBVzPfmsMA2JlY4oF+a3MtUU0y1CsrTHZ0SjCmm4oRMWxjlDJKVgkiXBLaO383RbEQ0xO6owUjiuKmoybD0Ym2h9KAuA+pidhBTkmWkK87O7+Mnoal7tzKM9YcOlaMz3dXNmTns6XqczYWObGcWaTi3oow3pctd1NLw95hpLox7MraOraDUlJUXAUn82v62rOOAlVwVQFXFRH3MaSbJCpp0LcSlYHfT0YxprglmEdRWHGRSXaqM5bjeSJfu0nZCC6qgDj5pMe5m+UVpPtppgdchDVFcotcW4tLCFQnONFSSbwu4RlZiHgj0ymLYOP5quH5QD03QpCOsqHjVJlprktJyO9He9uRiGbr466OH+plJDPTL1dBX4KODh/e4czsxtTxthZ7gDzHQH0u2kRE5gF0ZjMK5cPpXfxnR3DxqCQluMb5XXENGMYDqnomMzPSUKRuTxU21FxKXoFxw1/DBUw9e7cpjRWsxVRY0IIcmzxvl8cSOXFzWjS6N8ZyreRcWIuflb4yjCuoIqJP6kytNtRUx1B003Mxzr62aO109EV1EwomhTLwAVeNufw7KAF4uQ1EYdvNRRwJdLGkwGpnNhfitn5bYT0xUsQuI0xf8UXuwooMaMIh4qM0gxteN9XWnV2WtJkG1KXqqQNJhBbQd+paEraWFN0MNUV9Dw2mEY1zsTNjaFXX0kDdgecdIcszPGGU7bV1QkG8JuWvpU4BMChISFnXmcl9fGZDMVoMQe5bsVBs1pUuAwS2ekaK4lbueZtkKSUuwS83QwsUe9J5lMjuAG6a2HYTGJ919NpXwc8KYfQCpRL0XYuhQs9udwa/U4g0D7GAGFkIQ0lT82VLCkJ9tom17mlLqyK2HllY5C4tIgfrUPk1GEpDFm47baMawOekltYgUjktRnSWJTet27DTEHt9eNYWmPx1jcPpGXqpCoGBKDGGDeFtEbm6KIwRddEcYaqTuNNdVPyoPz98ZRdCet6YdsEQYj7A1QE6wMerm1elxa8kvN76WOPO7ZUUFXwkrq1WIVEq/J7FOBXZoUvNWdy+/qKgkk1XQczf2NpTzZWkxUV9P32013fipORMXI63q8pYT7G0tJpks29NKBal63cyRySgV6tq2AjwI+M2/NuF70/ekTxCKEoZal1ljdzRqrfdZ4wOclICnhox4vGgILhgRjFZLqqJOmuL2fytyRsLI14sJqSjopo/vyHh+xnU41ME48sHNb7RjWmVJhX5rzWpJpW4+CYe/5Td0YVgY8I5W9PGQcUuUaUg/i382lOBWdJPByRz5PtxVyYX47833dFNti2BSdiK5SG3XwVlcui7py6UxY+pVqSLWYdjFXTeBT+W2c4Oui2B7DIiRBzcLGkJvn2gppiNvZEbdjFxoJqZhh70YbAlgZyOLbWydxem4nx3r9lNujuFUNRRgxCy1xox7Mws48toYNu4/xhjdy+JeZtiHdNFD3DYs3gresPNxcil3RUYQ0SgAMsEYSeL3TqCUjpSCsK3Ql+8bbGHMOaip/3TGKxf5szs7rYIY7QK41gUVIwppKfczB+93ZvNaVR0vc2u98ICP2R+H+phKWB7yckdPBjKwg+dY4dkVHl4KAplJt1uN5uzvbjL+Q6f67khZ+XTuat7tzOTWnk0nOENnWJFZh1IPpTlrZHHbzemcuH/Z4ifWpSaNgqKX/bBrVJ8NZ0BBz9NtAipDURB3cuG0C87w9VJr5X32/3xp2o5t2jTaTtoa2xnn91rgzuWtMkwIsD3j4245ynKakpwjJyoC3nycnFTvzdFsRzXF7WlpOml66nZlCqp9lPV6+tXUyZ+R0Ms/XTZk9hlvR0vVgmuM2lvf4WNiZazguODS8bP3mIqX0A97BLvjNXx7hjn88NUIeJLlLtfe+GoYhMWhYhU5UV+lOqkR1ZQgVvXpTB/q2ETKjUVNep537Haj6mBHMJ/GoSVyqjoIhMfRoFsKakrbT9I9D2DV1oX/7u86795qdZjKALWJgwuotnaBiFGPyqIb+H9FVepJm1bZB165/NTW3qpGlamkGE9JVAkmjopqyp/4FeMzguhSDCWlGJOrAFQl3tx679pNyaQsGpoDUfcO1xgMxqV3b7aUfscd2d73Hoeh4VA2nSXNRXSFg0txg8xgMupTkerN44p4FTJ88Zmg37RuSh5QEA7segJWu/yKN3I7QTmHyvfqm2G27ithdG7s+4IFSExSzoFBCF3ToVjoSu45zYBfqwPPqG4A+EHEMuFkGvW5XpUsIUyWU0JO0pF2hqatTbujBtmXf+0NmJvHO/Q6+/jv3r+JP9l93Br1f7NU8Ux68wRQescc292+NB+9z13HKIbW76z1xXaFdV2AAmtvXoLqRCMY7xBiMOfGB/iYG/27I7Q7axu4f8y5Xir0fx5DbPoDX7Xneh/b9n5Q1Hq5r+92zDzQ3KKTEZrPidNgPVIuD4lCzCWWQQQbDDCklRfk55GZ79r+xPWDPDOZQSWrIIIMMDgikhLmzJpHtzRr2vvbIYNwux4jUjcgggwyGH7quk5/r48Iz54+I8LBHBjO+sgy7zTLkA+wzyCCDQxNSSoQQfO6i0zhqxsQR6XOPDGb2tPGMrShF1zMMJoMMPqnQdSM+6JKzT+C6L1yEOkKR+XuMgwF44PGXufWOB0lq2oipS1JKNF3vEwlr1JjJqGsHB6lzdA5HpGjqYNFWal0P9PrKPm0W5Pq46qIz+PrnLyRnBIy7JoYWB3PZhadS09DMg08uJBqLD3BCQJ840nQ06L4/LCkldpuVk+fNZvL4CiwWlaraRl54/QM0Td9vQtB1HV2XqKqSYVh7QIrRO+12crM9ByWrfrjnFwxF8AfC6Lo+oi8xKSW6NNIQfB43WW7nAe3barFQkOvjqJmTOP+0ecyaOn7ES64MSYIBCEeiPL9wMU+99A41O5pJJnXjJDtpbFgzKJ6kphMIhUkkkijKvm1gTdO45JwT+f1PrwOMfKg3F6/iW7f+mUSy/xl9e9O+lMZDnT9nGrOmjOPZhe/T1NrRr/KewfDlbttOvRVS3+/8eaBr93asu+v3QLQ1lL50XeLzuDjl2CP41FnzmTK+8jBkMNDR5eeDFet5+uV32bitzkg4HIH1lVIyYXQZl5x7EiccPYP83OwDane1Wix4slwH01Ez9Ehel9PB5Z86lQvOOI6Orh4jCTLViqanj+RLJJNsqqrniRffZvHydej63kkcuq6jaTqzp43HalH57s/+woo1W4gnkiQ1zdQlDXVJ03UU0VuaMyWZCCGMzSiMesF9GUEimeSkY2bxlSvP54MV66nb0YLVakVRhHG/lChCMTeznmaSUko0TTcDnowITqMv0iUKjTdgb39DaS89VkBVFXRdppl16l5FEem3naoopj1MpiVJzdSv1fQ6SHSpoyoKiqL062sob+gU8R89axLf/cqlzJ87A7vNyuGKylFFHDljIp86Yz6/v+8/PPXyu3tNt3uDlLH1gtOP46brrmBs5ciWVh1J7FUkrxCCLLeTLLdzt9dNnzyW048/kj/c9wT/fOJVtCE+LF3XGV9ZynFzpjNj8liklIwfPQq7zcYHK9YbRD97CqcffxR5OV621zby8ltLqWloBmDW1HFMHDOK6rpmJo+voNsfYNH7K4gnkumjMk84eiYzp4xFtahccPqxTJ80mveWraW6oZny4gLOOfUYJo8txx8I89aHq1iyagPJpEZetpfTjz+K9i4/s6eNJy/by8tvLaW1vYvPnHsSWVlO3ly8irc//BhN15FSUlFaxLmnHsP40WV0dQd4Y/FKPlqzGU3TKMzL5rT5R1JV10RZUR5up4PXF69k8rhyslxOOv0BJo4tZ3ttI+8uW8uY8mLOOeUYxlWU0t7pZ9H7K1i5bit2m5WzTpxLIplk0fsrSCSSnDB3OhPGjOKjNZtZu6kan9fN2SfNpaOrh7eXrN7t5kmd+nfuKcfwixu/TFlJwcGm0RFDeVkhv7jxy0gpeeLFt4EDL8mkXhTnn3IMv77pK+Tl7FF5+ERjyCrSvqAnEOI7C/7CS28uHZJonUxqXHLOCdz+46/hsNuxWlQi0RjJpMb3f3kvEsltP/wKLqednkCYvFwvm7fV8e0Ff2H1xip+8PUr+PaXL6ato5u8XB8r127hS/93O8FQBE3TOefko7nrZzfgctqxWi1EojHi8QTX//RPbN5ez19+8W2OmjGRji4/bpcTTdf59V8e4Z9PvMKMyWN58p4FqKpCLBbH7XbREwjREwiRl+PF6bQTiyX4+s138OYHq5g6oZI/LrieGZPH0tHlx+N2EYsn+NmdD/LI829wzKwpPPqXn9ATCOP1uIhEY3zlB7/n2ivO4+RjZxOORMn2enjqpbd58MmF/HHBN5k0roKOrh58HjehSISf/u4BXn5rKQ/8/gdMnTCai679CW0d3fz7Tz/muDnT+fczi/jeL+7mhLkzePTPP+GfT7zKgjsf2q0KoGk6c2dO4t7ffI9R/0PMpS9q6pv54nd/zabt9ft9KsbO0HWditJCHrrz5mE/tvUQQHJYFWqvx821V5xHttc9JAu5qiq8s3QNl359Aa+98xGxeIIf3nYfF3/1FjZvr+c713yGZFLjuh/9kfO/dDO/vftxJo+v5NrLz8OiWpBI7HYbr7+/kou/egs33/4PItFYuu2lqzdx6TcW8NzC94nHE/zo9n9w6Td+xkdrNvOlz5zF3FmTuftfz3H+1T/imht/S2dXD9/84kWMHlWcNgpX1zdx2XU/59Y//JP8PB/haJTPfH0Bt/z+n3g9bk4+bjaqqnL1Z89m5pSx3HHfE5z3pZv52k1/IByJcv2XPk1ZUT66lFgsKq0d3Xz5xt9y1bdvY/P2eoQQuFwO7nv0RT517U+4++HnufaKc5k8voLb736M8790M9f9+E6Sms4NV1+Mx+3i/WVrKcjzMWlsOaVF+YytKCUSjTFz8liyvVnMnjoeRVH4YMX6PUovLqedb3z+wv9Z5gIwuryYT591vJlke+A8OynV87xT5zFl/L6dW/5Jw7Bb7GZOGcfUCaPTdoLdQQhBpz/AynVbaevsRtd1NlXVsXzNFnzeLMaNLuP195bzyjvLqGtq5d/PLmJrdQNHzphAttcN0rBHvPbuRyxbtZHNVfVp24MQAn9PkFXrt9LS1omuSzZX1bNy3VYSiSRzZ02msaWdh55aSG1DC29+sIr/vraYsuJ8Jo0rT+vNazdVs2bzdj5avYlwOMr6LTWs3bydFWu3mFJHFj6Pm6NmTKKmvpmHn11EXWMrC99bzitvLWN0eTHjR5chTfvR8jWbeGfJatZsrCIYjqIoCl3dAV56YwnL12ymyx/kiOkT2LK9gUeee526plZeeXsZr7+7nHGVpYypKGHpqo3E4gmOnDGBGZPHYrNaeO7V9yktzmfKuAqOmjGRptYO1m+p3u0Z4bquM2lsOceNwJnFhzrmz52BN+vAHUGcgtNh54RjZv7PpOAMO4NxuxxUjioaclU8QX/DrKIoqKqCzWpBVQShSAxpHkWbSCaJxuJYLRZURTGqw5r9qKo6oBtaVdQ+cQ+gCIGqKFitFuLxBPF4Mr0JQ5EoihBYLZZ0oWppGl5TxlldgiIUSKfiC1RFYLWqxBJJw5smjC9DEYOBGO1htgeKqpjGX9J9CCFQVQWrRcVqsRCLJ9KeOV1KQpEYiqpgs1nZWrODqtpGjp49hVOOm01LexfPvPoeuq5z5olzmDpxNKvWbaWlvWu3NgUpYeqESrJ9w5+jcqijpCiPbK/nAEsw4HG7KCvOP9jTGzEMO4MRQux3PV9FCBqa2mhp7+b4udOZMLoMVVGYP8cwZlbVNuIPhvfKIKeqCvk5PrK9WSSSSbZsr2dUSQEnz5uFxaJSUVbEqfOPpLsnRG1Di8EkBprfzv8LCIQjbK3ewZhRxRw/dwYWVWVsRQknzZtFe6ef+sbW3UoSvW0LeoJhqmobmTCmjOPmTENVFCaOGcUJR8+gtb2bxuZ2/MEQy1ZtZNbUcZx+wlGs2bid1RuqqKlv5jPnnURxQQ6Ll68jHk/ucY1ys72Z2CDAarVgtVqG+l4cIqT50jgkq6QMCz4RMxWKoK6xhceff4NvXXMJD915M/U7WpkxZSzxRIKHn36NqHmU7W7bEcZx7B1dPdhsVn5z81fp6PJz6x0P8u9nFnHiMbP4xQ+u4ZLzTqKoIIeJY0bx4BOvsrGqjinjKwaomDZwj/F4gkeefZ15R07ltz/6Gp/79OmMKi5gTEUJ9z78PFV1jRw1feJuWkiNFyLROP9+ZhFzZk7ijluuY83GairLCqkYVcSf7n+ausYWkPDBivV88dKzcTkdLF+ziU5/gI/Xb+PoI6bQ3ulnxdotQ2IcQ2F8GWQwVKgLFiy4GRjWyjOvvbuc1RurhnyUrBCCwrwcwpEob3/4Mf6AcWzK6g1VtHX4KSvOJz/Xx4attfzunsd584NVgCAvx4uUkrc//JjWju5BN0tTawfJRJJwJEZnd5AlqzawfM1m1m2uJsebxaiSAgKhMA89uZB7//0C4UgUp91meKbWbWXNpu3Y7TYKcn2sWr+VNRu347DbyM/N5uMN21izcTt1ja1s3FpLbraXsuICunoC3P/4S/zjPy8TicVxOezkZnv5aPVmNmytSduJivJz6ezu4Z0lqw01SBFUNzSxqaqe/BwfZcX5dHT2cN8jL/DgUwuJJ5IIAcFwlCy3iy3VDTzz8nt0dPlJahpOh433lq1h4Tsf7THVQ9cl846catgI/scRCkf5zwtv0ekPDCq97i2klGS5nVx2wSkjGa5/MKEPq5s6hRt/cQ//evq1IYcpp2wQqSC21OdUDIHb6cBmtRCOxIjFE2lGktqkKWv9YJspFahmuM57r9d1ic1qweV0kEwmCUWiIESawHYez2CfU3PQdYndZsHpdJBIJAlHoukxDtReCgPOWzfSJ1xOO/F4glA0htKnrfQYMAL0UjCC9NjteqSQTGp855pL+NENVw0nOXwi0NLexcVfuYVttTsOmKta13VKCvN4+r6fMbbi8A2u64NDrSavgV4m0fs59b+CcZxtX/dzCn0T8na3mVKbLsVoUterqiCpaemD5sROG7jvePb0OdVeIqmRCOy5vf5z2HXeRltJ/AEjgrovc+l3705rmMmCP7SgKMpBOWPsYGFEGMy+GA0Hu2d3be1NP3vb/s5/39PnA/33ffkuY6w99DASeU6HEkYkc83tHP7iwhnsP4RgRApBZ/C/gxFhMBVlRemkuwwOTUgpsVgsVJQVHeyhHBJQzMTQA32qqRD/WzWNRoTBzJ423kgXONizzWBQSCkpyPUxY9KwHsT1iYHL6SAv24s8gFQrpSTX59ljsvDhhBFhMFMnVHLcUdPQtT2nC2RwcKDrkpPnzTqsSwfsDdwuB3NmTjqgbUoJR0yfgM/jPtjTGzGMCINxOOxce8V5FOZnp2uDZnDoQNN0KsoK+fJl5454xbNDGReccSwlBbkHhGZ1XScvx8tFZ87PqEjDgXlHTuPGr15mlEHISDKHBFKFqHJ8Wdx03ZXMnDruYA/pkMKMyeP4yhXnYbFY9svdn8qd+9JnzmLO7MkHe1ojihGJ5AXDuDVt0miK8nPYuLWWrp5AuhJcBiMP3SyKNb6yjAXf/SKfOvP4TJrAThBCMH3yGHRdZ92m7URj8b0mWE3TcTpsXH3p2Xzn2s/8r3npRiaSty+klGzcWst/XniLd5euoam1g1g8kfEwjRCEEDjsNsqK8znl2CO47IKTGTe67H9KbN9bxOMJFr23nH89/RprN1UTCIb7RUvvDENiEWS5nEydUMlVnz6Dc089Bsf/FnMBSI44g0lB142kw8aWDoKhMFom4nREoCoCb5ab0uJ8cnyejNSyFwiFI1TXNdHQ1EYsnhj0Ok3XsVutlBXnM250GZ5hqCvzCcHBYzAZZJDBYY/hLZmZQQYZ/G8jw2AyyCCDYUOGwWSQQQbDhgyDySCDDIYNGQaTQQYZDBsyDCaDDDIYNmQYTAYZZDBs+H+FQy3s9ZMc4wAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAyNi0wMy0yMFQxNzoyNDowNSswMDowMOrE+y4AAAAldEVYdGRhdGU6bW9kaWZ5ADIwMjYtMDMtMjBUMTc6MjQ6MDUrMDA6MDCbmUOSAAAAAElFTkSuQmCC";
 
 const T = {
   de: {
-    labNum: "Lab 09 von 09",
-    labTitle: ["Executive Dashboard & ", "Data Storytelling"],
-    labSub: "Das Abschluss-Lab: Du bringst alle Analysen aus Labs 01–08 in einem Executive Dashboard zusammen, lernst Dashboard-Design-Prinzipien und präsentierst deine Erkenntnisse mit einer Tableau Story.",
-    metaDauer: "90–120 Min.",
-    metaLevel: "Abschluss",
-    metaData: "Alle Datensätze",
-    metaTool: "Tableau Public",
-    progSteps: ["Einführung","Daten verbinden","KPI-Cards","Story Points","Peer-Review","Abschluss"],
-    s1eye: "Konzept",
-    s1title: "Was macht ein gutes Executive Dashboard aus?",
-    s1lead: "Ein Executive Dashboard vermittelt komplexe Daten auf einen Blick. Es folgt dem Prinzip: Überblick → Details → Aktion. Die Geschäftsführung soll in 30 Sekunden die wichtigsten Erkenntnisse verstehen können.",
-    s2eye: "Schritt-für-Schritt",
-    s2title: "Tableau: Executive Dashboard erstellen",
-    s2lead: "In diesem Abschluss-Lab verbindest du alle Datensätze und erstellst ein professionelles Executive Dashboard mit Tableau Story Points.",
-    steps: [
-      {
-        title: "Alle Datensätze verbinden",
-        body: "Neues Tableau Workbook. Verbinde alle 5 Datensätze: <code>orders.csv</code>, <code>customers.csv</code>, <code>reviews.csv</code>, <code>marketing.csv</code>, <code>sessions.csv</code>. Verknüpfe über gemeinsame Felder (year_month, channel). Überprüfe die Datenqualität: fehlende Werte, Duplikate.",
-        tip: "Tipp: Bei mehreren Datenquellen in Tableau: 'Daten' → 'Neue Datenquelle' für jede CSV. Dann im Dashboard über berechnete Felder oder Parameter verbinden."
-      },
-      {
-        title: "8 KPI-Text-Cards erstellen",
-        body: "Erstelle 8 Textblätter mit den wichtigsten KPIs aus allen Labs:<br/>1. <strong>Gesamtumsatz</strong> (SUM orders)<br/>2. <strong>AOV</strong> (Avg Order Value)<br/>3. <strong>% Positive Reviews</strong><br/>4. <strong>Gesamt-ROAS</strong><br/>5. <strong>Conversion Rate</strong> (Sessions)<br/>6. <strong>Top-Region</strong><br/>7. <strong>Top-Kanal</strong> (Marketing)<br/>8. <strong>YoY-Wachstum</strong>",
-        tip: "Dashboard-Tipp: KPI-Cards oben als 'Scorecards' – Zahl groß, Label klein. Farbe: Orange = gut, Blau = neutral, Rot = kritisch. So liest die Geschäftsführung auf einen Blick."
-      },
-      {
-        title: "Tableau Story: 5 Story Points",
-        body: "Neue Story (Story-Tab). Erstelle 5 Story Points:<br/>1. <strong>Überblick</strong>: 8 KPI-Cards + Headline<br/>2. <strong>Kunden</strong>: RFM-Segmente + CLV-Analyse (Lab 03)<br/>3. <strong>Produkte</strong>: ABC-Analyse + Sentiment (Labs 04 + 07)<br/>4. <strong>Marketing</strong>: ROAS + Funnel (Labs 06 + 08)<br/>5. <strong>Empfehlungen</strong>: 3 konkrete Handlungsmaßnahmen",
-        tip: "Story-Tipp: Jeder Story Point hat eine Headline ('Was zeigen die Daten?') und einen Call-to-Action ('Was sollten wir tun?'). Führe den Leser wie durch eine Geschichte."
-      },
-      {
-        title: "Story Point 5: Handlungsempfehlungen",
-        body: "Der wichtigste Story Point: 3 konkrete Empfehlungen basierend auf deinen Analysen:<br/>1. <strong>Schuhe-Qualität verbessern</strong> (Lab 07: höchster negativer Sentiment)<br/>2. <strong>Checkout optimieren</strong> (Lab 06: größter Drop-off Cart→Checkout)<br/>3. <strong>SEA-Budget skalieren</strong> (Lab 08: höchster ROAS aller Kanäle)<br/>Füge für jede Empfehlung Daten-Belege ein.",
-        tip: "Executive-Kommunikation: Empfehlungen immer mit Daten belegen. Format: Problem → Datenbeweis → Maßnahme → Erwarteter Impact. Das überzeugt in Managementpräsentationen."
-      },
-      {
-        title: "Peer-Review durchführen",
-        body: "Tauscht eure Dashboards mit einem Kommilitonen aus. Bewertet nach der Rubrik-Tabelle (siehe unten): Klarheit (0-5), Vollständigkeit (0-5), Handlungsrelevanz (0-5), Design (0-5). Maximale Punktzahl: 20. Gebt konstruktives schriftliches Feedback.",
-        tip: "Gutes Feedback-Format: 'Ich finde gut, dass... / Verbesserungspotenzial sehe ich bei... / Mein Verbesserungsvorschlag: ...' Specifisch, sachlich, konstruktiv."
-      }
+    labNum:"Lab 09 von 09", labTitle:["Executive Dashboard & ","Data Storytelling"],
+    labSub:"Das Abschluss-Lab. Du bringst alles zusammen: alle Datensätze, alle Labs, alle Erkenntnisse. Am Ende steht ein vollständiges Executive Dashboard mit Tableau Story Points und einer Peer-Review-Präsentation.",
+    metaDauer:"90–120 Min.", metaLevel:"Abschluss", metaData:"Alle Datensätze (Labs 01-08)", metaTool:"Tableau Public",
+    progSteps:["Einführung","Daten laden","Analyse","Visualisierung","Quiz","KI-Ausblick"],
+    s1eye:"Kontext", s1title:"Was ist ein Executive Dashboard?",
+    s1lead:"Ein Executive Dashboard zeigt der Geschäftsführung auf einer Seite das Wesentliche: die wichtigsten KPIs aller Geschäftsbereiche. Kein Detail-Drill, kein Datenwust – nur die 5-8 kritischen Metriken, die sofortige Entscheidungen ermöglichen. Du baust heute genau das für UrbanCart.",
+    kpis:[
+      {val:"1,24 Mio.€", lbl:"Gesamtumsatz 2024", def:"Lab 01: SUM(total_revenue) für 2024"},
+      {val:"85,40€", lbl:"Avg. Order Value", def:"Lab 02: Ø Warenkorb aller Bestellungen"},
+      {val:"3,9 / 5", lbl:"NPS-Proxy (Sterne)", def:"Lab 07: Durchschnittliche Sternebewertung"},
+      {val:"3,8x", lbl:"Gesamt-ROAS", def:"Lab 08: Umsatz / Marketing-Ausgaben"},
+      {val:"9,2%", lbl:"Conversion Rate", def:"Lab 06: Purchase / Visitors × 100"},
+      {val:"Bayern", lbl:"Top-Region", def:"Lab 02: Region mit höchstem Umsatz"},
+      {val:"E-Mail", lbl:"Top-Kanal", def:"Lab 08: Kanal mit bestem ROAS (72x)"},
+      {val:"+12,4%", lbl:"Wachstum YoY", def:"Lab 05: 2024 vs. 2023 Umsatzwachstum"}
     ],
-    s3eye: "Peer-Review Rubrik",
-    s3title: "Bewertungskriterien für das Executive Dashboard",
-    s3lead: "Bewertet euer gegenseitiges Dashboard anhand dieser Kriterien. Maximale Gesamtpunktzahl: 20 Punkte.",
-    kpis: [
-      { val:"9", lbl:"Labs abgeschlossen", def:"Du hast den vollständigen UrbanCart E-Commerce-Analyse-Kurs absolviert." },
-      { val:"135", lbl:"Quiz-Fragen beantwortet", def:"9 Labs × 15 Fragen = 135 Quiz-Fragen über alle Kerntthemen des E-Commerce-Analytics." },
-      { val:"7", lbl:"Datensätze analysiert", def:"orders, customers, products, reviews, marketing, sessions + Pivot – du kennst UrbanCart in- und auswendig." }
+    storyPoints:[
+      {num:1, title:"Überblick", desc:"8 Key Metrics, YoY-Trend"},
+      {num:2, title:"Kunden", desc:"Demografie, Top-Segmente"},
+      {num:3, title:"Produkte", desc:"Top-Kategorien, Sentiment"},
+      {num:4, title:"Marketing", desc:"ROAS, Funnel, Kanäle"},
+      {num:5, title:"Ausblick", desc:"3 Handlungsmaßnahmen"}
     ],
-    quizTitle: "Quiz: Lab 09 – Executive Dashboard & Data Storytelling",
-    quizSub: "15 Fragen · Das finale Quiz des Kurses.",
-    questions: [
-      {
-        q: "Was ist ein Executive Dashboard?",
-        options: ["Ein technisches Tool für Entwickler","Eine hochrangige Zusammenfassung der wichtigsten KPIs und Erkenntnisse für Entscheider","Ein detaillierter Bericht aller Datenpunkte","Eine Art von Datenbank"],
-        correct: 1,
-        explain: "Ein Executive Dashboard richtet sich an Führungskräfte und vermittelt die wichtigsten KPIs und Erkenntnisse auf einen Blick – mit minimalem Aufwand für maximale Entscheidungsgrundlage."
-      },
-      {
-        q: "Wie viele KPIs sind auf einem guten Executive Dashboard sinnvoll?",
-        options: ["So viele wie möglich, um vollständig zu sein","3–8 KPIs – genug für Überblick, aber nicht zu viele für schnelle Entscheidung","Genau 10 KPIs","Mindestens 20 KPIs für Vollständigkeit"],
-        correct: 1,
-        explain: "Forschung zeigt: 5-7 Einheiten sind das Maximum, das das Arbeitsgedächtnis auf einmal verarbeiten kann (Millers Law). Executive Dashboards: 5-8 KPIs, nicht mehr. Weniger ist mehr."
-      },
-      {
-        q: "Was ist Data Storytelling?",
-        options: ["Daten erfinden oder verschönern","Die Kunst, Daten in eine narrative Struktur einzubetten, um Erkenntnisse klar und überzeugend zu kommunizieren","Eine Methode zur Datenvisualisierung ohne Text","Ein technisches Verfahren zur Datenkomprimierung"],
-        correct: 1,
-        explain: "Data Storytelling = Daten + Narrative + Visualisierung. Elemente: Kontext (wo stehen wir?), Einsicht (was zeigen die Daten?), Aktion (was sollten wir tun?). Viel überzeugender als reine Zahlen."
-      },
-      {
-        q: "Was sind Tableau Story Points?",
-        options: ["Kommentare in einem Tableau-Workbook","Eine Abfolge von Tableau-Ansichten, die eine narrative Geschichte erzählen – wie Folien in einer Präsentation","Ein Feature zur Datenverschlüsselung","Ein Bewertungssystem für Dashboards"],
-        correct: 1,
-        explain: "Tableau Stories sind eine Abfolge von Dashboards/Blättern mit Anmerkungen, die eine zusammenhängende Geschichte erzählen. Ideal für Präsentationen und Berichte."
-      },
-      {
-        q: "Welche Kriterien sind für ein gutes Dashboard wichtig?",
-        options: ["Möglichst viele Farben und Diagrammtypen","Klarheit, Vollständigkeit, Handlungsrelevanz und ansprechendes Design","Ausschließlich Kreisdiagramme","Nur schwarze und weiße Farben"],
-        correct: 1,
-        explain: "Gute Dashboard-Kriterien: Klarheit (schnell lesbar), Vollständigkeit (alle relevanten KPIs), Handlungsrelevanz (führt zu Entscheidungen), Design (professionell, konsistent). Diese Kriterien spiegeln sich auch in eurer Peer-Review-Rubrik wider."
-      },
-      {
-        q: "Was ist Chartjunk?",
-        options: ["Fehlerhafte Daten in einem Chart","Unnötige visuelle Elemente in Diagrammen, die die Lesbarkeit verschlechtern (3D-Effekte, übertriebene Dekorationen)","Ein spezieller Diagrammtyp","Ein Tool zur Fehleranalyse"],
-        correct: 1,
-        explain: "Chartjunk (Edward Tufte): Alles in einem Diagramm, das keine Daten trägt. 3D-Effekte, Hintergrundgrafiken, übertriebene Gitterlinien. Chartjunk erhöht die kognitive Last und verringert die Datendichte."
-      },
-      {
-        q: "Was bedeutet das KISS-Prinzip im Dashboard-Design?",
-        options: ["Keep It Safe and Secure","Keep It Simple, Stupid – Einfachheit als Designprinzip","Keep It Stylish and Sophisticated","Keine Abkürzung, sondern ein konkretes Tool"],
-        correct: 1,
-        explain: "KISS = Keep It Simple, Stupid. Im Dashboard-Design: Entferne alles, was nicht zur Entscheidungsfindung beiträgt. Weniger Diagramme, klare Hierarchie, konsistente Farben. Einfach schlägt komplex."
-      },
-      {
-        q: "Was ist der Unterschied zwischen KPI und Metrik?",
-        options: ["Kein Unterschied, beide bedeuten das gleiche","KPI (Key Performance Indicator) ist eine Metrik, die direkt mit einem strategischen Ziel verknüpft ist; eine Metrik ist jede messbare Größe","Metriken sind immer wichtiger als KPIs","KPIs werden nur in Excel gemessen"],
-        correct: 1,
-        explain: "Metrik = jede messbare Größe (Seitenaufrufe, Klicks, Sessions). KPI = Metrik + strategische Relevanz (Conversion Rate, ROAS, CLV). Nicht jede Metrik ist ein KPI, aber jeder KPI ist eine Metrik."
-      },
-      {
-        q: "Wie nutzt man Farbe als Signal in einem Dashboard?",
-        options: ["Möglichst viele Farben verwenden für Abwechslung","Farbe konsistent und bedeutungsbasiert einsetzen: Grün=gut, Rot=kritisch, Orange=Warnung – und diese Kodierung beibehalten","Nur eine Farbe verwenden für Einheitlichkeit","Farben haben keine Bedeutung in Dashboards"],
-        correct: 1,
-        explain: "Farbe als Signal: Konsistente Farbkodierung (Ampelsystem: Grün/Orange/Rot) hilft, schnell kritische Bereiche zu identifizieren. Überladen mit Farben verwirrt. Maximal 3-4 semantische Farben."
-      },
-      {
-        q: "Was ist Drill-Down in einem Dashboard?",
-        options: ["Ein Button zum Löschen von Daten","Die Möglichkeit, von einer zusammenfassenden Ansicht in detailliertere Daten zu navigieren (z.B. von Jahresumsatz zu Monatsumsatz)","Ein Diagrammtyp","Ein Sicherheitsfeature"],
-        correct: 1,
-        explain: "Drill-Down = hierarchische Navigation von Überblick zu Details. Beispiel: Klick auf 'Q4 2024' → zeigt Monatsaufschlüsselung → Klick auf 'November' → zeigt Produktdetails. Tableau unterstützt Drill-Down nativ."
-      },
-      {
-        q: "Warum sind Balkendiagramme besser als Kreisdiagramme für Rankings?",
-        options: ["Balkendiagramme sind immer besser","Das menschliche Auge vergleicht Längen (Balken) präziser als Winkel oder Flächen (Kreissegmente) – besonders bei ähnlichen Werten","Kreisdiagramme sind veraltet","Balkendiagramme zeigen mehr Kategorien"],
-        correct: 1,
-        explain: "Perception Research (Cleveland & McGill): Menschen vergleichen Längen/Positionen am genauesten, Winkel/Flächen schlechter. Kreisdiagramme bei >3 Segmenten schwer lesbar. Balkendiagramme sind fast immer die bessere Wahl."
-      },
-      {
-        q: "Wann ist eine Karte/Map in einem Dashboard sinnvoll?",
-        options: ["Immer, da Karten immer gut aussehen","Wenn geografische Verteilung oder regionale Unterschiede die zentrale Erkenntnis sind","Nur bei internationalen Unternehmen","Karten sind in Dashboards nicht sinnvoll"],
-        correct: 1,
-        explain: "Karten eignen sich, wenn der Ort die Analyse treibt: regionale Umsatzunterschiede, Lieferzeiten nach PLZ, Marktanteil nach Bundesland. Für reine Kategorienvergleiche (Kanal A vs. B) sind Balkendiagramme besser."
-      },
-      {
-        q: "Wie präsentiert man Daten für Nicht-Techniker?",
-        options: ["Alle technischen Details zeigen für Vollständigkeit","Erkenntnisse vor Daten: Was bedeutet das für uns? Visualisierungen vereinfachen, Fachbegriffe erklären, Konsequenzen hervorheben","Nur rohe Zahlen ohne Visualisierung","So viele Diagramme wie möglich zeigen"],
-        correct: 1,
-        explain: "Für Nicht-Techniker: 1) Erkenntnisse statt Daten in den Vordergrund, 2) 'Was bedeutet das für uns?' immer beantworten, 3) Einfache Visualisierungen (Balken/Linien), 4) Handlungsempfehlungen explizit machen."
-      },
-      {
-        q: "Was ist der Unterschied zwischen Action Dashboard und Monitoring Dashboard?",
-        options: ["Kein Unterschied","Action Dashboard: zeigt kritische Abweichungen und klare Handlungsaufforderungen; Monitoring Dashboard: zeigt kontinuierlichen Status aller KPIs ohne direkten Handlungsbedarf","Monitoring Dashboards sind immer besser","Action Dashboards haben keine KPIs"],
-        correct: 1,
-        explain: "Monitoring Dashboard: Kontinuierlicher Überblick (z.B. Sales-Cockpit mit täglich aktualisierten KPIs). Action Dashboard: Zeigt Ausreißer, Alarme, priorisierte Handlungsfelder. Je nach Nutzungsfall wählen."
-      },
-      {
-        q: "Was ist das Ziel eines Abschluss-Dashboards wie dem Executive Dashboard in Lab 09?",
-        options: ["Alle Daten möglichst vollständig zu zeigen","Die Kernerkenntnisse aus allen Analysen zu synthetisieren und in drei klare Handlungsempfehlungen zu übersetzen, die Entscheidungen ermöglichen","Möglichst viele Visualisierungstypen zu verwenden","Technische Datenqualität zu dokumentieren"],
-        correct: 1,
-        explain: "Ein Abschluss-Dashboard synthetisiert: Aus Daten werden Erkenntnisse, aus Erkenntnissen werden Empfehlungen. Das Ziel: Entscheidungsträger können auf Basis des Dashboards sofort handeln. Das ist der Unterschied zwischen Daten und Business Intelligence."
-      }
+    recommendations:[
+      {num:1, title:lang=>'Schuhe-Kategorie optimieren', body:lang=>'28% negative Reviews in Schuhe. Maßnahme: Größentabelle überarbeiten, 360°-Produktfotos, erweiterte Rückgabefrist. Ziel: Negativanteil auf < 15% senken.'},
+      {num:2, title:lang=>'Display-Budget umschichten', body:lang=>'Display ROAS < 2. Maßnahme: 40% des Display-Budgets in E-Mail-Marketing und Social Media umschichten. Geschätztes Upside: +€80k zusätzlicher Jahresumsatz.'},
+      {num:3, title:lang=>'Q4 Forecast-Vorbereitung', body:lang=>'Tableau Forecast zeigt Q4 2025 +15% YoY. Maßnahme: Lagerkapazität erhöhen, Logistik-Partner frühzeitig informieren, Black-Friday-Kampagne 4 Wochen vorverlegen.'}
     ],
-    aiEye: "KI-Ausblick",
-    aiTitle: "Finales Showcase: Python Plotly Dash Multi-Page App",
-    aiText: "Das Executive Dashboard als interaktive Web-App – deployment-fertig für Render oder Railway (kostenlos):",
-    aiPrompt: `# Prompt für ChatGPT / Claude:
-"Erstelle eine Plotly Dash Multi-Page App als finales E-Commerce-Analytics-Showcase.
-Die App soll haben:
-- Startseite: Executive Summary mit 8 KPI-Cards (Gesamtumsatz, AOV, ROAS, etc.)
-- Seite 1: Zeitreihen (orders.csv - Umsatz pro Monat, YoY-Vergleich)
-- Seite 2: Kundenanalyse (customers.csv - RFM-Segmente)
-- Seite 3: Conversion Funnel (sessions.csv - Funnel-Chart + Heatmap)
-- Seite 4: Marketing ROI (marketing.csv - ROAS Balken + Treemap)
-- Seite 5: Handlungsempfehlungen (3 konkrete Actions aus den Daten)
-Farbschema: #E87722 (primär), #005B9A (sekundär)
-Deployment-Hinweis für Render.com (kostenlos) oder Railway.app hinzufügen."
+    s2eye:"Schritt-für-Schritt", s2title:"Tableau: Executive Dashboard aufbauen",
+    s2lead:"Du verbindest alle Datensätze und baust ein vollständiges Dashboard mit Tableau Story Points.",
+    steps:[
+      {title:"Alle Datensätze verbinden", body:"Neues Tableau-Workbook. Verbinde nacheinander: <code>orders.csv</code>, <code>customers.csv</code>, <code>reviews.csv</code>, <code>marketing.csv</code>, <code>sessions.csv</code>. Nutze <strong>Datenverbindungen</strong>, nicht joins – jeder Datensatz bleibt eigenständig.", tip:"Tipp: In Tableau können separate Datenquellen im selben Dashboard genutzt werden. Für das KPI-Dashboard genügt es, 'Gespeicherte Ansichten' aus den vorherigen Labs zu verwenden."},
+      {title:"8 Key Metrics als KPI-Cards", body:"Erstelle 8 einzelne Arbeitsblätter, je eine für einen KPI (Umsatz, AOV, NPS-Proxy, ROAS, Conversion, Top-Region, Top-Kanal, Wachstum YoY). Nutze 'Text'-Chart mit der entsprechenden Kennzahl.", tip:"KPI-Cards-Tipp: Jede Card zeigt NUR den Wert + Label. Verwende KEINE Achsen, KEINE Gitternetzlinien. Pure Zahl in THWS-Orange, Label in THWS-Blau."},
+      {title:"Tableau Story: 5 Chapters", body:"Klicke unten auf <code>+</code> → 'Neue Story'. Benenne die 5 Punkte: (1) Überblick, (2) Kunden, (3) Produkte & Sentiment, (4) Marketing & ROI, (5) Empfehlungen. Füge je eine passende Visualisierung ein.", tip:"Story-Tipp: Jeder Story Point sollte EINE klare Botschaft haben. Schreibe eine Beschriftung oben: 'Erkenntnis: Bayern generiert 28% des Gesamtumsatzes.' Nicht mehr als das."},
+      {title:"Story Point 5: Handlungsmaßnahmen", body:"Für den letzten Story Point: Erstelle eine Text-Visualisierung mit 3 konkreten Handlungsmaßnahmen aus deinen Analysen. Format: (1) Problem, (2) Maßnahme, (3) erwartetes Ergebnis.", tip:"Die beste Präsentation endet mit Handlungsempfehlungen, nicht mit Daten. Daten sind Mittel zum Zweck – der Zweck ist eine bessere Entscheidung."},
+      {title:"Peer-Review durchführen", body:"Tausche dein Dashboard mit einem/r Kommilitonin. Bewerte nach der Rubrik unten (Klarheit, Vollständigkeit, Handlungsrelevanz, Visuelles Design). Gib konstruktives Feedback: Was ist gut? Was würdest du anders machen?", tip:"Peer-Review-Tipp: Sei spezifisch in deinem Feedback. 'Die Farben sind verwirrend' hilft nicht. Besser: 'Im Marketing-Chart haben Blau und Grün zu wenig Kontrast – wähle Orange für die Highlights.'"}
+    ],
+    s4eye:"Dashboard-Design", s4title:"Die Prinzipien eines guten Executive Dashboards",
+    concepts:[
+      {title:"KISS-Prinzip: Keep It Simple, Stupid", body:"Ein Dashboard mit 20 Charts verwirrt. 5-8 KPIs sind ideal. Jede Visualisierung beantwortet genau eine Frage. Alles, was keine Frage beantwortet, fliegt raus.", tip:"Test: Zeige dein Dashboard jemandem 10 Sekunden lang. Was hat er/sie behalten? Das ist deine Botschaft. Alles andere ist Lärm."},
+      {title:"Farbe als Signal, nicht als Dekoration", body:"Farbe sollte Bedeutung tragen: Rot = Problem, Grün = gut, Orange = Warnung. Wenn alles bunt ist, ist nichts betont. Nutze Farbe sparsam und konsistent.", tip:"THWS-Design: NUR Orange (#E87722) und Blau (#005B9A) als Akzentfarben. Alles andere: Grau (#9ca3af) oder Weiß. Das erzeugt Fokus."},
+      {title:"Was ist 'Chartjunk'?", body:"Chartjunk (nach Edward Tufte): alles in einem Diagramm, das keine Information trägt. Beispiele: 3D-Effekte, Schatten, übermäßige Gitternetzlinien, unnötige Icons. Chartjunk verringert das Signal-Rausch-Verhältnis.", tip:"Test: Kannst du ein Element entfernen, ohne Information zu verlieren? Dann tu es. Das nennt sich 'Data-Ink Ratio maximieren.'"}
+    ],
+    peerTitle:"Peer-Review Rubrik",
+    peerDesc:"Bewerte das Dashboard deines Kommilitonen anhand dieser 4 Kriterien (je 1-5 Punkte):",
+    peerCriteria:[
+      {criterion:"Klarheit", desc1:"Sind die Visualisierungen klar und lesbar?", desc2:"Ist die Botschaft auf den ersten Blick erkennbar?", max:"5"},
+      {criterion:"Vollständigkeit", desc1:"Werden alle wesentlichen KPIs aus Labs 01-08 abgedeckt?", desc2:"Gibt es eine Story mit klarem Anfang und Ende?", max:"5"},
+      {criterion:"Handlungsrelevanz", desc1:"Leiten die Erkenntnisse zu konkreten Maßnahmen?", desc2:"Sind die Empfehlungen im Story Point 5 spezifisch und umsetzbar?", max:"5"},
+      {criterion:"Visuelles Design", desc1:"Wird das Farbschema konsistent eingesetzt?", desc2:"Gibt es kein Chartjunk? Ist der Whitespace angemessen?", max:"5"}
+    ],
+    quizTitle:"Quiz: Lab 09 – Executive Dashboard & Data Storytelling",
+    quizSub:"15 Fragen · Das finale Quiz des Kurses.",
+    questions:[
+      {q:"Was ist ein Executive Dashboard?",options:["Ein Dashboard für alle Mitarbeiter","Eine kompakte Übersicht der wichtigsten KPIs für die Geschäftsführung","Ein technisches System-Monitoring-Dashboard","Ein Dashboard für die IT-Abteilung"],correct:1,explain:"Executive Dashboard: Zeigt auf einer Seite die 5-8 wichtigsten KPIs für das Top-Management. Kein Detail-Drill, nur die kritischen Metriken für sofortige Entscheidungen."},
+      {q:"Wie viele KPIs sind auf einem Executive Dashboard sinnvoll?",options:["So viele wie möglich – mehr ist besser","5-8 (maximal 10) – zu viele verwirren","Exakt 3","Mindestens 20"],correct:1,explain:"Forschung (Few et al.): Menschen können gleichzeitig 5-9 Informationseinheiten verarbeiten. 5-8 KPIs sind ideal – genug für Überblick, nicht so viel dass man überfordert ist."},
+      {q:"Was ist Data Storytelling?",options:["Das Erstellen bunter Infografiken","Die Kunst, Daten durch eine narrative Struktur mit einem klaren Anfang, Wendepunkt und Handlungsempfehlung zu kommunizieren","Eine spezielle Tableau-Funktion","Die Visualisierung von Zeitreihen"],correct:1,explain:"Data Storytelling verbindet Daten, Visualisierung und Narration. Ziel: Erkenntnisse so aufbereiten, dass Nicht-Techniker verstehen, was getan werden muss."},
+      {q:"Was ist ein Tableau Story Point?",options:["Ein einzelner Datenpunkt in einer Zeitreihe","Eine einzelne Folie in einer Tableau Story – kombiniert eine Visualisierung mit einer kurzen Botschaft","Ein Berechnetes Feld","Ein Filter"],correct:1,explain:"Tableau Story Points sind Folien innerhalb einer Story: Jeder Point zeigt eine Visualisierung mit einer Beschriftung/Botschaft. Stories sind für Präsentationen konzipiert."},
+      {q:"Was macht ein gutes Dashboard aus?",options:["Viele bunte Diagramme","Klare Botschaft, konsistente Farben, relevante KPIs, keine Redundanz und kein Chartjunk","Möglichst viele Datenquellen","Komplexe berechnete Felder"],correct:1,explain:"Merkmale eines guten Dashboards: Klare Fragestellung, 5-8 relevante KPIs, konsistentes Design, keine unnötigen Elemente (Chartjunk), sofort erkennbare Botschaft."},
+      {q:"Was ist 'Chartjunk'?",options:["Fehlerhafte Datenpunkte","Visuelle Elemente in einem Diagramm, die keine Information tragen (3D-Effekte, Schatten, Dekoration)","Ein veralteter Diagrammtyp","Zu viele Farben"],correct:1,explain:"Chartjunk (Edward Tufte): Alles, was kein Informationsgehalt hat – 3D-Effekte, Schatten, übermäßige Gitternetzlinien. Erhöht den visuellen Lärm ohne Nutzen."},
+      {q:"Was bedeutet das KISS-Prinzip im Dashboard-Design?",options:["Keep It Secure and Structured","Keep It Simple, Stupid – einfachste Darstellung, die die Botschaft transportiert","Keep It Sophisticated and Stylish","Keep It Scalable and Smart"],correct:1,explain:"KISS = Keep It Simple, Stupid. Im Dashboard-Design: Jede Visualisierung beantwortet genau eine Frage. Alles, was keine Frage beantwortet, fliegt raus."},
+      {q:"Was ist ein KPI vs. eine Metrik?",options:["Kein Unterschied","KPI (Key Performance Indicator) ist eine strategisch wichtige Metrik, die direkt mit Unternehmenszielen verknüpft ist; eine Metrik ist jede messbare Zahl","Metriken sind nur für IT-Teams","KPIs sind immer Prozentzahlen"],correct:1,explain:"Metrik = jede messbare Zahl (Seitenaufrufe, Klicks). KPI = strategisch wichtige Metrik, die zeigt, ob ein Unternehmensziel erreicht wird. Nicht jede Metrik ist ein KPI."},
+      {q:"Was ist die Rolle von Farbe auf einem Dashboard?",options:["Rein dekorativ – je bunter, desto besser","Farbe als Signal: Rot = Problem, Grün = gut, Orange = Warnung – sparsam und konsistent einsetzen","Farbe sollte jede Datenkategorie unterscheiden","Farbe ist optional"],correct:1,explain:"Farbe als Signal: Sie sollte bedeutungstragend sein (Rot = Alarm, Grün = OK). Wenn alles bunt ist, ist nichts betont. Maximal 2-3 Akzentfarben verwenden."},
+      {q:"Was ist ein Drill-Down?",options:["Ein Tableau-Chart-Typ","Die Möglichkeit, von einer Übersicht in die Details zu navigieren (z.B. von Region zu Stadt)","Ein Filter für Zeitreihen","Eine Exportfunktion"],correct:1,explain:"Drill-Down = Interaktivität: Nutzer klickt auf Bayern → sieht die Städte in Bayern. Von der Aggregation in die Details. In Tableau: Hierarchien oder Filter-Aktionen."},
+      {q:"Warum ist Balken statt Kreisdiagramm für Rankings besser?",options:["Kreisdiagramme sind veraltet","Menschen können Längen besser vergleichen als Winkel/Flächen – Balken eignen sich besser für genaue Vergleiche","Balkendiagramme sind schneller zu erstellen","Kreisdiagramme brauchen mehr Platz"],correct:1,explain:"Cognitive Science: Beim Vergleich von Werten ist die Wahrnehmung von Längen (Balken) genauer als die von Winkeln (Kreisdiagramm). Kreisdiagramme nur für Anteile mit 2-4 Kategorien."},
+      {q:"Wann nutzt man eine Karte/Map in einem Dashboard?",options:["Immer, da Karten professionell wirken","Wenn geografische Variation ein zentrales Thema ist (z.B. regionale Umsatzunterschiede)","Für alle Zeitreihenanalysen","Für Sentimentanalysen"],correct:1,explain:"Maps sind sinnvoll, wenn geografische Lage/Verteilung eine Rolle spielt. Wenn Bayern oder NRW interessanter ist als deren geografische Position, reicht ein Balkendiagramm."},
+      {q:"Wie präsentiert man Daten an Nicht-Techniker?",options:["Mit möglichst vielen technischen Details und Formeln","Mit einer klaren Geschichte: Problem → Erkenntnis → Handlungsempfehlung; keine technischen Details","Nur mit Tabellen","Mit Rohdaten statt Visualisierungen"],correct:1,explain:"Für Nicht-Techniker: Problem zuerst ('Schuhe haben 28% negative Reviews'), dann Erkenntnis ('Größe passt nicht'), dann Maßnahme ('Größentabelle überarbeiten'). Keine Methodik."},
+      {q:"Was ist ein 'Action Dashboard' vs. 'Monitoring Dashboard'?",options:["Kein Unterschied","Action Dashboard: zeigt, was getan werden muss (wenige KPIs, klare Handlungsrelevanz); Monitoring: zeigt laufend den Status (mehr Metriken, Alerts)","Action Dashboards sind für IT-Teams","Monitoring ist veraltet"],correct:1,explain:"Action Dashboard: Führt zu Entscheidungen – wenige, hochrelevante KPIs. Monitoring Dashboard: Zeigt laufenden Status – mehr Metriken, Alarm-Schwellenwerte. Executive nutzen meist Action Dashboards."},
+      {q:"Was ist das Wichtigste an einem Executive Dashboard?",options:["Die Anzahl der Visualisierungen","Die Frage 'Was muss ich jetzt tun?' in unter 30 Sekunden beantworten können","Die technische Komplexität","Die Schriftgröße"],correct:1,explain:"Das Executive Dashboard muss in unter 30 Sekunden die wichtigste Frage beantworten: Läuft das Business gut? Wo muss ich eingreifen? Was ist die nächste Maßnahme?"}
+    ],
+    aiEye:"KI-Ausblick", aiTitle:"Plotly Dash: Vollständiges Multi-Page Dashboard",
+    aiText:"Als Abschluss-Showcase: Ein vollständiges Plotly Dash Dashboard mit allen UrbanCart-KPIs, bereit für Deployment:",
+    aiCode:`# Prompt für ChatGPT / Claude:
+"Erstelle ein vollständiges Plotly Dash Multi-Page Dashboard für UrbanCart.
+Pages: Overview, Customers, Products, Marketing, Sentiment.
+Nutze alle CSV-Dateien: orders.csv, customers.csv, reviews.csv,
+marketing.csv, sessions.csv.
+Zeige auf der Overview-Seite 8 KPI-Cards.
+Deployment auf Render.com: requirements.txt mit dash, plotly, pandas.
+Farbschema: Orange #E87722 + Blau #005B9A."
 
-# Deployment (kostenlos):
-# render.com: requirements.txt + Procfile + render.yaml → Auto-Deploy
-# railway.app: GitHub-Repo verbinden → 1-Click Deploy
-# Beide: Dash-App wird als Web-Service exposed (URL sofort teilbar)
-
-# Einstieg Multi-Page Dash:
+# Grundstruktur:
 import dash
 from dash import dcc, html, Input, Output
 import plotly.express as px
 import pandas as pd
 
-app = dash.Dash(__name__, use_pages=True)
+app = dash.Dash(__name__, use_pages=True,
+    suppress_callback_exceptions=True)
+
 app.layout = html.Div([
-    html.Nav([  # Navigation
-        dcc.Link('Executive Summary', href='/'),
-        dcc.Link('Zeitreihen', href='/zeitreihen'),
-        dcc.Link('Kunden', href='/kunden'),
-        dcc.Link('Funnel', href='/funnel'),
-        dcc.Link('Marketing', href='/marketing'),
-    ]),
-    dash.page_container  # Seiten-Inhalt
+    html.Div([  # Navbar
+        html.H1("UrbanCart Executive Dashboard",
+                style={{"color":"#005B9A","fontWeight":900}}),
+        dcc.Link("Overview", href="/"),
+        dcc.Link("Marketing", href="/marketing"),
+    ], style={{"padding":"16px 32px","borderBottom":"3px solid #E87722"}}),
+    dash.page_container
 ])
 
-# Seite erstellen (pages/home.py):
-# import dash; dash.register_page(__name__, path='/')
-
-if __name__ == '__main__':
-    app.run(debug=True, port=8050)
-
-# requirements.txt: dash>=2.14, plotly>=5.17, pandas>=2.0, gunicorn`,
-    nextLab: null,
-    prevLab: "← Lab 08: Marketing ROI",
-    completeTitle: ["Kurs", "abgeschlossen"],
-    completeSub: "Du hast alle 9 Labs des UrbanCart E-Commerce Analytics Kurses erfolgreich absolviert. Von der Rohdaten-Exploration bis zum Executive Dashboard – du bist jetzt in der Lage, datengetriebene Entscheidungen im E-Commerce zu treffen und zu präsentieren.",
-    completeBadge: "THWS Business School · E-Commerce Analytics",
-    completeLink: "Zurück zur Kursübersicht",
-    completeKpis: [
-      { val:"9", lbl:"Labs" },
-      { val:"135", lbl:"Quiz-Fragen" },
-      { val:"7", lbl:"Datensätze" }
-    ]
+# Deployment: Procfile -> web: gunicorn app:server
+# requirements.txt -> dash, plotly, pandas, gunicorn`,
+    prevLab:"← Lab 08", nextLab:null,
+    prevHref:"lab08.html", overviewHref:"index.html"
   },
   en: {
-    labNum: "Lab 09 of 09",
-    labTitle: ["Executive Dashboard & ", "Data Storytelling"],
-    labSub: "The final lab: You bring all analyses from Labs 01–08 together in an executive dashboard, learn dashboard design principles and present your insights with a Tableau story.",
-    metaDauer: "90–120 min.",
-    metaLevel: "Final",
-    metaData: "All datasets",
-    metaTool: "Tableau Public",
-    progSteps: ["Introduction","Connect Data","KPI Cards","Story Points","Peer Review","Complete"],
-    s1eye: "Concept",
-    s1title: "What makes a good executive dashboard?",
-    s1lead: "An executive dashboard conveys complex data at a glance. It follows the principle: overview → details → action. Management should be able to understand the most important insights in 30 seconds.",
-    s2eye: "Step by Step",
-    s2title: "Tableau: Creating the Executive Dashboard",
-    s2lead: "In this final lab you connect all datasets and create a professional executive dashboard with Tableau story points.",
-    steps: [
-      {
-        title: "Connect all datasets",
-        body: "New Tableau workbook. Connect all 5 datasets: <code>orders.csv</code>, <code>customers.csv</code>, <code>reviews.csv</code>, <code>marketing.csv</code>, <code>sessions.csv</code>. Link via common fields (year_month, channel). Check data quality: missing values, duplicates.",
-        tip: "Tip: With multiple data sources in Tableau: 'Data' → 'New Data Source' for each CSV. Then connect in the dashboard via calculated fields or parameters."
-      },
-      {
-        title: "Create 8 KPI text cards",
-        body: "Create 8 text sheets with the most important KPIs from all labs:<br/>1. <strong>Total Revenue</strong> (SUM orders)<br/>2. <strong>AOV</strong> (Avg Order Value)<br/>3. <strong>% Positive Reviews</strong><br/>4. <strong>Overall ROAS</strong><br/>5. <strong>Conversion Rate</strong> (Sessions)<br/>6. <strong>Top Region</strong><br/>7. <strong>Top Channel</strong> (Marketing)<br/>8. <strong>YoY Growth</strong>",
-        tip: "Dashboard tip: KPI cards at the top as 'scorecards' – number large, label small. Colour: Orange = good, Blue = neutral, Red = critical. Management reads at a glance."
-      },
-      {
-        title: "Tableau Story: 5 story points",
-        body: "New story (Story tab). Create 5 story points:<br/>1. <strong>Overview</strong>: 8 KPI cards + headline<br/>2. <strong>Customers</strong>: RFM segments + CLV analysis (Lab 03)<br/>3. <strong>Products</strong>: ABC analysis + sentiment (Labs 04 + 07)<br/>4. <strong>Marketing</strong>: ROAS + funnel (Labs 06 + 08)<br/>5. <strong>Recommendations</strong>: 3 concrete action measures",
-        tip: "Story tip: Each story point has a headline ('What do the data show?') and a call-to-action ('What should we do?'). Lead the reader like through a story."
-      },
-      {
-        title: "Story Point 5: Action recommendations",
-        body: "The most important story point: 3 concrete recommendations based on your analyses:<br/>1. <strong>Improve shoe quality</strong> (Lab 07: highest negative sentiment)<br/>2. <strong>Optimise checkout</strong> (Lab 06: biggest drop-off cart→checkout)<br/>3. <strong>Scale SEA budget</strong> (Lab 08: highest ROAS of all channels)<br/>Add data evidence for each recommendation.",
-        tip: "Executive communication: Always back recommendations with data. Format: Problem → data evidence → measure → expected impact. This convinces in management presentations."
-      },
-      {
-        title: "Conduct peer review",
-        body: "Exchange your dashboards with a fellow student. Evaluate using the rubric table (see below): Clarity (0-5), Completeness (0-5), Action relevance (0-5), Design (0-5). Maximum score: 20. Give constructive written feedback.",
-        tip: "Good feedback format: 'I like that... / I see improvement potential in... / My suggestion: ...' Specific, objective, constructive."
-      }
+    labNum:"Lab 09 of 09", labTitle:["Executive Dashboard & ","Data Storytelling"],
+    labSub:"The final lab. You bring everything together: all datasets, all labs, all insights. The result is a complete executive dashboard with Tableau Story Points and a peer-review presentation.",
+    metaDauer:"90–120 min.", metaLevel:"Final", metaData:"All datasets (Labs 01-08)", metaTool:"Tableau Public",
+    progSteps:["Introduction","Load Data","Analysis","Visualisation","Quiz","AI Outlook"],
+    s1eye:"Context", s1title:"What is an Executive Dashboard?",
+    s1lead:"An executive dashboard shows management the essentials on one page: the most important KPIs across all business areas. No detailed drill-down, no data overload – just the 5-8 critical metrics that enable immediate decisions. Today you build exactly that for UrbanCart.",
+    kpis:[
+      {val:"€1.24M", lbl:"Total Revenue 2024", def:"Lab 01: SUM(total_revenue) for 2024"},
+      {val:"€85.40", lbl:"Avg. Order Value", def:"Lab 02: Average basket of all orders"},
+      {val:"3.9 / 5", lbl:"NPS-Proxy (Stars)", def:"Lab 07: Average star rating"},
+      {val:"3.8x", lbl:"Overall ROAS", def:"Lab 08: Revenue / Marketing Spend"},
+      {val:"9.2%", lbl:"Conversion Rate", def:"Lab 06: Purchase / Visitors × 100"},
+      {val:"Bavaria", lbl:"Top Region", def:"Lab 02: Region with highest revenue"},
+      {val:"Email", lbl:"Top Channel", def:"Lab 08: Channel with best ROAS (72x)"},
+      {val:"+12.4%", lbl:"YoY Growth", def:"Lab 05: 2024 vs. 2023 revenue growth"}
     ],
-    s3eye: "Peer Review Rubric",
-    s3title: "Evaluation criteria for the Executive Dashboard",
-    s3lead: "Evaluate each other's dashboard based on these criteria. Maximum total score: 20 points.",
-    kpis: [
-      { val:"9", lbl:"Labs completed", def:"You have completed the full UrbanCart E-Commerce Analytics course." },
-      { val:"135", lbl:"Quiz questions answered", def:"9 labs × 15 questions = 135 quiz questions covering all core topics of e-commerce analytics." },
-      { val:"7", lbl:"Datasets analysed", def:"orders, customers, products, reviews, marketing, sessions + pivot – you know UrbanCart inside out." }
+    storyPoints:[
+      {num:1, title:"Overview", desc:"8 Key Metrics, YoY trend"},
+      {num:2, title:"Customers", desc:"Demographics, top segments"},
+      {num:3, title:"Products", desc:"Top categories, sentiment"},
+      {num:4, title:"Marketing", desc:"ROAS, funnel, channels"},
+      {num:5, title:"Outlook", desc:"3 action recommendations"}
     ],
-    quizTitle: "Quiz: Lab 09 – Executive Dashboard & Data Storytelling",
-    quizSub: "15 questions · The final quiz of the course.",
-    questions: [
-      { q:"What is an executive dashboard?", options:["A technical tool for developers","A high-level summary of the most important KPIs and insights for decision-makers","A detailed report of all data points","A type of database"], correct:1, explain:"An executive dashboard targets executives and conveys the most important KPIs and insights at a glance – minimal effort for maximum decision basis." },
-      { q:"How many KPIs are sensible on a good executive dashboard?", options:["As many as possible to be complete","3–8 KPIs – enough for overview but not too many for quick decisions","Exactly 10 KPIs","At least 20 KPIs for completeness"], correct:1, explain:"Research shows: 5-7 units is the maximum that working memory can process at once (Miller's Law). Executive dashboards: 5-8 KPIs, no more. Less is more." },
-      { q:"What is data storytelling?", options:["Inventing or embellishing data","The art of embedding data in a narrative structure to communicate insights clearly and persuasively","A data visualisation method without text","A technical procedure for data compression"], correct:1, explain:"Data storytelling = data + narrative + visualisation. Elements: context (where are we?), insight (what do the data show?), action (what should we do?). Much more persuasive than raw numbers." },
-      { q:"What are Tableau story points?", options:["Comments in a Tableau workbook","A sequence of Tableau views that tell a narrative story – like slides in a presentation","A data encryption feature","A dashboard rating system"], correct:1, explain:"Tableau stories are a sequence of dashboards/sheets with annotations that tell a coherent story. Ideal for presentations and reports." },
-      { q:"Which criteria are important for a good dashboard?", options:["As many colours and chart types as possible","Clarity, completeness, action relevance and appealing design","Only pie charts","Only black and white colours"], correct:1, explain:"Good dashboard criteria: Clarity (quickly readable), Completeness (all relevant KPIs), Action relevance (leads to decisions), Design (professional, consistent). These criteria are also reflected in your peer review rubric." },
-      { q:"What is chartjunk?", options:["Erroneous data in a chart","Unnecessary visual elements in charts that worsen readability (3D effects, excessive decorations)","A special chart type","An error analysis tool"], correct:1, explain:"Chartjunk (Edward Tufte): Everything in a chart that carries no data. 3D effects, background graphics, excessive grid lines. Chartjunk increases cognitive load and reduces data density." },
-      { q:"What does the KISS principle mean in dashboard design?", options:["Keep It Safe and Secure","Keep It Simple, Stupid – simplicity as a design principle","Keep It Stylish and Sophisticated","Not an abbreviation, but a concrete tool"], correct:1, explain:"KISS = Keep It Simple, Stupid. In dashboard design: Remove everything that doesn't contribute to decision-making. Fewer charts, clear hierarchy, consistent colours. Simple beats complex." },
-      { q:"What is the difference between a KPI and a metric?", options:["No difference, both mean the same thing","A KPI (Key Performance Indicator) is a metric directly linked to a strategic goal; a metric is any measurable quantity","Metrics are always more important than KPIs","KPIs are only measured in Excel"], correct:1, explain:"Metric = any measurable quantity (page views, clicks, sessions). KPI = metric + strategic relevance (conversion rate, ROAS, CLV). Not every metric is a KPI, but every KPI is a metric." },
-      { q:"How should colour be used as a signal in a dashboard?", options:["Use as many colours as possible for variety","Use colour consistently and meaning-based: Green=good, Red=critical, Orange=warning – and maintain this coding","Use only one colour for uniformity","Colours have no meaning in dashboards"], correct:1, explain:"Colour as signal: Consistent colour coding (traffic light: Green/Orange/Red) helps quickly identify critical areas. Overloading with colours confuses. Maximum 3-4 semantic colours." },
-      { q:"What is drill-down in a dashboard?", options:["A button for deleting data","The ability to navigate from a summary view into more detailed data (e.g. from annual revenue to monthly revenue)","A chart type","A security feature"], correct:1, explain:"Drill-down = hierarchical navigation from overview to detail. Example: Click on 'Q4 2024' → shows monthly breakdown → click on 'November' → shows product details. Tableau supports drill-down natively." },
-      { q:"Why are bar charts better than pie charts for rankings?", options:["Bar charts are always better","The human eye compares lengths (bars) more precisely than angles or areas (pie segments) – especially with similar values","Pie charts are outdated","Bar charts show more categories"], correct:1, explain:"Perception research (Cleveland & McGill): Humans compare lengths/positions most accurately, angles/areas less so. Pie charts with >3 segments hard to read. Bar charts are almost always the better choice." },
-      { q:"When is a map/geographic chart useful in a dashboard?", options:["Always, as maps always look good","When geographic distribution or regional differences are the central insight","Only for international companies","Maps are not useful in dashboards"], correct:1, explain:"Maps are appropriate when location drives the analysis: regional revenue differences, delivery times by postcode, market share by state. For pure category comparisons (channel A vs. B), bar charts are better." },
-      { q:"How do you present data for non-technical audiences?", options:["Show all technical details for completeness","Insights before data: what does this mean for us? Simplify visualisations, explain jargon, highlight consequences","Only raw numbers without visualisation","Show as many charts as possible"], correct:1, explain:"For non-technical audiences: 1) Insights rather than data in the foreground, 2) Always answer 'what does this mean for us?', 3) Simple visualisations (bars/lines), 4) Make action recommendations explicit." },
-      { q:"What is the difference between an action dashboard and a monitoring dashboard?", options:["No difference","Action dashboard: shows critical deviations and clear calls to action; monitoring dashboard: shows continuous status of all KPIs without direct action required","Monitoring dashboards are always better","Action dashboards have no KPIs"], correct:1, explain:"Monitoring dashboard: Continuous overview (e.g. sales cockpit with daily updated KPIs). Action dashboard: Shows outliers, alerts, prioritised action areas. Choose based on use case." },
-      { q:"What is the goal of a final dashboard like the executive dashboard in Lab 09?", options:["To show all data as completely as possible","To synthesise the core insights from all analyses and translate them into three clear action recommendations that enable decisions","To use as many visualisation types as possible","To document technical data quality"], correct:1, explain:"A final dashboard synthesises: from data come insights, from insights come recommendations. The goal: decision-makers can act immediately based on the dashboard. That's the difference between data and business intelligence." }
+    recommendations:[
+      {num:1, title:lang=>'Optimise Shoes category', body:lang=>'28% negative reviews in Shoes. Action: revise sizing guide, add 360° product photos, extended return window. Goal: reduce negative share to < 15%.'},
+      {num:2, title:lang=>'Reallocate Display budget', body:lang=>'Display ROAS < 2. Action: reallocate 40% of Display budget to Email marketing and Social Media. Estimated upside: +€80k additional annual revenue.'},
+      {num:3, title:lang=>'Q4 Forecast preparation', body:lang=>'Tableau Forecast shows Q4 2025 +15% YoY. Action: increase storage capacity, notify logistics partner early, start Black Friday campaign 4 weeks earlier.'}
     ],
-    aiEye: "AI Outlook",
-    aiTitle: "Final Showcase: Python Plotly Dash Multi-Page App",
-    aiText: "The executive dashboard as an interactive web app – deployment-ready for Render or Railway (free):",
-    aiPrompt: `# Prompt for ChatGPT / Claude:
-"Create a Plotly Dash multi-page app as the final e-commerce analytics showcase.
-The app should have:
-- Home: Executive summary with 8 KPI cards (total revenue, AOV, ROAS, etc.)
-- Page 1: Time series (orders.csv - revenue per month, YoY comparison)
-- Page 2: Customer analysis (customers.csv - RFM segments)
-- Page 3: Conversion funnel (sessions.csv - funnel chart + heatmap)
-- Page 4: Marketing ROI (marketing.csv - ROAS bar + treemap)
-- Page 5: Action recommendations (3 concrete actions from the data)
-Colour scheme: #E87722 (primary), #005B9A (secondary)
-Add deployment instructions for Render.com (free) or Railway.app."
+    s2eye:"Step by Step", s2title:"Tableau: Building the Executive Dashboard",
+    s2lead:"You connect all datasets and build a complete dashboard with Tableau Story Points.",
+    steps:[
+      {title:"Connect all datasets", body:"New Tableau workbook. Connect in sequence: <code>orders.csv</code>, <code>customers.csv</code>, <code>reviews.csv</code>, <code>marketing.csv</code>, <code>sessions.csv</code>. Use <strong>data connections</strong>, not joins.", tip:"Tip: Separate data sources can be used in the same Tableau dashboard. For the KPI dashboard it's sufficient to use 'saved views' from previous labs."},
+      {title:"8 Key Metrics as KPI Cards", body:"Create 8 individual worksheets, one per KPI. Use a 'Text' chart with the respective metric.", tip:"KPI cards tip: Each card shows ONLY the value + label. NO axes, NO gridlines. Pure number in THWS orange, label in THWS blue."},
+      {title:"Tableau Story: 5 Chapters", body:"Click <code>+</code> at bottom → 'New Story'. Name the 5 points: (1) Overview, (2) Customers, (3) Products & Sentiment, (4) Marketing & ROI, (5) Recommendations. Add one fitting visualisation per point.", tip:"Story tip: Each story point should have ONE clear message. Write a caption: 'Insight: Bavaria generates 28% of total revenue.' Nothing more."},
+      {title:"Story Point 5: Action Recommendations", body:"For the last story point: create a text visualisation with 3 concrete action recommendations from your analyses. Format: (1) Problem, (2) Action, (3) expected result.", tip:"The best presentation ends with action recommendations, not data. Data is a means to an end – the end is a better decision."},
+      {title:"Conduct Peer Review", body:"Exchange your dashboard with a fellow student. Evaluate using the rubric below (Clarity, Completeness, Actionability, Visual Design). Give constructive feedback: What is good? What would you do differently?", tip:"Peer review tip: be specific. 'The colours are confusing' doesn't help. Better: 'In the marketing chart, blue and green have too little contrast – use orange for highlights.'"}
+    ],
+    s4eye:"Dashboard Design", s4title:"Principles of a Good Executive Dashboard",
+    concepts:[
+      {title:"KISS Principle: Keep It Simple, Stupid", body:"A dashboard with 20 charts confuses. 5-8 KPIs are ideal. Each visualisation answers exactly one question. Everything that answers no question gets removed.", tip:"Test: Show your dashboard to someone for 10 seconds. What did they remember? That's your message. Everything else is noise."},
+      {title:"Colour as Signal, not Decoration", body:"Colour should carry meaning: Red = problem, Green = good, Orange = warning. If everything is colourful, nothing is emphasised. Use colour sparingly and consistently.", tip:"THWS design: ONLY orange (#E87722) and blue (#005B9A) as accent colours. Everything else: grey (#9ca3af) or white. This creates focus."},
+      {title:"What is 'Chartjunk'?", body:"Chartjunk (Edward Tufte): everything in a chart that carries no information. Examples: 3D effects, shadows, excessive gridlines, unnecessary icons. Chartjunk reduces the signal-to-noise ratio.", tip:"Test: Can you remove an element without losing information? Then do it. This is called 'maximising the data-ink ratio.'"}
+    ],
+    peerTitle:"Peer-Review Rubric",
+    peerDesc:"Evaluate your fellow student's dashboard using these 4 criteria (1-5 points each):",
+    peerCriteria:[
+      {criterion:"Clarity", desc1:"Are the visualisations clear and readable?", desc2:"Is the message recognisable at first glance?", max:"5"},
+      {criterion:"Completeness", desc1:"Are all key KPIs from Labs 01-08 covered?", desc2:"Is there a story with a clear beginning and end?", max:"5"},
+      {criterion:"Actionability", desc1:"Do the insights lead to concrete actions?", desc2:"Are the recommendations in Story Point 5 specific and implementable?", max:"5"},
+      {criterion:"Visual Design", desc1:"Is the colour scheme applied consistently?", desc2:"No chartjunk? Is the whitespace appropriate?", max:"5"}
+    ],
+    quizTitle:"Quiz: Lab 09 – Executive Dashboard & Data Storytelling",
+    quizSub:"15 questions · The final quiz of the course.",
+    questions:[
+      {q:"What is an executive dashboard?",options:["A dashboard for all employees","A compact overview of the most important KPIs for management","A technical system monitoring dashboard","A dashboard for the IT department"],correct:1,explain:"Executive Dashboard: shows management the 5-8 most important KPIs on one page. No detailed drill-down, only the critical metrics for immediate decisions."},
+      {q:"How many KPIs are useful on an executive dashboard?",options:["As many as possible – more is better","5-8 (max 10) – too many confuses","Exactly 3","At least 20"],correct:1,explain:"Research (Few et al.): people can process 5-9 information units simultaneously. 5-8 KPIs are ideal – enough for overview, not so many as to overwhelm."},
+      {q:"What is Data Storytelling?",options:["Creating colourful infographics","The art of communicating data through a narrative structure with a clear beginning, turning point and action recommendation","A special Tableau function","Visualising time series"],correct:1,explain:"Data Storytelling combines data, visualisation and narrative. Goal: present insights so non-technical people understand what needs to be done."},
+      {q:"What is a Tableau Story Point?",options:["A single data point in a time series","A single slide in a Tableau Story – combines a visualisation with a short message","A calculated field","A filter"],correct:1,explain:"Tableau Story Points are slides within a Story: each point shows a visualisation with a caption/message. Stories are designed for presentations."},
+      {q:"What makes a good dashboard?",options:["Many colourful charts","Clear message, consistent colours, relevant KPIs, no redundancy and no chartjunk","As many data sources as possible","Complex calculated fields"],correct:1,explain:"Characteristics of a good dashboard: clear question, 5-8 relevant KPIs, consistent design, no unnecessary elements (chartjunk), immediately recognisable message."},
+      {q:"What is 'chartjunk'?",options:["Incorrect data points","Visual elements in a chart that carry no information (3D effects, shadows, decoration)","An outdated chart type","Too many colours"],correct:1,explain:"Chartjunk (Edward Tufte): everything with no information content – 3D effects, shadows, excessive gridlines. Increases visual noise without benefit."},
+      {q:"What does the KISS principle mean in dashboard design?",options:["Keep It Secure and Structured","Keep It Simple, Stupid – simplest representation that conveys the message","Keep It Sophisticated and Stylish","Keep It Scalable and Smart"],correct:1,explain:"KISS = Keep It Simple, Stupid. In dashboard design: each visualisation answers exactly one question. Everything that answers no question gets removed."},
+      {q:"What is a KPI vs. a metric?",options:["No difference","A KPI (Key Performance Indicator) is a strategically important metric linked to business goals; a metric is any measurable number","Metrics are only for IT teams","KPIs are always percentages"],correct:1,explain:"Metric = any measurable number (page views, clicks). KPI = strategically important metric showing whether a business goal is achieved. Not every metric is a KPI."},
+      {q:"What role does colour play on a dashboard?",options:["Purely decorative – the more colourful the better","Colour as signal: Red = problem, Green = good, Orange = warning – use sparingly and consistently","Colour should distinguish every data category","Colour is optional"],correct:1,explain:"Colour as signal: it should be meaningful (Red = alarm, Green = OK). If everything is colourful, nothing is emphasised. Use maximum 2-3 accent colours."},
+      {q:"What is a drill-down?",options:["A Tableau chart type","The ability to navigate from an overview into details (e.g. from region to city)","A time series filter","An export function"],correct:1,explain:"Drill-Down = interactivity: user clicks Bavaria → sees cities in Bavaria. From aggregation to detail. In Tableau: hierarchies or filter actions."},
+      {q:"Why is a bar chart better than a pie chart for rankings?",options:["Pie charts are outdated","People compare lengths more accurately than angles/areas – bar charts are better for precise comparisons","Bar charts are faster to create","Pie charts need more space"],correct:1,explain:"Cognitive science: when comparing values, perception of lengths (bar) is more accurate than angles (pie). Use pie charts only for shares with 2-4 categories."},
+      {q:"When should you use a map in a dashboard?",options:["Always, maps look professional","When geographic variation is a central theme (e.g. regional revenue differences)","For all time series analyses","For sentiment analyses"],correct:1,explain:"Maps are useful when geographic location/distribution matters. If Bavaria vs NRW is the point rather than their geographic position, a bar chart suffices."},
+      {q:"How do you present data to non-technical people?",options:["With as many technical details and formulas as possible","With a clear story: Problem → Insight → Action recommendation; no technical details","Only with tables","With raw data instead of visualisations"],correct:1,explain:"For non-technical audiences: problem first ('Shoes have 28% negative reviews'), then insight ('sizing doesn't fit'), then action ('revise sizing guide'). No methodology."},
+      {q:"What is an 'Action Dashboard' vs. 'Monitoring Dashboard'?",options:["No difference","Action Dashboard: shows what needs to be done (few KPIs, clear actionability); Monitoring: shows ongoing status (more metrics, alerts)","Action dashboards are for IT teams","Monitoring is outdated"],correct:1,explain:"Action Dashboard: leads to decisions – few, highly relevant KPIs. Monitoring Dashboard: shows ongoing status – more metrics, alert thresholds. Executives usually use action dashboards."},
+      {q:"What is most important about an executive dashboard?",options:["The number of visualisations","Answering 'What do I need to do now?' in under 30 seconds","Technical complexity","Font size"],correct:1,explain:"The executive dashboard must answer the most important question in under 30 seconds: Is the business running well? Where do I need to intervene? What is the next action?"}
+    ],
+    aiEye:"AI Outlook", aiTitle:"Plotly Dash: Complete Multi-Page Dashboard",
+    aiText:"As a final showcase: a complete Plotly Dash dashboard with all UrbanCart KPIs, ready for deployment:",
+    aiCode:`# Prompt for ChatGPT / Claude:
+"Create a complete Plotly Dash Multi-Page dashboard for UrbanCart.
+Pages: Overview, Customers, Products, Marketing, Sentiment.
+Use all CSV files: orders.csv, customers.csv, reviews.csv,
+marketing.csv, sessions.csv.
+Show 8 KPI cards on the Overview page.
+Deployment on Render.com: requirements.txt with dash, plotly, pandas.
+Colour scheme: Orange #E87722 + Blue #005B9A."
 
-# Deployment (free):
-# render.com: requirements.txt + Procfile + render.yaml → auto-deploy
-# railway.app: connect GitHub repo → 1-click deploy
-# Both: Dash app exposed as web service (URL immediately shareable)
-
-# Multi-page Dash starter:
 import dash
 from dash import dcc, html, Input, Output
 import plotly.express as px
 import pandas as pd
 
-app = dash.Dash(__name__, use_pages=True)
+app = dash.Dash(__name__, use_pages=True,
+    suppress_callback_exceptions=True)
+
 app.layout = html.Div([
-    html.Nav([  # Navigation
-        dcc.Link('Executive Summary', href='/'),
-        dcc.Link('Time Series', href='/time-series'),
-        dcc.Link('Customers', href='/customers'),
-        dcc.Link('Funnel', href='/funnel'),
-        dcc.Link('Marketing', href='/marketing'),
-    ]),
-    dash.page_container  # Page content
+    html.Div([
+        html.H1("UrbanCart Executive Dashboard",
+                style={{"color":"#005B9A","fontWeight":900}}),
+        dcc.Link("Overview", href="/"),
+        dcc.Link("Marketing", href="/marketing"),
+    ], style={{"padding":"16px 32px","borderBottom":"3px solid #E87722"}}),
+    dash.page_container
 ])
 
-# Create page (pages/home.py):
-# import dash; dash.register_page(__name__, path='/')
-
-if __name__ == '__main__':
-    app.run(debug=True, port=8050)
-
-# requirements.txt: dash>=2.14, plotly>=5.17, pandas>=2.0, gunicorn`,
-    nextLab: null,
-    prevLab: "← Lab 08: Marketing ROI",
-    completeTitle: ["Course", "Complete"],
-    completeSub: "You have successfully completed all 9 labs of the UrbanCart E-Commerce Analytics course. From raw data exploration to executive dashboard – you are now able to make and present data-driven decisions in e-commerce.",
-    completeBadge: "THWS Business School · E-Commerce Analytics",
-    completeLink: "Back to course overview",
-    completeKpis: [
-      { val:"9", lbl:"Labs" },
-      { val:"135", lbl:"Quiz questions" },
-      { val:"7", lbl:"Datasets" }
-    ]
+# Deployment: Procfile -> web: gunicorn app:server`,
+    prevLab:"← Lab 08", nextLab:null,
+    prevHref:"lab08.html", overviewHref:"index.html"
   }
 };
 
-function Quiz({ questions, t, lang }) {
+function Quiz({ questions, lang, quizTitle, quizSub }) {
   const [answers, setAnswers] = useState({});
   const [revealed, setRevealed] = useState({});
   const done = Object.keys(revealed).length === questions.length;
-  const score = Object.entries(answers).filter(([i, a]) => a === questions[i].correct).length;
+  const score = Object.entries(answers).filter(([i,a]) => Number(a) === questions[Number(i)].correct).length;
   const handleAnswer = (qi, oi) => {
     if (revealed[qi] !== undefined) return;
-    setAnswers(prev => ({ ...prev, [qi]: oi }));
-    setRevealed(prev => ({ ...prev, [qi]: true }));
+    setAnswers(p=>({...p,[qi]:oi}));
+    setRevealed(p=>({...p,[qi]:true}));
   };
   return (
     <div className="quiz-section">
-      <h3 className="quiz-title">{t.quizTitle}</h3>
-      <p className="quiz-sub">{t.quizSub}</p>
+      <h3 className="quiz-title">{quizTitle}</h3>
+      <p className="quiz-sub">{quizSub}</p>
       <div className="quiz-progress">{Object.keys(revealed).length} / {questions.length} {lang==='de'?'beantwortet':'answered'}</div>
-      {questions.map((q, qi) => (
+      {questions.map((q,qi)=>(
         <div key={qi} className="question-block">
-          <div className="question-num">{lang==='de'?'Frage':'Question'} {qi + 1}</div>
+          <div className="question-num">{lang==='de'?'Frage':'Question'} {qi+1}</div>
           <div className="question-text">{q.q}</div>
           <div className="options">
-            {q.options.map((opt, oi) => {
-              let cls = "option-btn";
-              if (revealed[qi] !== undefined) {
-                cls += " revealed";
-                if (oi === q.correct) cls += " correct";
-                else if (oi === answers[qi]) cls += " wrong";
-              }
-              return (
-                <button key={oi} className={cls} onClick={() => handleAnswer(qi, oi)}>
-                  <span style={{marginRight:'8px',fontWeight:800}}>{String.fromCharCode(65+oi)}.</span>{opt}
-                </button>
-              );
+            {q.options.map((opt,oi)=>{
+              let cls="option-btn";
+              if(revealed[qi]!==undefined){cls+=" revealed";if(oi===q.correct)cls+=" correct";else if(oi===answers[qi])cls+=" wrong";}
+              return <button key={oi} className={cls} onClick={()=>handleAnswer(qi,oi)}><span style={{marginRight:'8px',fontWeight:800}}>{String.fromCharCode(65+oi)}.</span>{opt}</button>;
             })}
           </div>
-          {revealed[qi] !== undefined && (
-            <div className={`feedback ${answers[qi] === q.correct ? 'correct' : 'wrong'}`}>
-              {answers[qi] === q.correct ? (lang==='de'?"✓ Richtig! ":"✓ Correct! ") : (lang==='de'?"✗ Nicht ganz. ":"✗ Not quite. ")}
-              {q.explain}
-            </div>
-          )}
+          {revealed[qi]!==undefined&&<div className={`feedback ${answers[qi]===q.correct?'correct':'wrong'}`}>{answers[qi]===q.correct?(lang==='de'?'✓ Richtig! ':'✓ Correct! '):(lang==='de'?'✗ Nicht ganz. ':'✗ Not quite. ')}{q.explain}</div>}
         </div>
       ))}
-      {done && (
-        <div className="quiz-result">
-          <div className="quiz-result-score">{score}/{questions.length}</div>
-          <div className="quiz-result-label">{lang==='de'?'Punkte':'Points'}</div>
-          <div className="quiz-result-msg">
-            {score >= 13 ? (lang==='de'?'Ausgezeichnet! Kurs abgeschlossen!':'Excellent! Course complete!') :
-             score >= 10 ? (lang==='de'?'Gut! Lies die Erklärungen nochmal durch.':'Good! Review the explanations.') :
-             (lang==='de'?'Noch einmal! Schau dir die Erklärungen an.':'Try again! Check the explanations.')}
-          </div>
-        </div>
-      )}
+      {done&&<div className="quiz-result"><div className="quiz-result-score">{score}/{questions.length}</div><div className="quiz-result-label">{lang==='de'?'Punkte':'Points'}</div><div className="quiz-result-msg">{score>=13?(lang==='de'?'🎉 Hervorragend! Du hast den Kurs abgeschlossen!':'🎉 Outstanding! You completed the course!'):score>=10?(lang==='de'?'👍 Gut! Lies die Erklärungen nochmal durch.':'👍 Good! Review the explanations.'):(lang==='de'?'💪 Noch einmal! Schau dir die Erklärungen an.':'💪 Try again! Check the explanations.')}</div></div>}
     </div>
   );
 }
@@ -568,19 +372,16 @@ function App() {
   const t = T[lang];
   useEffect(() => {
     const els = document.querySelectorAll('.sr');
-    const obs = new IntersectionObserver(entries => {
-      entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
-    }, { threshold: 0.08 });
+    const obs = new IntersectionObserver(entries => { entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); }); }, {threshold:0.08});
     els.forEach(el => obs.observe(el));
     return () => obs.disconnect();
   }, [lang]);
-
   return (
     <>
       <nav className="navbar">
         <div className="nav-brand">
-          <a href="index.html" style={{textDecoration:'none', display:'flex', alignItems:'center', gap:'10px'}}>
-            <img src={"data:image/png;base64,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"} alt="THWS Business School" style={{height:'30px',width:'auto'}}/>
+          <a href="index.html" style={{textDecoration:'none',display:'flex',alignItems:'center',gap:'10px'}}>
+            <img src={LOGO} alt="THWS" style={{height:'30px',width:'auto'}}/>
             <div style={{width:'1px',height:'24px',background:'#E9ECEF'}}/>
             <span className="nav-brand-text">E-Commerce Labs</span>
           </a>
@@ -591,67 +392,37 @@ function App() {
           <button className={`lang-btn${lang==='en'?' active':''}`} onClick={()=>setLang('en')}>EN</button>
         </div>
       </nav>
-
       <div className="progress-bar">
-        {t.progSteps.map((s, i) => (
+        {t.progSteps.map((s,i)=>(
           <React.Fragment key={i}>
-            <div className={`prog-step ${i < 5 ? 'done' : i === 5 ? 'active' : ''}`}>
-              <div className={`prog-dot ${i < 5 ? 'done' : i === 5 ? 'active' : ''}`}>
-                {i < 5 ? '✓' : i + 1}
-              </div>
-              {s}
+            <div className={`prog-step ${i<2?'done':i===2?'active':''}`}>
+              <div className={`prog-dot ${i<2?'done':i===2?'active':''}`}>{i<2?'✓':i+1}</div>{s}
             </div>
-            {i < t.progSteps.length - 1 && <div className="prog-arrow">›</div>}
+            {i<t.progSteps.length-1&&<div className="prog-arrow">›</div>}
           </React.Fragment>
         ))}
       </div>
-
-      <div className="lab-hero" style={{background:'linear-gradient(135deg,#005B9A 0%,#0077c8 100%)'}}>
+      <div className="lab-hero">
         <div className="lab-hero-inner">
           <div className="lab-num">{t.labNum}</div>
           <h1 className="lab-title">{t.labTitle[0]}<span>{t.labTitle[1]}</span></h1>
           <p className="lab-sub">{t.labSub}</p>
           <div className="lab-meta">
-            {[
-              [<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>, t.metaDauer],
-              [<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>, t.metaLevel],
-              [<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>, t.metaData],
-              [<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>, t.metaTool]
-            ].map(([icon,val],i) => (
+            {[['⏱',t.metaDauer],['🏆',t.metaLevel],['📁',t.metaData],['🔧',t.metaTool]].map(([icon,val],i)=>(
               <div key={i} className="lab-meta-item">{icon} <strong>{val}</strong></div>
             ))}
           </div>
         </div>
       </div>
-
       <div className="content">
-
-        <div className="section-block sr">
-          <div className="block-eyebrow">{lang==='de'?'Kurs-Meilenstein':'Course Milestone'}</div>
-          <h2 className="block-title">{lang==='de'?'Du hast fast alle Labs abgeschlossen':'You have almost completed all labs'}</h2>
-          <div className="divider"/>
-          <div className="kpi-grid">
-            {t.kpis.map((k,i) => (
-              <div key={i} className="kpi-card">
-                <div className="kpi-val">{k.val}</div>
-                <div className="kpi-lbl">{k.lbl}</div>
-                <div className="kpi-def">{k.def}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
         <div className="section-block sr">
           <div className="block-eyebrow">{t.s1eye}</div>
           <h2 className="block-title">{t.s1title}</h2>
           <div className="divider"/>
           <p className="block-lead">{t.s1lead}</p>
-          <div className="kpi-grid" style={{marginTop:'20px'}}>
-            {[
-              {val:lang==='de'?"Überblick":"Overview", lbl:lang==='de'?"Stufe 1":"Level 1", def:lang==='de'?"8 KPI-Cards: Was passiert im Unternehmen? Schneller Kontext für die Geschäftsführung.":"8 KPI cards: What's happening in the company? Quick context for management."},
-              {val:lang==='de'?"Details":"Details", lbl:lang==='de'?"Stufe 2":"Level 2", def:lang==='de'?"Drill-Down in kritische Bereiche: Welche Kategorie/Kanal/Region hat Probleme?":"Drill-down into critical areas: Which category/channel/region has issues?"},
-              {val:lang==='de'?"Aktion":"Action", lbl:lang==='de'?"Stufe 3":"Level 3", def:lang==='de'?"3 konkrete Empfehlungen: Was sollen wir tun? Mit Datenbeweis und erwartetem Impact.":"3 concrete recommendations: What should we do? With data evidence and expected impact."}
-            ].map((k,i) => (
+          <div style={{fontSize:'0.78rem',fontWeight:700,color:'#6C757D',marginBottom:'8px',textTransform:'uppercase',letterSpacing:'0.08em'}}>{lang==='de'?'UrbanCart – 8 Key Metrics (Kurs-Zusammenfassung)':'UrbanCart – 8 Key Metrics (Course Summary)'}</div>
+          <div className="kpi-grid-8">
+            {t.kpis.map((k,i)=>(
               <div key={i} className="kpi-card">
                 <div className="kpi-val">{k.val}</div>
                 <div className="kpi-lbl">{k.lbl}</div>
@@ -660,124 +431,110 @@ function App() {
             ))}
           </div>
         </div>
-
+        <div className="section-block sr">
+          <div className="block-eyebrow">{lang==='de'?'Tableau Story':'Tableau Story'}</div>
+          <h2 className="block-title">{lang==='de'?'Story Points: 5 Kapitel':'Story Points: 5 Chapters'}</h2>
+          <div className="divider"/>
+          <p className="block-lead">{lang==='de'?'Deine Präsentation folgt dieser Struktur – von Überblick bis Handlungsempfehlung.':'Your presentation follows this structure – from overview to action recommendation.'}</p>
+          <div className="story-grid">
+            {t.storyPoints.map((sp,i)=>(
+              <div key={i} className="story-card">
+                <div className="story-num">{sp.num}</div>
+                <div className="story-title">{sp.title}</div>
+                <div className="story-desc">{sp.desc}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div className="section-block sr">
+          <div className="block-eyebrow">{lang==='de'?'Story Point 5':'Story Point 5'}</div>
+          <h2 className="block-title">{lang==='de'?'3 Handlungsmaßnahmen für UrbanCart':'3 Action Recommendations for UrbanCart'}</h2>
+          <div className="divider"/>
+          {t.recommendations.map((r,i)=>(
+            <div key={i} className="step-card" style={{borderLeft:'3px solid #E87722',marginBottom:'16px'}}>
+              <div className="step-header">
+                <div className="step-num" style={{background:'#E87722'}}>{r.num}</div>
+                <div className="step-title">{r.title(lang)}</div>
+              </div>
+              <div className="step-body">{r.body(lang)}</div>
+            </div>
+          ))}
+        </div>
         <div className="section-block sr">
           <div className="block-eyebrow">{t.s2eye}</div>
           <h2 className="block-title">{t.s2title}</h2>
           <div className="divider"/>
           <p className="block-lead">{t.s2lead}</p>
           <div className="steps">
-            {t.steps.map((step, i) => (
+            {t.steps.map((step,i)=>(
               <div key={i} className="step-card">
-                <div className="step-header">
-                  <div className="step-num">{i+1}</div>
-                  <div className="step-title">{step.title}</div>
-                </div>
-                <div className="step-body" dangerouslySetInnerHTML={{__html: step.body}}/>
-                {step.tip && <div className="step-tip">{step.tip}</div>}
+                <div className="step-header"><div className="step-num">{i+1}</div><div className="step-title">{step.title}</div></div>
+                <div className="step-body" dangerouslySetInnerHTML={{__html:step.body}}/>
+                {step.tip&&<div className="step-tip">{step.tip}</div>}
+                {i<4&&<div className="screenshot-placeholder"><div className="screenshot-placeholder-text">{lang==='de'?`Dein Ergebnis für Schritt ${i+1}`:`Your result for step ${i+1}`}</div></div>}
               </div>
             ))}
           </div>
         </div>
-
         <div className="section-block sr">
-          <div className="block-eyebrow">{t.s3eye}</div>
-          <h2 className="block-title">{t.s3title}</h2>
+          <div className="block-eyebrow">{t.s4eye}</div>
+          <h2 className="block-title">{t.s4title}</h2>
           <div className="divider"/>
-          <p className="block-lead">{t.s3lead}</p>
-          <table className="peer-table">
-            <thead>
-              <tr>
-                <th>{lang==='de'?'Kriterium':'Criterion'}</th>
-                <th>{lang==='de'?'Beschreibung':'Description'}</th>
-                <th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[
-                {
-                  crit: lang==='de'?"Klarheit":"Clarity",
-                  desc: lang==='de'?"Sind die wichtigsten Erkenntnisse auf Anhieb verständlich?":"Are the most important insights immediately understandable?"
-                },
-                {
-                  crit: lang==='de'?"Vollständigkeit":"Completeness",
-                  desc: lang==='de'?"Sind alle 8 KPIs und die Story Points vollständig?":"Are all 8 KPIs and story points complete?"
-                },
-                {
-                  crit: lang==='de'?"Handlungsrelevanz":"Action Relevance",
-                  desc: lang==='de'?"Leiten die Empfehlungen zu konkreten Maßnahmen?":"Do the recommendations lead to concrete measures?"
-                },
-                {
-                  crit: lang==='de'?"Design":"Design",
-                  desc: lang==='de'?"Professionelles, konsistentes visuelles Erscheinungsbild?":"Professional, consistent visual appearance?"
-                }
-              ].map((row, i) => (
-                <tr key={i}>
-                  <td style={{fontWeight:700, color:'#005B9A'}}>{row.crit}</td>
-                  <td>{row.desc}</td>
-                  {[0,1,2,3,4,5].map(n => <td key={n} className="score-cell">{n}</td>)}
-                </tr>
-              ))}
-              <tr>
-                <td colspan="2" style={{fontWeight:800, color:'#212529', textAlign:'right'}}>
-                  {lang==='de'?'Gesamt (max. 20 Punkte):':'Total (max. 20 points):'}
-                </td>
-                <td colspan="6" className="score-cell" style={{fontWeight:900, fontSize:'1rem', color:'#E87722'}}>/20</td>
-              </tr>
-            </tbody>
-          </table>
+          {t.concepts.map((c,i)=>(
+            <div key={i} className="concept-card">
+              <div className="concept-title">{c.title}</div>
+              <div className="concept-body">{c.body}</div>
+              {c.tip&&<div className="concept-tip">{c.tip}</div>}
+            </div>
+          ))}
         </div>
-
         <div className="section-block sr">
-          <Quiz questions={t.questions} t={t} lang={lang}/>
+          <div className="peer-section">
+            <div className="peer-title">{t.peerTitle}</div>
+            <p style={{fontSize:'0.84rem',color:'#6C757D',marginBottom:'16px'}}>{t.peerDesc}</p>
+            <table className="peer-table">
+              <thead><tr><th>{lang==='de'?'Kriterium':'Criterion'}</th><th>{lang==='de'?'Beschreibung':'Description'}</th><th>{lang==='de'?'Max. Punkte':'Max Points'}</th></tr></thead>
+              <tbody>
+                {t.peerCriteria.map((c,i)=>(
+                  <tr key={i}>
+                    <td><strong>{c.criterion}</strong></td>
+                    <td>{c.desc1}<br/><span style={{fontSize:'0.75rem',color:'#9ca3af'}}>{c.desc2}</span></td>
+                    <td><strong style={{color:'#E87722'}}>{c.max}</strong></td>
+                  </tr>
+                ))}
+                <tr><td colSpan="2"><strong>{lang==='de'?'Gesamt':'Total'}</strong></td><td><strong style={{color:'#005B9A'}}>20</strong></td></tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-
+        <div className="section-block sr">
+          <Quiz questions={t.questions} lang={lang} quizTitle={t.quizTitle} quizSub={t.quizSub}/>
+        </div>
         <div className="section-block sr">
           <div className="ai-section">
             <div className="ai-eyebrow">{t.aiEye}</div>
             <h3 className="ai-title">{t.aiTitle}</h3>
             <p className="ai-text">{t.aiText}</p>
-            <div className="code-block">{t.aiPrompt}</div>
+            <div className="code-block">{t.aiCode}</div>
           </div>
         </div>
-
-      </div>
-
-      {/* Abschluss-Block */}
-      <div className="course-complete">
-        <div className="confetti-strip">
-          {[1,2,3,4,5,6,7,8,9,10].map(i => (
-            <div key={i} className="confetti-dot" style={{animationDelay: `${(i-1)*0.18}s`}}></div>
-          ))}
-        </div>
-        <div className="complete-kpis">
-          {t.completeKpis.map((k,i) => (
-            <div key={i} className="complete-kpi">
-              <div className="complete-kpi-val">{k.val}</div>
-              <div className="complete-kpi-lbl">{k.lbl}</div>
+        <div className="section-block sr">
+          <div className="completion-section">
+            <div className="completion-trophy">🎓</div>
+            <div className="completion-title">{lang==='de'?'Kurs abgeschlossen!':'Course Completed!'}</div>
+            <p className="completion-sub">{lang==='de'?'Du hast alle 9 Labs des E-Commerce & Digitale Geschäftsmodelle Kurses erfolgreich durchgearbeitet. Von einfachen KPIs bis zum Executive Dashboard – du kannst jetzt Daten für Entscheidungen nutzen.':'You have successfully completed all 9 labs of the E-Commerce & Digital Business Models course. From basic KPIs to executive dashboards – you can now use data to drive decisions.'}</p>
+            <div className="completion-labs">
+              {['Lab 01','Lab 02','Lab 03','Lab 04','Lab 05','Lab 06','Lab 07','Lab 08','Lab 09'].map(l=>(
+                <span key={l} className="completion-lab-tag">{l} ✓</span>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
-        <h2 className="course-complete-title">{t.completeTitle[0]} <span>{t.completeTitle[1]}</span></h2>
-        <p className="course-complete-sub">{t.completeSub}</p>
-        <div className="course-complete-badge">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{color:'#E87722'}}><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-          <span>{t.completeBadge}</span>
-        </div>
-        <br/>
-        <a href="index.html" className="course-complete-link">
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-          {t.completeLink}
-        </a>
       </div>
-
       <div className="lab-nav">
-        <a href="lab08.html" className="lab-nav-btn">
-          {t.prevLab}
-        </a>
-        <a href="index.html" className="lab-nav-btn" style={{color:'#3D7A56', fontWeight:700}}>
-          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{marginRight:'4px'}}><polyline points="20 6 9 17 4 12"/></svg>
-          {lang==='de'?'Kurs abgeschlossen':'Course complete'}
+        <a href={t.prevHref} className="lab-nav-btn">{t.prevLab}</a>
+        <a href={t.overviewHref} className="lab-nav-btn primary">
+          {lang==='de'?'← Zur Kursübersicht':'← Back to Course Overview'}
         </a>
       </div>
     </>
