@@ -1,1017 +1,1191 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Lab 03 – RFM-Analyse · UrbanCart · THWS</title>
-  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body { font-family: 'Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif; background:#fff; color:#212529; }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Lab 03 – RFM-Analyse · THWS E-Commerce</title>
+<style>
+/* ── RESET ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{
+  font-family:'Segoe UI','Helvetica Neue',Helvetica,Arial,sans-serif;
+  background:#fff;color:#212529;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  line-height:1.5
+}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
 
-    .top-bar { height:4px; background:#E87722; position:fixed; top:0; left:0; right:0; z-index:200; }
+/* ── GRID SYSTEM ── */
+/* 8px base, columns: max 1200px centered, 32px gutters */
+.container{max-width:1200px;margin:0 auto;padding:0 32px}
+@media(max-width:640px){.container{padding:0 16px}}
 
-    .navbar {
-      position:sticky; top:4px; z-index:100;
-      background:#fff; border-bottom:1px solid #E9ECEF;
-      box-shadow:0 1px 8px rgba(0,0,0,0.05);
-      height:52px; display:flex; align-items:center;
-      padding:0 32px; justify-content:space-between;
-    }
-    .nav-brand { display:flex; align-items:center; gap:10px; text-decoration:none; }
-    .nav-brand-text { font-size:0.78rem; font-weight:700; color:#005B9A; letter-spacing:0.04em; text-transform:uppercase; }
-    .nav-lab-badge {
-      background:rgba(232,119,34,0.12); color:#E87722;
-      font-size:0.68rem; font-weight:700;
-      padding:3px 10px; letter-spacing:0.06em; text-transform:uppercase;
-    }
-    .lang-wrap { display:flex; gap:4px; }
-    .lang-btn {
-      padding:4px 10px; border-radius:3px;
-      border:1.5px solid #E9ECEF; background:#fff;
-      cursor:pointer; font-weight:700; font-size:0.72rem;
-      color:#6C757D; transition:all 0.15s; font-family:inherit;
-    }
-    .lang-btn.active { background:#E87722; color:#fff; border-color:#E87722; }
+/* ── AICHER TOP BAR ── */
+.topbar{height:4px;background:#E87722;position:fixed;top:0;left:0;right:0;z-index:200}
 
-    .progress-bar {
-      background:#F1F3F5; padding:12px 32px;
-      display:flex; align-items:center; gap:8px; overflow-x:auto;
-    }
-    .prog-step {
-      display:flex; align-items:center; gap:6px; white-space:nowrap;
-      font-size:0.72rem; font-weight:700; color:#9ca3af;
-    }
-    .prog-step.active { color:#E87722; }
-    .prog-step.done { color:#3D7A56; }
-    .prog-dot {
-      width:24px; height:24px; border-radius:50%;
-      background:#E9ECEF; display:flex; align-items:center;
-      justify-content:center; font-size:0.68rem; font-weight:800;
-      flex-shrink:0;
-    }
-    .prog-dot.active { background:#E87722; color:#fff; }
-    .prog-dot.done { background:#3D7A56; color:#fff; }
-    .prog-arrow { color:#D1D5DB; font-size:0.9rem; }
+/* ── NAVBAR ── */
+.navbar{
+  position:sticky;top:4px;z-index:100;
+  background:#fff;
+  border-bottom:1px solid #E9ECEF;
+  height:64px;
+}
+.navbar__inner{
+  max-width:1200px;margin:0 auto;padding:0 32px;
+  height:64px;display:flex;align-items:center;
+  justify-content:space-between;gap:24px;
+}
+.navbar__brand{display:flex;align-items:center;gap:16px;flex-shrink:0}
+.navbar__logo{height:28px;width:auto;flex-shrink:0}
+.navbar__sep{width:1px;height:24px;background:#E9ECEF;flex-shrink:0}
+.navbar__kurs{
+  font-size:11px;font-weight:700;
+  letter-spacing:.1em;text-transform:uppercase;
+  color:#6C757D;white-space:nowrap;
+}
+.navbar__right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.lang-btn{
+  padding:4px 12px;
+  border:1.5px solid #E9ECEF;background:#fff;
+  font-size:11px;font-weight:700;letter-spacing:.06em;
+  color:#6C757D;transition:all .15s;
+}
+.lang-btn.is-active{background:#E87722;color:#fff;border-color:#E87722}
+.lang-btn:hover:not(.is-active){border-color:#005B9A;color:#005B9A}
 
-    .lab-hero {
-      background:#005B9A; padding:48px 32px;
-      position:relative; overflow:hidden;
-    }
-    .lab-hero-inner { max-width:800px; }
-    .lab-num {
-      font-size:0.72rem; font-weight:700; letter-spacing:0.18em;
-      text-transform:uppercase; color:rgba(255,255,255,0.5); margin-bottom:8px;
-    }
-    .lab-title { font-size:clamp(1.8rem,4vw,2.8rem); font-weight:800; color:#fff; line-height:1.1; margin-bottom:12px; }
-    .lab-title span { color:#E87722; }
-    .lab-sub { font-size:1rem; color:rgba(255,255,255,0.75); line-height:1.7; max-width:560px; }
-    .lab-meta { display:flex; gap:16px; flex-wrap:wrap; margin-top:24px; }
-    .lab-meta-item {
-      display:flex; align-items:center; gap:6px;
-      font-size:0.78rem; font-weight:600; color:rgba(255,255,255,0.6);
-    }
-    .lab-meta-item strong { color:#fff; }
+/* ── HERO ── */
+.hero{
+  background:#005B9A;
+  padding:80px 0 72px;
+  position:relative;overflow:hidden;
+}
+.hero::before{
+  content:'';
+  position:absolute;top:-80px;right:-80px;
+  width:480px;height:480px;border-radius:50%;
+  background:rgba(232,119,34,.1);
+  pointer-events:none;
+}
+.hero__inner{
+  max-width:1200px;margin:0 auto;padding:0 32px;
+  display:grid;grid-template-columns:1fr auto;
+  align-items:end;gap:64px;
+}
+@media(max-width:900px){.hero__inner{grid-template-columns:1fr;gap:40px}}
+.hero__label{
+  font-size:11px;font-weight:700;letter-spacing:.18em;
+  text-transform:uppercase;color:rgba(255,255,255,.5);
+  margin-bottom:16px;
+}
+.hero__title{
+  font-size:clamp(40px,6vw,72px);
+  font-weight:800;color:#fff;
+  line-height:1.05;letter-spacing:-.02em;
+  margin-bottom:0;
+}
+.hero__title em{color:#E87722;font-style:normal;display:block}
+.hero__sub{
+  font-size:17px;color:rgba(255,255,255,.72);
+  line-height:1.7;margin-top:24px;max-width:540px;
+}
+.hero__badges{display:flex;flex-wrap:wrap;gap:8px;margin-top:32px}
+.hero__badge{
+  border:1.5px solid rgba(255,255,255,.3);
+  color:rgba(255,255,255,.7);
+  font-size:11px;font-weight:700;letter-spacing:.08em;
+  padding:5px 12px;text-transform:uppercase;
+}
+.hero__cta-row{display:flex;gap:12px;flex-wrap:wrap;margin-top:40px}
+.btn-primary{
+  background:#E87722;color:#fff;
+  padding:12px 28px;font-size:13px;font-weight:700;
+  border:2px solid #E87722;letter-spacing:.04em;
+  transition:background .15s,transform .15s;
+  display:inline-block;
+}
+.btn-primary:hover{background:#cf6a1c;border-color:#cf6a1c;transform:translateY(-1px)}
+.btn-outline-white{
+  background:transparent;color:#fff;
+  padding:12px 28px;font-size:13px;font-weight:700;
+  border:2px solid rgba(255,255,255,.4);letter-spacing:.04em;
+  transition:border-color .15s;
+  display:inline-block;
+}
+.btn-outline-white:hover{border-color:rgba(255,255,255,.8)}
 
-    .content { max-width:800px; margin:0 auto; padding:48px 32px; }
-    .section-block { margin-bottom:48px; }
-    .block-eyebrow {
-      font-size:0.68rem; font-weight:700; letter-spacing:0.14em;
-      text-transform:uppercase; color:#E87722; margin-bottom:6px;
-    }
-    .block-title { font-size:1.3rem; font-weight:800; color:#005B9A; margin-bottom:8px; }
-    .block-lead { font-size:0.95rem; color:#6C757D; line-height:1.75; margin-bottom:20px; }
-    .divider { width:40px; height:3px; background:#E87722; margin:8px 0 16px; }
+/* ── STATS BAR ── */
+.statsbar{
+  background:#fff;
+  border-bottom:1px solid #E9ECEF;
+}
+.statsbar__inner{
+  max-width:1200px;margin:0 auto;padding:0 32px;
+  display:flex;flex-wrap:wrap;
+}
+.stat{
+  flex:1;min-width:150px;
+  padding:28px 24px;
+  text-align:center;
+  position:relative;
+}
+.stat+.stat::before{
+  content:'';position:absolute;
+  left:0;top:24px;height:calc(100% - 48px);
+  width:1px;background:#E9ECEF;
+}
+.stat__num{
+  font-size:36px;font-weight:900;
+  color:#E87722;line-height:1;
+  font-variant-numeric:tabular-nums;
+}
+.stat__lbl{
+  font-size:11px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.1em;
+  color:#005B9A;margin-top:8px;
+}
 
-    .steps { display:flex; flex-direction:column; gap:16px; }
-    .step-card {
-      border:1.5px solid #E9ECEF; padding:20px 24px;
-      border-left:3px solid #005B9A;
-      transition:border-color 0.2s;
-    }
-    .step-card:hover { border-left-color:#E87722; }
-    .step-header { display:flex; align-items:center; gap:12px; margin-bottom:10px; }
-    .step-num {
-      width:28px; height:28px; border-radius:50%;
-      background:#005B9A; color:#fff;
-      display:flex; align-items:center; justify-content:center;
-      font-size:0.75rem; font-weight:800; flex-shrink:0;
-    }
-    .step-title { font-size:0.95rem; font-weight:800; color:#212529; }
-    .step-body { font-size:0.87rem; color:#6C757D; line-height:1.7; margin-left:40px; }
-    .step-body code {
-      background:#F1F3F5; padding:1px 6px;
-      font-family:'Consolas','Monaco',monospace; font-size:0.82rem;
-      color:#E87722; border-radius:2px;
-    }
-    .step-tip {
-      background:rgba(0,91,154,0.06); border-left:2px solid #005B9A;
-      padding:10px 14px; margin-top:10px; margin-left:40px;
-      font-size:0.82rem; color:#005B9A; line-height:1.6;
-    }
+/* ── SECTIONS ── */
+.section{padding:80px 0}
+.section--alt{background:#F8F9FA}
+.section__eyebrow{
+  font-size:11px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.14em;
+  color:#E87722;margin-bottom:8px;
+}
+.section__title{
+  font-size:clamp(24px,3vw,36px);
+  font-weight:800;color:#212529;
+  line-height:1.2;
+}
+.section__lead{
+  font-size:15px;color:#6C757D;
+  line-height:1.75;margin-top:16px;
+  max-width:640px;
+}
+.divider{width:48px;height:3px;background:#E87722;margin:12px 0 32px}
 
-    .screenshot-placeholder {
-      background:#F1F3F5; border:1.5px dashed #D1D5DB;
-      padding:32px; text-align:center; margin:16px 0;
-      border-radius:2px;
-    }
-    .screenshot-placeholder-icon { font-size:2rem; opacity:0.3; margin-bottom:8px; }
-    .screenshot-placeholder-text { font-size:0.78rem; color:#9ca3af; font-weight:600; }
+/* ── DEMING QUOTE ── */
+.quote{
+  border-left:3px solid #E87722;
+  padding:32px 40px;
+  background:#F8F9FA;
+  margin-top:48px;
+}
+.quote__text{
+  font-size:clamp(18px,2.5vw,26px);
+  font-weight:700;color:#212529;
+  line-height:1.45;font-style:italic;
+}
+.quote__source{
+  margin-top:16px;
+  font-size:11px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.12em;
+  color:#E87722;
+}
 
-    .kpi-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:16px; margin:16px 0; }
-    .kpi-card {
-      background:#fff; border:1.5px solid #E9ECEF;
-      border-top:3px solid #E87722; padding:20px 16px; text-align:center;
-    }
-    .kpi-icon { font-size:1.4rem; margin-bottom:8px; }
-    .kpi-val { font-size:1.6rem; font-weight:900; color:#E87722; line-height:1; }
-    .kpi-lbl { font-size:0.72rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:#005B9A; margin-top:4px; }
-    .kpi-def { font-size:0.78rem; color:#9ca3af; margin-top:6px; line-height:1.5; }
+/* ── WORKFLOW ── */
+.workflow{
+  display:flex;align-items:stretch;
+  margin-top:40px;overflow-x:auto;
+  border:1px solid #E9ECEF;
+}
+.wf-step{
+  flex:1;min-width:120px;
+  padding:20px 16px;
+  text-align:center;
+  border-right:1px solid #E9ECEF;
+  position:relative;
+}
+.wf-step:last-child{border-right:0}
+.wf-step__num{
+  font-size:11px;font-weight:700;
+  color:#E87722;letter-spacing:.1em;
+  text-transform:uppercase;margin-bottom:8px;
+}
+.wf-step__label{
+  font-size:13px;font-weight:700;color:#212529;
+  line-height:1.3;
+}
+.wf-step__arrow{
+  position:absolute;right:-1px;top:50%;
+  transform:translateY(-50%);
+  width:8px;height:8px;
+  border-top:2px solid #E87722;
+  border-right:2px solid #E87722;
+  transform:translateY(-50%) rotate(45deg);
+  background:#fff;
+  z-index:1;
+}
+.wf-step:last-child .wf-step__arrow{display:none}
 
-    .quiz-section { background:#F1F3F5; padding:40px 32px; margin:0 -32px; border-radius:2px; }
-    .quiz-title { font-size:1.1rem; font-weight:800; color:#005B9A; margin-bottom:4px; }
-    .quiz-sub { font-size:0.84rem; color:#6C757D; margin-bottom:24px; }
-    .quiz-progress { font-size:0.72rem; font-weight:700; color:#9ca3af; margin-bottom:20px; text-transform:uppercase; letter-spacing:0.08em; }
-    .question-block { background:#fff; border:1.5px solid #E9ECEF; padding:24px; margin-bottom:16px; }
-    .question-num { font-size:0.68rem; font-weight:700; color:#E87722; text-transform:uppercase; letter-spacing:0.1em; margin-bottom:6px; }
-    .question-text { font-size:0.95rem; font-weight:700; color:#212529; margin-bottom:16px; line-height:1.5; }
-    .options { display:flex; flex-direction:column; gap:8px; }
-    .option-btn {
-      background:#F9FAFB; border:1.5px solid #E9ECEF;
-      padding:10px 16px; text-align:left;
-      font-size:0.87rem; font-weight:600; color:#374151;
-      cursor:pointer; transition:all 0.15s; font-family:inherit;
-    }
-    .option-btn:hover { border-color:#005B9A; color:#005B9A; background:rgba(0,91,154,0.04); }
-    .option-btn.correct { background:rgba(61,122,86,0.1); border-color:#3D7A56; color:#3D7A56; }
-    .option-btn.wrong   { background:rgba(239,68,68,0.08); border-color:#ef4444; color:#ef4444; }
-    .option-btn.revealed { pointer-events:none; }
-    .feedback {
-      margin-top:10px; padding:10px 14px;
-      font-size:0.84rem; line-height:1.6; font-weight:600;
-    }
-    .feedback.correct { background:rgba(61,122,86,0.1); color:#3D7A56; border-left:2px solid #3D7A56; }
-    .feedback.wrong   { background:rgba(239,68,68,0.08); color:#dc2626; border-left:2px solid #dc2626; }
-    .quiz-result {
-      background:#fff; border:1.5px solid #E9ECEF; border-top:3px solid #E87722;
-      padding:32px; text-align:center; margin-top:16px;
-    }
-    .quiz-result-score { font-size:3rem; font-weight:900; color:#E87722; line-height:1; }
-    .quiz-result-label { font-size:0.84rem; color:#6C757D; margin-top:6px; }
-    .quiz-result-msg { font-size:1rem; font-weight:700; color:#212529; margin-top:16px; }
+/* ── LAB GRID ── */
+.lab-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1px;background:#E9ECEF;
+  border:1px solid #E9ECEF;
+  margin-top:48px;
+}
+@media(max-width:900px){.lab-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:580px){.lab-grid{grid-template-columns:1fr}}
 
-    .ai-section {
-      background:#0f172a; padding:32px;
-      border-left:3px solid #E87722; margin:32px 0;
-    }
-    .ai-eyebrow { font-size:0.68rem; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:#E87722; margin-bottom:6px; }
-    .ai-title { font-size:1.1rem; font-weight:800; color:#fff; margin-bottom:12px; }
-    .ai-text { font-size:0.87rem; color:rgba(255,255,255,0.65); line-height:1.75; margin-bottom:16px; }
-    .code-block {
-      background:#1e293b; border-left:2px solid #E87722;
-      color:#e2e8f0; font-family:'Consolas','Monaco',monospace;
-      font-size:0.78rem; line-height:1.8; padding:16px 20px; overflow-x:auto;
-      white-space:pre;
-    }
+.lab-card{
+  background:#fff;
+  padding:32px 28px;
+  display:flex;flex-direction:column;
+  min-height:220px;
+  transition:background .15s;
+  position:relative;
+}
+.lab-card:hover{background:#F8F9FA}
+.lab-card::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;
+  height:3px;background:#E9ECEF;
+  transition:background .15s;
+}
+.lab-card:hover::before{background:#E87722}
+.lab-card__num{
+  font-size:11px;font-weight:700;
+  letter-spacing:.12em;text-transform:uppercase;
+  color:#9CA3AF;margin-bottom:8px;
+}
+.lab-card__icon{
+  width:32px;height:32px;
+  margin-bottom:16px;color:#005B9A;
+  flex-shrink:0;
+}
+.lab-card__title{
+  font-size:15px;font-weight:800;
+  color:#212529;line-height:1.3;
+  margin-bottom:8px;
+}
+.lab-card__desc{
+  font-size:13px;color:#6C757D;
+  line-height:1.65;flex:1;
+}
+.lab-card__footer{
+  display:flex;align-items:center;
+  justify-content:space-between;
+  margin-top:24px;padding-top:16px;
+  border-top:1px solid #F1F3F5;
+}
+.lab-card__diff{
+  font-size:10px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;
+  padding:3px 8px;
+}
+.diff--e{background:#D1FAE5;color:#065F46}
+.diff--m{background:#FEF3C7;color:#92400E}
+.diff--f{background:#FEE2E2;color:#991B1B}
+.lab-card__cta{
+  font-size:12px;font-weight:700;
+  color:#E87722;letter-spacing:.04em;
+  display:flex;align-items:center;gap:4px;
+}
 
-    .rfm-table { width:100%; border-collapse:collapse; font-size:0.84rem; margin:16px 0; }
-    .rfm-table th { background:#005B9A; color:#fff; padding:10px 14px; text-align:left; font-size:0.75rem; font-weight:700; text-transform:uppercase; letter-spacing:0.06em; }
-    .rfm-table td { padding:10px 14px; border-bottom:1px solid #E9ECEF; color:#374151; }
-    .rfm-table tr:nth-child(even) td { background:#F9FAFB; }
-    .rfm-table .seg-badge { display:inline-block; padding:2px 8px; border-radius:2px; font-size:0.72rem; font-weight:700; }
-    .seg-champion { background:rgba(61,122,86,0.15); color:#3D7A56; }
-    .seg-loyal { background:rgba(0,91,154,0.12); color:#005B9A; }
-    .seg-risk { background:rgba(239,68,68,0.1); color:#dc2626; }
-    .seg-lost { background:#F1F3F5; color:#6C757D; }
-    .seg-new { background:rgba(232,119,34,0.12); color:#E87722; }
+/* ── INSTRUCTOR ── */
+.instructor{
+  display:grid;
+  grid-template-columns:320px 1fr;
+  gap:64px;align-items:start;
+  margin-top:48px;
+}
+@media(max-width:800px){.instructor{grid-template-columns:1fr;gap:32px}}
 
-    .lab-nav {
-      border-top:1px solid #E9ECEF; padding:32px;
-      display:flex; justify-content:space-between; align-items:center;
-      max-width:800px; margin:0 auto;
-    }
-    .lab-nav-btn {
-      display:flex; align-items:center; gap:8px;
-      font-size:0.87rem; font-weight:700; color:#005B9A;
-      text-decoration:none; cursor:pointer;
-      transition:color 0.15s;
-    }
-    .lab-nav-btn:hover { color:#E87722; }
-    .lab-nav-btn.primary {
-      background:#E87722; color:#fff;
-      padding:10px 20px; border:2px solid #E87722;
-    }
-    .lab-nav-btn.primary:hover { background:#d06a1a; border-color:#d06a1a; }
+.instructor-card{
+  border:1px solid #E9ECEF;
+  overflow:hidden;
+}
+.instructor-card__cover{
+  height:64px;background:#005B9A;
+  position:relative;
+}
+.instructor-card__cover::after{
+  content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(
+    -45deg,
+    rgba(255,255,255,0) 0,
+    rgba(255,255,255,0) 6px,
+    rgba(255,255,255,.04) 6px,
+    rgba(255,255,255,.04) 7px
+  );
+}
+.instructor-card__avatar-row{
+  padding:0 24px;
+  margin-top:-36px;
+  position:relative;z-index:1;
+}
+.instructor-card__avatar{
+  width:72px;height:72px;border-radius:50%;
+  border:3px solid #fff;
+  object-fit:cover;object-position:top;
+}
+.instructor-card__body{padding:12px 24px 24px}
+.instructor-card__name{
+  font-size:16px;font-weight:800;color:#212529;
+  line-height:1.2;
+}
+.instructor-card__role{
+  font-size:13px;color:#6C757D;
+  line-height:1.5;margin-top:4px;
+}
+.instructor-card__org{
+  display:flex;align-items:center;gap:8px;
+  margin-top:12px;
+  font-size:12px;font-weight:700;color:#005B9A;
+}
+.instructor-card__tags{
+  display:flex;flex-wrap:wrap;gap:6px;
+  margin-top:12px;
+}
+.instructor-card__tag{
+  background:rgba(0,91,154,.08);
+  color:#005B9A;
+  font-size:11px;font-weight:700;
+  padding:3px 10px;
+  border-radius:20px;
+}
+.instructor-card__contact{
+  display:flex;align-items:center;gap:8px;
+  margin-top:16px;
+  font-size:12px;color:#6C757D;
+  border-top:1px solid #F1F3F5;
+  padding-top:16px;
+}
+.instructor-card__contact a{color:#005B9A;font-weight:600}
 
-    .sr { opacity:0; transform:translateY(12px); transition:opacity 0.5s ease,transform 0.5s ease; }
-    .sr.visible { opacity:1; transform:translateY(0); }
-  </style>
+.instructor__bio p{
+  font-size:15px;color:#6C757D;
+  line-height:1.75;margin-bottom:16px;
+}
+.instructor__bio p:last-child{margin-bottom:0}
+
+/* ── AI SECTION ── */
+.ai-cards{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:24px;margin-top:40px;
+}
+@media(max-width:800px){.ai-cards{grid-template-columns:1fr}}
+.ai-card{
+  background:#F8F9FA;
+  border-left:3px solid #E87722;
+  padding:24px;
+}
+.ai-card__title{
+  font-size:13px;font-weight:800;
+  color:#212529;margin-bottom:8px;
+}
+.ai-card__body{
+  font-size:13px;color:#6C757D;
+  line-height:1.65;
+}
+.code-block{
+  background:#0F172A;
+  border-left:3px solid #E87722;
+  padding:24px;
+  margin-top:32px;
+  overflow-x:auto;
+}
+.code-block code{
+  font-family:'Consolas','Monaco','Courier New',monospace;
+  font-size:12px;color:#E2E8F0;
+  line-height:1.8;
+  white-space:pre;
+  display:block;
+}
+.code-block .c{color:#64748B}
+.code-block .s{color:#86EFAC}
+
+/* ── FOOTER ── */
+.footer{
+  background:#212529;
+  padding:56px 0;
+}
+.footer__inner{
+  max-width:1200px;margin:0 auto;padding:0 32px;
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:64px;align-items:start;
+}
+@media(max-width:700px){.footer__inner{grid-template-columns:1fr;gap:32px}}
+.footer__brand{}
+.footer__thws{filter:brightness(0) invert(1) opacity(.6);height:20px;width:auto}
+.footer__title{
+  font-size:13px;font-weight:700;color:rgba(255,255,255,.9);
+  margin-top:16px;
+}
+.footer__sub{
+  font-size:12px;color:rgba(255,255,255,.4);
+  margin-top:6px;line-height:1.6;
+}
+.footer__links{display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+@media(max-width:700px){.footer__links{align-items:flex-start}}
+.footer__link{
+  font-size:12px;font-weight:600;
+  color:rgba(255,255,255,.45);
+  transition:color .15s;
+}
+.footer__link:hover{color:#E87722}
+.footer__disclaimer{
+  grid-column:1/-1;
+  font-size:11px;color:rgba(255,255,255,.2);
+  line-height:1.6;padding-top:32px;
+  border-top:1px solid rgba(255,255,255,.08);
+}
+
+/* ── SCROLL REVEAL ── */
+.sr{opacity:0;transform:translateY(16px);transition:opacity .55s ease,transform .55s ease}
+.sr.visible{opacity:1;transform:none}
+
+/* ── RESPONSIVE HELPERS ── */
+@media(max-width:640px){
+  .hero{padding:56px 0 48px}
+  .section{padding:56px 0}
+  .hero__inner{grid-template-columns:1fr}
+  .stat{min-width:120px;padding:20px 12px}
+  .stat__num{font-size:28px}
+}
+
+/* ── LAB-SPECIFIC ── */
+.progress-bar{
+  background:#F8F9FA;
+  border-bottom:1px solid #E9ECEF;
+  overflow-x:auto;
+}
+.progress-bar__inner{
+  max-width:1200px;margin:0 auto;padding:0 32px;
+  display:flex;align-items:center;gap:0;
+  height:48px;
+}
+.prog-step{
+  display:flex;align-items:center;gap:8px;
+  padding:0 16px;height:48px;
+  font-size:11px;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;
+  color:#9CA3AF;white-space:nowrap;
+  border-right:1px solid #E9ECEF;
+  position:relative;
+}
+.prog-step:last-child{border-right:0}
+.prog-step.is-done{color:#3D7A56}
+.prog-step.is-active{color:#E87722;background:rgba(232,119,34,.04)}
+.prog-step__dot{
+  width:20px;height:20px;border-radius:50%;
+  border:1.5px solid currentColor;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:800;flex-shrink:0;
+}
+.prog-step.is-done .prog-step__dot{
+  background:#3D7A56;border-color:#3D7A56;color:#fff;
+}
+.prog-step.is-active .prog-step__dot{
+  background:#E87722;border-color:#E87722;color:#fff;
+}
+
+.lab-hero{
+  background:#005B9A;
+  padding:56px 0 48px;
+  position:relative;overflow:hidden;
+}
+.lab-hero::before{
+  content:'';position:absolute;
+  top:-60px;right:-60px;
+  width:320px;height:320px;border-radius:50%;
+  background:rgba(232,119,34,.1);pointer-events:none;
+}
+.lab-hero__inner{
+  max-width:1200px;margin:0 auto;padding:0 32px;
+}
+.lab-hero__num{
+  font-size:11px;font-weight:700;
+  letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(255,255,255,.45);margin-bottom:8px;
+}
+.lab-hero__title{
+  font-size:clamp(28px,4vw,48px);
+  font-weight:800;color:#fff;
+  line-height:1.1;letter-spacing:-.02em;
+}
+.lab-hero__title em{color:#E87722;font-style:normal}
+.lab-hero__sub{
+  font-size:15px;color:rgba(255,255,255,.7);
+  line-height:1.7;margin-top:16px;max-width:600px;
+}
+.lab-hero__meta{
+  display:flex;flex-wrap:wrap;gap:24px;
+  margin-top:32px;
+}
+.lab-hero__meta-item{
+  display:flex;align-items:center;gap:8px;
+  font-size:12px;color:rgba(255,255,255,.55);
+}
+.lab-hero__meta-item strong{color:rgba(255,255,255,.85)}
+.lab-hero__meta-item svg{flex-shrink:0;opacity:.6}
+
+/* Content layout */
+.lab-content{max-width:800px;margin:0 auto;padding:0 32px}
+@media(max-width:640px){.lab-content{padding:0 16px}}
+
+.lab-section{padding:56px 0}
+.lab-section+.lab-section{border-top:1px solid #E9ECEF}
+
+.block-label{
+  font-size:11px;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;
+  color:#E87722;margin-bottom:8px;
+}
+.block-title{
+  font-size:22px;font-weight:800;
+  color:#212529;line-height:1.25;
+}
+.block-divider{width:32px;height:2px;background:#E87722;margin:10px 0 20px}
+.block-lead{
+  font-size:14px;color:#6C757D;
+  line-height:1.8;margin-bottom:0;
+}
+
+/* Steps */
+.steps{display:flex;flex-direction:column;gap:2px;margin-top:32px}
+.step{
+  border:1px solid #E9ECEF;
+  border-left:2px solid #005B9A;
+  background:#fff;
+  transition:border-left-color .15s;
+}
+.step:hover{border-left-color:#E87722}
+.step__head{
+  display:flex;align-items:center;gap:16px;
+  padding:20px 24px;
+  cursor:pointer;
+}
+.step__head::-webkit-details-marker{display:none}
+.step__num{
+  width:28px;height:28px;border-radius:50%;
+  background:#005B9A;color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:800;flex-shrink:0;
+}
+.step__title{font-size:14px;font-weight:700;color:#212529;flex:1}
+.step__body{
+  padding:0 24px 20px 68px;
+  font-size:13px;color:#6C757D;
+  line-height:1.8;
+}
+.step__body code{
+  background:#F1F3F5;padding:1px 6px;
+  font-family:'Consolas','Monaco',monospace;
+  font-size:12px;color:#E87722;
+}
+.step__tip{
+  background:rgba(0,91,154,.06);
+  border-left:2px solid #005B9A;
+  padding:10px 14px;margin-top:12px;
+  font-size:12px;color:#005B9A;line-height:1.6;
+}
+
+/* KPI Cards */
+.kpi-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1px;background:#E9ECEF;
+  border:1px solid #E9ECEF;
+  margin-top:32px;
+}
+@media(max-width:560px){.kpi-grid{grid-template-columns:1fr}}
+.kpi-card{
+  background:#fff;padding:24px;
+  border-top:2px solid #E87722;
+}
+.kpi-card__icon{color:#005B9A;margin-bottom:12px}
+.kpi-card__val{
+  font-size:20px;font-weight:800;
+  color:#E87722;line-height:1;
+}
+.kpi-card__lbl{
+  font-size:11px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.1em;
+  color:#005B9A;margin-top:6px;
+}
+.kpi-card__def{
+  font-size:12px;color:#9CA3AF;
+  margin-top:8px;line-height:1.55;
+}
+
+/* Info box */
+.info-box{
+  background:#F8F9FA;
+  border-left:3px solid #E87722;
+  padding:20px 24px;margin-top:24px;
+}
+.info-box__title{
+  font-size:12px;font-weight:800;
+  text-transform:uppercase;letter-spacing:.1em;
+  color:#E87722;margin-bottom:8px;
+}
+.info-box__body{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+  gap:16px;
+}
+.info-box__item{}
+.info-box__item-icon{font-size:16px;margin-bottom:4px}
+.info-box__item-title{font-size:13px;font-weight:800;color:#212529}
+.info-box__item-sub{font-size:11px;color:#9CA3AF;margin-top:2px}
+
+/* Screenshot placeholder */
+.screen-placeholder{
+  background:#F8F9FA;
+  border:1px dashed #D1D5DB;
+  padding:28px;
+  text-align:center;
+  margin-top:16px;
+}
+.screen-placeholder__icon{color:#D1D5DB;margin:0 auto 8px}
+.screen-placeholder__text{
+  font-size:12px;color:#9CA3AF;font-weight:600;
+  text-transform:uppercase;letter-spacing:.08em;
+}
+
+/* Quiz */
+.quiz{
+  background:#F8F9FA;
+  padding:40px;
+  margin:0 -32px;
+}
+@media(max-width:640px){.quiz{margin:0 -16px;padding:32px 16px}}
+.quiz__header{margin-bottom:32px}
+.quiz__title{font-size:20px;font-weight:800;color:#212529}
+.quiz__sub{font-size:13px;color:#6C757D;margin-top:6px}
+.quiz__progress{
+  font-size:11px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.08em;
+  color:#9CA3AF;margin-top:12px;
+}
+
+.question{
+  background:#fff;
+  border:1px solid #E9ECEF;
+  padding:24px;
+  margin-bottom:8px;
+}
+.question__num{
+  font-size:10px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.1em;
+  color:#E87722;margin-bottom:8px;
+}
+.question__text{
+  font-size:14px;font-weight:700;
+  color:#212529;line-height:1.55;
+  margin-bottom:16px;
+}
+.question__options{display:flex;flex-direction:column;gap:6px}
+.opt{
+  background:#F8F9FA;border:1px solid #E9ECEF;
+  padding:10px 16px;
+  font-size:13px;font-weight:600;color:#374151;
+  cursor:pointer;text-align:left;
+  transition:all .12s;width:100%;
+  display:flex;align-items:center;gap:10px;
+}
+.opt:hover:not(:disabled){border-color:#005B9A;color:#005B9A;background:rgba(0,91,154,.04)}
+.opt.is-correct{background:rgba(61,122,86,.1);border-color:#3D7A56;color:#3D7A56}
+.opt.is-wrong{background:rgba(239,68,68,.08);border-color:#ef4444;color:#dc2626}
+.opt:disabled{cursor:default}
+.opt__letter{
+  width:20px;height:20px;border-radius:50%;
+  background:currentColor;color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-size:10px;font-weight:800;flex-shrink:0;
+  opacity:.25;
+}
+.opt.is-correct .opt__letter,.opt.is-wrong .opt__letter{opacity:1}
+.feedback{
+  margin-top:10px;padding:10px 14px;
+  font-size:13px;font-weight:600;line-height:1.6;
+}
+.feedback.is-correct{background:rgba(61,122,86,.08);color:#3D7A56;border-left:2px solid #3D7A56}
+.feedback.is-wrong{background:rgba(239,68,68,.06);color:#dc2626;border-left:2px solid #ef4444}
+
+.quiz__result{
+  background:#fff;border:1px solid #E9ECEF;
+  border-top:2px solid #E87722;
+  padding:40px;text-align:center;
+  margin-top:16px;display:none;
+}
+.quiz__result.is-visible{display:block}
+.quiz__result-score{
+  font-size:56px;font-weight:900;
+  color:#E87722;line-height:1;
+  font-variant-numeric:tabular-nums;
+}
+.quiz__result-label{font-size:13px;color:#6C757D;margin-top:6px}
+.quiz__result-msg{font-size:15px;font-weight:700;color:#212529;margin-top:16px}
+.quiz__result-btn{
+  display:inline-block;
+  margin-top:24px;background:#E87722;color:#fff;
+  padding:10px 24px;font-size:12px;font-weight:700;
+  letter-spacing:.06em;text-transform:uppercase;
+  border:0;cursor:pointer;
+}
+
+/* AI block */
+.ai-block{
+  background:#0F172A;
+  border-left:3px solid #E87722;
+  padding:32px;
+}
+.ai-block__eyebrow{
+  font-size:11px;font-weight:700;
+  letter-spacing:.14em;text-transform:uppercase;
+  color:#E87722;margin-bottom:8px;
+}
+.ai-block__title{font-size:18px;font-weight:800;color:#fff;margin-bottom:12px}
+.ai-block__text{font-size:13px;color:rgba(255,255,255,.6);line-height:1.75;margin-bottom:20px}
+.ai-block pre{
+  background:#1E293B;
+  border-left:2px solid #E87722;
+  padding:20px 24px;
+  font-family:'Consolas','Monaco',monospace;
+  font-size:12px;color:#E2E8F0;
+  line-height:1.8;overflow-x:auto;
+}
+.ai-block .c{color:#64748B}
+.ai-block .s{color:#86EFAC}
+
+/* Lab nav */
+.lab-nav{
+  border-top:1px solid #E9ECEF;
+  padding:32px 0;
+  display:flex;justify-content:space-between;align-items:center;
+  flex-wrap:wrap;gap:16px;
+}
+.lab-nav__back{
+  display:flex;align-items:center;gap:8px;
+  font-size:13px;font-weight:700;color:#6C757D;
+  transition:color .15s;
+}
+.lab-nav__back:hover{color:#005B9A}
+.lab-nav__next{
+  display:flex;align-items:center;gap:8px;
+  background:#E87722;color:#fff;
+  padding:12px 24px;
+  font-size:13px;font-weight:700;letter-spacing:.04em;
+  border:2px solid #E87722;
+  transition:background .15s,transform .15s;
+}
+.lab-nav__next:hover{background:#cf6a1c;border-color:#cf6a1c;transform:translateY(-1px)}
+</style>
 </head>
 <body>
-<div class="top-bar"></div>
-<div id="root"></div>
 
-<script type="text/babel">
-const { useState, useEffect } = React;
+<div class="topbar"></div>
 
-const T = {
-  de: {
-    labNum: "Lab 03 von 09",
-    labTitle: ["RFM-Analyse: ", "Kundenwert messen"],
-    labSub: "Nicht jeder Kunde ist gleich viel wert. Die RFM-Analyse teilt UrbanCarts 8.000 Kunden in Segmente ein – von Champions bis Hibernating. Du berechnest Scores, visualisierst Cluster und leitest konkrete Marketingmaßnahmen ab.",
-    metaDauer: "75–100 Min.",
-    metaLevel: "Fortgeschritten",
-    metaData: "orders.csv · customers.csv",
-    metaTool: "Tableau Public (kostenlos)",
-    progSteps: ["Einführung","Daten laden","Analyse","Visualisierung","Quiz","KI-Ausblick"],
-    s1eye: "Theorie",
-    s1title: "Was ist die RFM-Analyse?",
-    s1lead: "RFM steht für Recency, Frequency und Monetary – die drei Dimensionen, die den Wert eines Kunden beschreiben. Die Methode stammt ursprünglich aus dem Direktmarketing und wird heute von Amazon, Netflix und jedem professionellen E-Commerce-Team eingesetzt.",
-    rfmSegments: [
-      { seg: "Champions", r:"5", f:"5", m:"5", desc: "Kaufen oft, viel, kürzlich. Deine besten Kunden – belohne sie.", css:"seg-champion" },
-      { seg: "Loyal Customers", r:"3–5", f:"3–5", m:"3–5", desc: "Kaufen regelmäßig. Cross-Selling und Loyalty-Programme funktionieren hier.", css:"seg-loyal" },
-      { seg: "At Risk", r:"2–3", f:"3–4", m:"3–4", desc: "Früher aktiv, jetzt ruhiger. Reaktivierungskampagnen nötig!", css:"seg-risk" },
-      { seg: "Hibernating", r:"1–2", f:"1–2", m:"1–2", desc: "Lange nicht mehr aktiv. Win-back mit starkem Angebot versuchen.", css:"seg-lost" },
-      { seg: "New Customers", r:"4–5", f:"1", m:"1–2", desc: "Erst kürzlich gekauft, aber selten. Onboarding und zweiten Kauf triggern.", css:"seg-new" },
-    ],
-    s2eye: "Schritt-für-Schritt",
-    s2title: "RFM in Tableau berechnen",
-    s2lead: "Tableau kann RFM-Scores direkt über berechnete Felder (Calculated Fields) ermitteln. Du brauchst keine Programmierkenntnisse – nur das Verständnis der Logik.",
-    steps: [
-      {
-        title: "Daten laden: orders.csv + customers.csv",
-        body: "Öffne Tableau. Lade <code>orders.csv</code> als Primärquelle. Ziehe <code>customers.csv</code> daneben → Inner Join über <code>Customer Id</code>. Aggregationsebene: ein Datensatz pro Kunde.",
-        tip: "💡 Wichtig: Wechsle zur Arbeitsblattebene und stelle sicher, dass du auf der Ebene 'pro Kunde' arbeitest (Customer Id auf der Detailebene)."
-      },
-      {
-        title: "Recency berechnen: Tage seit letztem Kauf",
-        body: "Erstelle ein Calculated Field: Rechtsklick auf Datenfeldbereich → <code>Berechnetes Feld erstellen</code>. Name: <strong>Recency (Tage)</strong>.<br/>Formel: <code>DATEDIFF('day', MAX([Order Date]), TODAY())</code><br/>Aggregation: pro Customer Id → nimm <code>MIN(Recency)</code> (= letzter Kauf).",
-        tip: "💡 Recency Logik: Kleinere Zahl = kürzlicher Kauf = besser. Ein Kunde mit Recency 5 hat vor 5 Tagen gekauft. Einer mit Recency 365 kaufte vor einem Jahr – ist er noch aktiv?"
-      },
-      {
-        title: "Frequency berechnen: Anzahl Bestellungen",
-        body: "Neues Calculated Field. Name: <strong>Frequency</strong>.<br/>Formel: <code>COUNTD([Order Id])</code><br/>Aggregiert pro Customer Id: Wie oft hat der Kunde bestellt?",
-        tip: null
-      },
-      {
-        title: "Monetary berechnen: Gesamtumsatz pro Kunde",
-        body: "Neues Calculated Field. Name: <strong>Monetary</strong>.<br/>Formel: <code>SUM([Total Revenue])</code><br/>Aggregiert pro Customer Id: Wie viel hat der Kunde insgesamt ausgegeben?",
-        tip: "💡 Tipp: Tableau aggregiert automatisch – stelle sicher, dass der Berechnungskontext auf 'Tabelle (quer)' steht, damit jeder Kunde seinen eigenen Wert bekommt."
-      },
-      {
-        title: "RFM-Scores (1–5) als berechnete Felder",
-        body: "Erstelle drei Score-Felder. Beispiel für <strong>R-Score</strong>:<br/><code>IF MIN([Recency (Tage)]) &lt;= 30 THEN 5<br/>ELSEIF MIN([Recency (Tage)]) &lt;= 60 THEN 4<br/>ELSEIF MIN([Recency (Tage)]) &lt;= 120 THEN 3<br/>ELSEIF MIN([Recency (Tage)]) &lt;= 180 THEN 2<br/>ELSE 1<br/>END</code><br/>Analog: F-Score (Quintile nach Bestellanzahl), M-Score (Quintile nach Umsatz).",
-        tip: "💡 Quintile: 5 = Top 20% (bester), 1 = Bottom 20% (schlechtester). Tableau bietet für Quintile alternativ NTILE(5) in Custom SQL, aber IF/ELSEIF mit festen Schwellwerten ist transparent und nachvollziehbarer."
-      },
-    ],
-    s3eye: "RFM-Dimensionen",
-    s3title: "Recency · Frequency · Monetary",
-    s3lead: "Jede Dimension misst einen anderen Aspekt des Kundenwerts. Erst zusammen ergeben sie das vollständige Bild.",
-    kpis: [
-      { icon:"🕐", val:"R", lbl:"Recency", def:"Tage seit dem letzten Kauf. Niedrig = gut. Kunden, die kürzlich gekauft haben, kaufen eher wieder." },
-      { icon:"🔄", val:"F", lbl:"Frequency", def:"Anzahl der Bestellungen. Hoch = gut. Häufige Käufer sind loyaler und haben höheres CLV-Potenzial." },
-      { icon:"💶", val:"M", lbl:"Monetary", def:"Gesamtumsatz pro Kunde. Hoch = gut. Zeigt den bisherigen wirtschaftlichen Beitrag des Kunden." },
-    ],
-    s4eye: "Visualisierung",
-    s4title: "Dashboard: UrbanCart RFM Segmentation",
-    viz_steps: [
-      {
-        title: "Histogramme für R, F und M",
-        body: "Erstelle für jede Dimension ein eigenes Histogramm: Dimension (kontinuierlich) auf Spalten, <code>Anzahl Datensätze</code> auf Zeilen. Verwende <code>Show Me → Histogramm</code>. Erkennst du eine Normalverteilung oder Skewness?",
-        tip: "💡 Skewness in E-Commerce: Monetary ist meist stark rechtsschief – die meisten Kunden kaufen wenig, sehr wenige kaufen sehr viel. Das ist normal!"
-      },
-      {
-        title: "Scatter Plot: Frequency vs. Monetary",
-        body: "Neues Arbeitsblatt. Ziehe <code>Frequency</code> auf Spalten, <code>Monetary</code> auf Zeilen. Eine Zeile pro Kunde: Klicke <code>Customer Id</code> → auf <code>Detail</code> im Marks-Panel ziehen. Färbe nach <code>R-Score</code>: Orange = 5 (sehr aktuell), Dunkelgrau = 1 (inaktiv).",
-        tip: "💡 Im Scatter Plot siehst du Cluster: Champions oben rechts (hohe Frequency, hohes Monetary), Lost Customers unten links. Das ist RFM-Segmentierung visuell!"
-      },
-      {
-        title: "Segment-Tabelle erstellen",
-        body: "Erstelle ein Calculated Field <strong>RFM-Segment</strong>:<br/><code>IF [R-Score] >= 4 AND [F-Score] >= 4 THEN 'Champion'<br/>ELSEIF [R-Score] >= 3 AND [F-Score] >= 3 THEN 'Loyal Customer'<br/>ELSEIF [R-Score] &lt;= 2 AND [F-Score] >= 3 THEN 'At Risk'<br/>ELSEIF [R-Score] &lt;= 2 AND [F-Score] &lt;= 2 THEN 'Hibernating'<br/>ELSE 'New/Promising'<br/>END</code><br/>Erstelle ein Balkendiagramm: Segmente auf Zeilen, COUNT auf Spalten.",
-        tip: null
-      },
-      {
-        title: "Dashboard zusammenbauen",
-        body: "Neues Dashboard: <strong>UrbanCart RFM Segmentation</strong>. Kombiniere Scatter Plot, Segment-Balkendiagramm und eine Kennzahlen-Zusammenfassung. Füge einen Filter für RFM-Segment hinzu – so kann Marketing direkt auf ein Segment klicken.",
-        tip: "💡 Actionable Dashboard: Füge einen Hinweistext pro Segment ein (Tooltip oder Annotation): z.B. 'Champions → Exklusive Previews anbieten'. Ein gutes Dashboard beantwortet die Frage 'Was tun wir jetzt?'."
-      },
-    ],
-    quizTitle: "Quiz: Lab 03 – RFM-Analyse",
-    quizSub: "15 Fragen · Beantworte alle, bevor du zum nächsten Lab gehst.",
-    questions: [
-      {
-        q: "Was steht das 'R' in RFM?",
-        options: [
-          "Revenue – der Umsatz des Kunden",
-          "Recency – wie lange der letzte Kauf zurückliegt",
-          "Rank – die Rangfolge der Kunden",
-          "Retention – die Kundenbindungsrate"
-        ],
-        correct: 1,
-        explain: "R = Recency = Aktualität des letzten Kaufs in Tagen. Niedriger R-Wert = kürzlicher Kauf = gutes Zeichen. Kunden, die kürzlich gekauft haben, kaufen wahrscheinlicher wieder."
-      },
-      {
-        q: "Was steht das 'F' in RFM?",
-        options: [
-          "Frequency – die Anzahl der Bestellungen",
-          "Financial – der finanzielle Wert",
-          "Flow – der Bestellfluss pro Monat",
-          "Funnel – die Konversionsrate"
-        ],
-        correct: 0,
-        explain: "F = Frequency = Häufigkeit der Käufe. Wie oft hat der Kunde in einem bestimmten Zeitraum bestellt? Hohe Frequency = treuer, engagierter Kunde."
-      },
-      {
-        q: "Was steht das 'M' in RFM?",
-        options: [
-          "Marketing – Ausgaben für Werbung",
-          "Monetary – der Gesamtumsatz des Kunden",
-          "Margin – die Gewinnmarge",
-          "Mobile – ob der Kunde mobil kauft"
-        ],
-        correct: 1,
-        explain: "M = Monetary = Gesamtumsatz, den der Kunde generiert hat. Hoher M-Wert = wirtschaftlich wertvoller Kunde. Zusammen mit R und F ergibt sich das vollständige Bild."
-      },
-      {
-        q: "Ein Kunde hat R=5, F=5, M=5. Welchem Segment gehört er an?",
-        options: [
-          "At Risk",
-          "Hibernating",
-          "New Customer",
-          "Champion"
-        ],
-        correct: 3,
-        explain: "Champions haben die höchsten Scores in allen drei Dimensionen: kauften kürzlich (R=5), kaufen oft (F=5) und geben viel aus (M=5). Das sind die wertvollsten Kunden – sie verdienen besondere Aufmerksamkeit."
-      },
-      {
-        q: "Ein Kunde hat R=1, F=4, M=4. Was bedeutet das?",
-        options: [
-          "Er ist ein Champion",
-          "Er ist ein neuer Kunde",
-          "Er ist 'At Risk' – früher aktiv, aber lange nicht mehr gekauft",
-          "Er ist ein Hibernate-Kunde mit niedrigem Wert"
-        ],
-        correct: 2,
-        explain: "Hohe Frequency und hohes Monetary zeigen: Der Kunde war früher wertvoll. Niedrige Recency (=langer Zeitraum seit letztem Kauf) signalisiert: Er wird inaktiv. Das ist ein klassischer 'At Risk'-Kunde – sofort reaktivieren!"
-      },
-      {
-        q: "Welche Maßnahme empfiehlt sich für 'Hibernating'-Kunden?",
-        options: [
-          "Exklusive Previews neuer Produkte anbieten",
-          "Win-back-Kampagne mit starkem Rabattangebot",
-          "Loyalty-Programm-Einladung",
-          "Cross-Selling-E-Mails"
-        ],
-        correct: 1,
-        explain: "Hibernating-Kunden sind seit langer Zeit inaktiv und kauften früher wenig und günstig. Win-back-Kampagnen mit starken Anreizen (z.B. 20% Rabatt, kostenloser Versand) können sie reaktivieren – sind aber teuer. Wenn sie nicht reagieren: Abmelden."
-      },
-      {
-        q: "Wie wird Recency in Tableau berechnet?",
-        options: [
-          "SUM([order_date])",
-          "DATEDIFF('day', MAX([Order Date]), TODAY())",
-          "COUNT([Order Date])",
-          "AVG([Order Date])"
-        ],
-        correct: 1,
-        explain: "DATEDIFF('day', MAX([Order Date]), TODAY()) berechnet die Anzahl der Tage zwischen dem letzten Kauf (MAX des Bestelldatums) und heute. Das ergibt den Recency-Wert pro Kunde."
-      },
-      {
-        q: "Welche Tableau-Funktion gibt die Anzahl eindeutiger Bestellungen pro Kunde zurück?",
-        options: [
-          "SUM([Order Id])",
-          "COUNT([Customer Id])",
-          "COUNTD([Order Id])",
-          "AVG([Order Id])"
-        ],
-        correct: 2,
-        explain: "COUNTD([Order Id]) zählt jede Bestellung genau einmal pro Kunde. Das ist die Frequency-Dimension der RFM-Analyse. COUNTD verhindert Doppelzählungen bei mehreren Bestellpositionen."
-      },
-      {
-        q: "Was ist ein RFM-Score von 1–5?",
-        options: [
-          "Eine absolute Kennzahl wie Umsatz oder Tage",
-          "Eine relative Bewertung – 5 = bestes Quintil, 1 = schlechtestes Quintil",
-          "Eine Bewertung von 1 (sehr gut) bis 5 (sehr schlecht)",
-          "Ein Kundenzufriedenheitswert"
-        ],
-        correct: 1,
-        explain: "RFM-Scores sind relative Bewertungen: 5 = bestes 20% (Quintil) aller Kunden in dieser Dimension, 1 = schlechtestes 20%. Die Absolut-Werte variieren – Scores machen sie vergleichbar."
-      },
-      {
-        q: "Warum ist der Scatter Plot (Frequency vs. Monetary) in der RFM-Analyse nützlich?",
-        options: [
-          "Er zeigt die zeitliche Entwicklung der Kundenzahl",
-          "Er macht Kundensegmente als Cluster visuell sichtbar",
-          "Er berechnet den CLV automatisch",
-          "Er ersetzt die Heatmap"
-        ],
-        correct: 1,
-        explain: "Im Scatter Plot (F auf X, M auf Y, Farbe = R-Score) werden Kundensegmente als natürliche Cluster sichtbar: Champions oben rechts, Lost Customers unten links. Das ist die mächtigste Visualisierung der RFM-Analyse."
-      },
-      {
-        q: "Wann gilt ein Kunde in der RFM-Analyse als 'churned' (abgewandert)?",
-        options: [
-          "Wenn er seit 7 Tagen nichts bestellt hat",
-          "Wenn er weniger als 3 Bestellungen hat",
-          "Wenn seine Recency sehr hoch ist und er lange inaktiv war",
-          "Wenn er nur über Mobile kauft"
-        ],
-        correct: 2,
-        explain: "Ein Kunde gilt als abgewandert (churned), wenn er seit sehr langer Zeit nicht mehr gekauft hat (hohe Recency in Tagen). Was 'lang' bedeutet, hängt von der Branche ab: Im Fashion-E-Commerce könnte das 90–180 Tage sein."
-      },
-      {
-        q: "Du hast 8.000 Kunden in 5 Quintile aufgeteilt. Wie viele Kunden sind im 'R5'-Segment (Top-Quintil)?",
-        options: [
-          "500",
-          "800",
-          "1.600",
-          "4.000"
-        ],
-        correct: 2,
-        explain: "8.000 Kunden ÷ 5 Quintile = 1.600 Kunden pro Quintil. Das oberste Quintil (R5) enthält also die 1.600 Kunden mit der niedrigsten Recency – die 20% mit dem kürzlichsten Kauf."
-      },
-      {
-        q: "Welches RFM-Segment hat das höchste Marketingpotenzial für Cross-Selling?",
-        options: [
-          "Hibernating",
-          "Lost Customers",
-          "Champions und Loyal Customers",
-          "New Customers"
-        ],
-        correct: 2,
-        explain: "Champions und Loyal Customers kaufen regelmäßig und geben viel aus. Sie sind offen für neue Produkte und reagieren gut auf Cross-Selling (ähnliche Produkte) und Upselling (Premium-Versionen). Ihr CLV-Potenzial ist am höchsten."
-      },
-      {
-        q: "Was ist der Nachteil von absoluten Schwellwerten bei der RFM-Score-Berechnung (statt Quintilen)?",
-        options: [
-          "Sie sind zu kompliziert zu berechnen",
-          "Sie sind von Tableau nicht unterstützt",
-          "Sie sind nicht auf andere Zeiträume oder Unternehmen übertragbar",
-          "Sie zeigen keine Farbunterschiede im Dashboard"
-        ],
-        correct: 2,
-        explain: "Feste Schwellwerte (z.B. Recency ≤30 → Score 5) funktionieren nur für den aktuellen Datensatz. Bei einem anderen Zeitraum oder Unternehmen müssen sie neu kalibriert werden. Quintile (NTILE) sind automatisch anpassbar, aber schwieriger in Tableau ohne SQL."
-      },
-      {
-        q: "Welche Marketingmaßnahme passt am besten zu 'New Customers' (R=5, F=1)?",
-        options: [
-          "Win-back-Kampagne mit 30% Rabatt",
-          "Onboarding-E-Mail-Sequenz und Trigger für den zweiten Kauf",
-          "Kündigung des Newsletters",
-          "Premium-Loyalty-Programm-Einladung"
-        ],
-        correct: 1,
-        explain: "New Customers haben kürzlich zum ersten Mal gekauft (R=5) aber nur einmal (F=1). Ziel: Den zweiten Kauf triggern! Onboarding-Sequenzen (Willkommens-E-Mail, Produktempfehlungen, Folgeangebot nach 7 Tagen) erhöhen die Chance auf eine langfristige Kundenbeziehung."
-      },
-    ],
-    nextLab: "Lab 04: ABC-Analyse →",
-    prevLab: "← Lab 02: Kundenstruktur",
-    aiEye: "KI-Ausblick",
-    aiTitle: "RFM-Analyse mit Python, pandas & 3D-Scatter Plot",
-    aiText: "In Python lässt sich die RFM-Analyse vollständig automatisieren – inklusive NTILE-Äquivalent via pd.qcut() und einem 3D-Scatter-Plot mit Plotly für die dreidimensionale Kundensegmentierung.",
-    aiPrompt: `# Prompt für ChatGPT / Claude:
-"Erstelle eine vollständige RFM-Analyse in Python.
-
-Lade 'orders.csv' mit pandas.
-Referenzdatum: Datum des letzten Kaufs + 1 Tag.
-
-1. Berechne pro customer_id:
-   - Recency: Tage seit letztem Kauf
-   - Frequency: Anzahl Bestellungen (COUNTD order_id)
-   - Monetary: Gesamtumsatz (SUM total_revenue)
-
-2. Weise Scores 1-5 zu via pd.qcut():
-   df['R_Score'] = pd.qcut(df['Recency'], 5, labels=[5,4,3,2,1])
-   df['F_Score'] = pd.qcut(df['Frequency'].rank(method='first'), 5, labels=[1,2,3,4,5])
-   df['M_Score'] = pd.qcut(df['Monetary'], 5, labels=[1,2,3,4,5])
-
-3. Erstelle einen 3D Scatter Plot (Plotly):
-   - X: Recency, Y: Frequency, Z: Monetary
-   - Farbe: RFM_Segment
-   - Hover: customer_id, alle drei Werte
-
-Farbschema: Grün=#3D7A56 (Champions), Blau=#005B9A (Loyal),
-Rot=#dc2626 (At Risk), Grau=#9ca3af (Hibernating)."`,
-  },
-  en: {
-    labNum: "Lab 03 of 09",
-    labTitle: ["RFM Analysis: ", "Measuring Customer Value"],
-    labSub: "Not every customer is equally valuable. The RFM analysis divides UrbanCart's 8,000 customers into segments – from Champions to Hibernating. You calculate scores, visualise clusters and derive concrete marketing actions.",
-    metaDauer: "75–100 min.",
-    metaLevel: "Intermediate",
-    metaData: "orders.csv · customers.csv",
-    metaTool: "Tableau Public (free)",
-    progSteps: ["Introduction","Load Data","Analysis","Visualisation","Quiz","AI Outlook"],
-    s1eye: "Theory",
-    s1title: "What is RFM Analysis?",
-    s1lead: "RFM stands for Recency, Frequency and Monetary – the three dimensions that describe a customer's value. The method originates from direct marketing and is used today by Amazon, Netflix and every professional e-commerce team.",
-    rfmSegments: [
-      { seg: "Champions", r:"5", f:"5", m:"5", desc: "Buy often, spend a lot, bought recently. Your best customers – reward them.", css:"seg-champion" },
-      { seg: "Loyal Customers", r:"3–5", f:"3–5", m:"3–5", desc: "Buy regularly. Cross-selling and loyalty programmes work well here.", css:"seg-loyal" },
-      { seg: "At Risk", r:"2–3", f:"3–4", m:"3–4", desc: "Previously active, now quieter. Reactivation campaigns needed!", css:"seg-risk" },
-      { seg: "Hibernating", r:"1–2", f:"1–2", m:"1–2", desc: "Long inactive. Try a win-back with a strong offer.", css:"seg-lost" },
-      { seg: "New Customers", r:"4–5", f:"1", m:"1–2", desc: "Bought recently but rarely. Trigger onboarding and a second purchase.", css:"seg-new" },
-    ],
-    s2eye: "Step by Step",
-    s2title: "Calculate RFM in Tableau",
-    s2lead: "Tableau can calculate RFM scores directly via calculated fields. No programming knowledge required – just understanding the logic.",
-    steps: [
-      {
-        title: "Load data: orders.csv + customers.csv",
-        body: "Open Tableau. Load <code>orders.csv</code> as primary source. Drag <code>customers.csv</code> next to it → Inner Join on <code>Customer Id</code>. Aggregation level: one record per customer.",
-        tip: "💡 Important: Switch to the worksheet level and make sure you are working at the 'per customer' level (Customer Id on the Detail level)."
-      },
-      {
-        title: "Calculate Recency: days since last purchase",
-        body: "Create a Calculated Field: right-click on the data pane → <code>Create Calculated Field</code>. Name: <strong>Recency (Days)</strong>.<br/>Formula: <code>DATEDIFF('day', MAX([Order Date]), TODAY())</code><br/>Aggregation: per Customer Id → use <code>MIN(Recency)</code> (= last purchase).",
-        tip: "💡 Recency logic: Smaller number = more recent purchase = better. A customer with Recency 5 bought 5 days ago. One with Recency 365 bought a year ago – are they still active?"
-      },
-      {
-        title: "Calculate Frequency: number of orders",
-        body: "New Calculated Field. Name: <strong>Frequency</strong>.<br/>Formula: <code>COUNTD([Order Id])</code><br/>Aggregated per Customer Id: how many times has the customer ordered?",
-        tip: null
-      },
-      {
-        title: "Calculate Monetary: total revenue per customer",
-        body: "New Calculated Field. Name: <strong>Monetary</strong>.<br/>Formula: <code>SUM([Total Revenue])</code><br/>Aggregated per Customer Id: how much has the customer spent in total?",
-        tip: "💡 Tip: Tableau aggregates automatically – make sure the calculation context is set to 'Table (across)' so each customer gets their own value."
-      },
-      {
-        title: "RFM scores (1–5) as calculated fields",
-        body: "Create three score fields. Example for <strong>R-Score</strong>:<br/><code>IF MIN([Recency (Days)]) &lt;= 30 THEN 5<br/>ELSEIF MIN([Recency (Days)]) &lt;= 60 THEN 4<br/>ELSEIF MIN([Recency (Days)]) &lt;= 120 THEN 3<br/>ELSEIF MIN([Recency (Days)]) &lt;= 180 THEN 2<br/>ELSE 1<br/>END</code><br/>Analogously: F-Score (quintiles by order count), M-Score (quintiles by revenue).",
-        tip: "💡 Quintiles: 5 = top 20% (best), 1 = bottom 20% (worst). Tableau offers NTILE(5) in Custom SQL for quintiles, but IF/ELSEIF with fixed thresholds is more transparent and easier to follow."
-      },
-    ],
-    s3eye: "RFM Dimensions",
-    s3title: "Recency · Frequency · Monetary",
-    s3lead: "Each dimension measures a different aspect of customer value. Only together do they provide the complete picture.",
-    kpis: [
-      { icon:"🕐", val:"R", lbl:"Recency", def:"Days since last purchase. Low = good. Customers who bought recently are more likely to buy again." },
-      { icon:"🔄", val:"F", lbl:"Frequency", def:"Number of orders. High = good. Frequent buyers are more loyal and have higher CLV potential." },
-      { icon:"💶", val:"M", lbl:"Monetary", def:"Total revenue per customer. High = good. Shows the customer's economic contribution to date." },
-    ],
-    s4eye: "Visualisation",
-    s4title: "Dashboard: UrbanCart RFM Segmentation",
-    viz_steps: [
-      {
-        title: "Histograms for R, F and M",
-        body: "Create a separate histogram for each dimension: dimension (continuous) on Columns, <code>Count of Records</code> on Rows. Use <code>Show Me → Histogram</code>. Can you see a normal distribution or skewness?",
-        tip: "💡 Skewness in e-commerce: Monetary is usually strongly right-skewed – most customers buy little, very few buy a lot. This is normal!"
-      },
-      {
-        title: "Scatter plot: Frequency vs. Monetary",
-        body: "New worksheet. Drag <code>Frequency</code> to Columns, <code>Monetary</code> to Rows. One row per customer: drag <code>Customer Id</code> → to <code>Detail</code> in the Marks panel. Colour by <code>R-Score</code>: Orange = 5 (very recent), Dark grey = 1 (inactive).",
-        tip: "💡 In the scatter plot you see clusters: Champions top right (high Frequency, high Monetary), Lost Customers bottom left. This is RFM segmentation made visual!"
-      },
-      {
-        title: "Create a segment table",
-        body: "Create a Calculated Field <strong>RFM Segment</strong>:<br/><code>IF [R-Score] >= 4 AND [F-Score] >= 4 THEN 'Champion'<br/>ELSEIF [R-Score] >= 3 AND [F-Score] >= 3 THEN 'Loyal Customer'<br/>ELSEIF [R-Score] &lt;= 2 AND [F-Score] >= 3 THEN 'At Risk'<br/>ELSEIF [R-Score] &lt;= 2 AND [F-Score] &lt;= 2 THEN 'Hibernating'<br/>ELSE 'New/Promising'<br/>END</code><br/>Create a bar chart: segments on Rows, COUNT on Columns.",
-        tip: null
-      },
-      {
-        title: "Assemble the dashboard",
-        body: "New dashboard: <strong>UrbanCart RFM Segmentation</strong>. Combine scatter plot, segment bar chart and a KPI summary. Add a filter for RFM Segment – so marketing can click directly on a segment.",
-        tip: "💡 Actionable Dashboard: Add a hint text per segment (tooltip or annotation): e.g. 'Champions → Offer exclusive previews'. A good dashboard answers the question: what do we do now?"
-      },
-    ],
-    quizTitle: "Quiz: Lab 03 – RFM Analysis",
-    quizSub: "15 questions · Complete all before moving to the next lab.",
-    questions: [
-      {
-        q: "What does 'R' stand for in RFM?",
-        options: [
-          "Revenue – the customer's sales",
-          "Recency – how long ago the last purchase was",
-          "Rank – the ranking of customers",
-          "Retention – the customer retention rate"
-        ],
-        correct: 1,
-        explain: "R = Recency = how many days ago the last purchase occurred. Low R value = recent purchase = good sign. Customers who bought recently are more likely to buy again."
-      },
-      {
-        q: "What does 'F' stand for in RFM?",
-        options: [
-          "Frequency – the number of orders",
-          "Financial – the financial value",
-          "Flow – the order flow per month",
-          "Funnel – the conversion rate"
-        ],
-        correct: 0,
-        explain: "F = Frequency = how often the customer has ordered in a given period. High Frequency = loyal, engaged customer."
-      },
-      {
-        q: "What does 'M' stand for in RFM?",
-        options: [
-          "Marketing – advertising spend",
-          "Monetary – the customer's total revenue",
-          "Margin – the profit margin",
-          "Mobile – whether the customer shops on mobile"
-        ],
-        correct: 1,
-        explain: "M = Monetary = total revenue generated by the customer. High M = economically valuable customer. Together with R and F, this gives the complete picture."
-      },
-      {
-        q: "A customer has R=5, F=5, M=5. Which segment do they belong to?",
-        options: ["At Risk","Hibernating","New Customer","Champion"],
-        correct: 3,
-        explain: "Champions have the highest scores in all three dimensions: bought recently (R=5), buy often (F=5) and spend a lot (M=5). These are the most valuable customers – they deserve special attention."
-      },
-      {
-        q: "A customer has R=1, F=4, M=4. What does this mean?",
-        options: [
-          "They are a Champion",
-          "They are a new customer",
-          "They are 'At Risk' – previously active but not bought for a long time",
-          "They are a Hibernating customer with low value"
-        ],
-        correct: 2,
-        explain: "High Frequency and high Monetary show: this customer was formerly valuable. Low Recency (= long time since last purchase) signals they are becoming inactive. This is a classic 'At Risk' customer – reactivate immediately!"
-      },
-      {
-        q: "Which measure is recommended for 'Hibernating' customers?",
-        options: [
-          "Offer exclusive previews of new products",
-          "Win-back campaign with a strong discount offer",
-          "Loyalty programme invitation",
-          "Cross-selling emails"
-        ],
-        correct: 1,
-        explain: "Hibernating customers have been inactive for a long time and previously bought little and cheaply. Win-back campaigns with strong incentives (e.g. 20% discount, free shipping) can reactivate them – but are expensive. If they don't respond: unsubscribe them."
-      },
-      {
-        q: "How is Recency calculated in Tableau?",
-        options: [
-          "SUM([order_date])",
-          "DATEDIFF('day', MAX([Order Date]), TODAY())",
-          "COUNT([Order Date])",
-          "AVG([Order Date])"
-        ],
-        correct: 1,
-        explain: "DATEDIFF('day', MAX([Order Date]), TODAY()) calculates the number of days between the last purchase (MAX of order date) and today. This gives the Recency value per customer."
-      },
-      {
-        q: "Which Tableau function returns the number of unique orders per customer?",
-        options: [
-          "SUM([Order Id])",
-          "COUNT([Customer Id])",
-          "COUNTD([Order Id])",
-          "AVG([Order Id])"
-        ],
-        correct: 2,
-        explain: "COUNTD([Order Id]) counts each order exactly once per customer. This is the Frequency dimension of the RFM analysis. COUNTD prevents double-counting with multiple order items."
-      },
-      {
-        q: "What is an RFM score of 1–5?",
-        options: [
-          "An absolute metric like revenue or days",
-          "A relative rating – 5 = best quintile, 1 = worst quintile",
-          "A rating from 1 (very good) to 5 (very bad)",
-          "A customer satisfaction score"
-        ],
-        correct: 1,
-        explain: "RFM scores are relative ratings: 5 = best 20% (quintile) of all customers in this dimension, 1 = worst 20%. Absolute values vary – scores make them comparable."
-      },
-      {
-        q: "Why is the scatter plot (Frequency vs. Monetary) useful in RFM analysis?",
-        options: [
-          "It shows the temporal development of the number of customers",
-          "It makes customer segments visually apparent as clusters",
-          "It automatically calculates CLV",
-          "It replaces the heatmap"
-        ],
-        correct: 1,
-        explain: "In the scatter plot (F on X, M on Y, colour = R-Score), customer segments become visible as natural clusters: Champions top right, Lost Customers bottom left. This is the most powerful visualisation of RFM analysis."
-      },
-      {
-        q: "When is a customer considered 'churned' in RFM analysis?",
-        options: [
-          "When they haven't ordered for 7 days",
-          "When they have fewer than 3 orders",
-          "When their Recency is very high and they have been inactive for a long time",
-          "When they only buy on mobile"
-        ],
-        correct: 2,
-        explain: "A customer is considered churned when they haven't bought for a very long time (high Recency in days). What 'long' means depends on the industry: in fashion e-commerce it might be 90–180 days."
-      },
-      {
-        q: "You have 8,000 customers divided into 5 quintiles. How many customers are in the 'R5' segment (top quintile)?",
-        options: ["500","800","1,600","4,000"],
-        correct: 2,
-        explain: "8,000 customers ÷ 5 quintiles = 1,600 customers per quintile. The top quintile (R5) therefore contains the 1,600 customers with the lowest Recency – the 20% who bought most recently."
-      },
-      {
-        q: "Which RFM segment has the highest marketing potential for cross-selling?",
-        options: [
-          "Hibernating",
-          "Lost Customers",
-          "Champions and Loyal Customers",
-          "New Customers"
-        ],
-        correct: 2,
-        explain: "Champions and Loyal Customers buy regularly and spend a lot. They are receptive to new products and respond well to cross-selling (similar products) and upselling (premium versions). Their CLV potential is the highest."
-      },
-      {
-        q: "What is the disadvantage of absolute thresholds for RFM score calculation (instead of quintiles)?",
-        options: [
-          "They are too complex to calculate",
-          "They are not supported by Tableau",
-          "They cannot be transferred to other time periods or companies",
-          "They don't show colour differences in the dashboard"
-        ],
-        correct: 2,
-        explain: "Fixed thresholds (e.g. Recency ≤30 → Score 5) only work for the current dataset. For a different time period or company they need to be recalibrated. Quintiles (NTILE) are automatically adaptive, but harder in Tableau without SQL."
-      },
-      {
-        q: "Which marketing measure best suits 'New Customers' (R=5, F=1)?",
-        options: [
-          "Win-back campaign with 30% discount",
-          "Onboarding email sequence and trigger for the second purchase",
-          "Unsubscribe from newsletter",
-          "Premium loyalty programme invitation"
-        ],
-        correct: 1,
-        explain: "New Customers bought recently for the first time (R=5) but only once (F=1). Goal: trigger the second purchase! Onboarding sequences (welcome email, product recommendations, follow-up offer after 7 days) increase the chance of a long-term customer relationship."
-      },
-    ],
-    nextLab: "Lab 04: ABC Analysis →",
-    prevLab: "← Lab 02: Customer Structure",
-    aiEye: "AI Outlook",
-    aiTitle: "RFM Analysis with Python, pandas & 3D Scatter Plot",
-    aiText: "In Python, the RFM analysis can be fully automated – including the NTILE equivalent via pd.qcut() and a 3D scatter plot with Plotly for three-dimensional customer segmentation.",
-    aiPrompt: `# Prompt for ChatGPT / Claude:
-"Create a complete RFM analysis in Python.
-
-Load 'orders.csv' with pandas.
-Reference date: date of last purchase + 1 day.
-
-1. Calculate per customer_id:
-   - Recency: days since last purchase
-   - Frequency: number of orders (COUNTD order_id)
-   - Monetary: total revenue (SUM total_revenue)
-
-2. Assign scores 1-5 via pd.qcut():
-   df['R_Score'] = pd.qcut(df['Recency'], 5, labels=[5,4,3,2,1])
-   df['F_Score'] = pd.qcut(df['Frequency'].rank(method='first'), 5, labels=[1,2,3,4,5])
-   df['M_Score'] = pd.qcut(df['Monetary'], 5, labels=[1,2,3,4,5])
-
-3. Create a 3D scatter plot (Plotly):
-   - X: Recency, Y: Frequency, Z: Monetary
-   - Colour: RFM_Segment
-   - Hover: customer_id, all three values
-
-Colour scheme: Green=#3D7A56 (Champions), Blue=#005B9A (Loyal),
-Red=#dc2626 (At Risk), Grey=#9ca3af (Hibernating)."`,
-  }
-};
-
-function Quiz({ questions, t, lang }) {
-  const [answers, setAnswers] = useState({});
-  const [revealed, setRevealed] = useState({});
-  const done = Object.keys(revealed).length === questions.length;
-  const score = Object.entries(answers).filter(([i, a]) => a === questions[i].correct).length;
-
-  const handleAnswer = (qi, oi) => {
-    if (revealed[qi] !== undefined) return;
-    setAnswers(prev => ({ ...prev, [qi]: oi }));
-    setRevealed(prev => ({ ...prev, [qi]: true }));
-  };
-
-  return (
-    <div className="quiz-section">
-      <h3 className="quiz-title">{t.quizTitle}</h3>
-      <p className="quiz-sub">{t.quizSub}</p>
-      <div className="quiz-progress">{Object.keys(revealed).length} / {questions.length} {lang==='de'?'beantwortet':'answered'}</div>
-      {questions.map((q, qi) => (
-        <div key={qi} className="question-block">
-          <div className="question-num">{lang==='de'?'Frage':'Question'} {qi + 1}</div>
-          <div className="question-text">{q.q}</div>
-          <div className="options">
-            {q.options.map((opt, oi) => {
-              let cls = "option-btn";
-              if (revealed[qi] !== undefined) {
-                cls += " revealed";
-                if (oi === q.correct) cls += " correct";
-                else if (oi === answers[qi]) cls += " wrong";
-              }
-              return (
-                <button key={oi} className={cls} onClick={() => handleAnswer(qi, oi)}>
-                  <span style={{marginRight:'8px', fontWeight:800}}>{String.fromCharCode(65+oi)}.</span>
-                  {opt}
-                </button>
-              );
-            })}
-          </div>
-          {revealed[qi] !== undefined && (
-            <div className={`feedback ${answers[qi] === q.correct ? 'correct' : 'wrong'}`}>
-              {answers[qi] === q.correct
-                ? (lang==='de'?"✓ Richtig! ":"✓ Correct! ")
-                : (lang==='de'?"✗ Nicht ganz. ":"✗ Not quite. ")}
-              {q.explain}
-            </div>
-          )}
-        </div>
-      ))}
-      {done && (
-        <div className="quiz-result">
-          <div className="quiz-result-score">{score}/{questions.length}</div>
-          <div className="quiz-result-label">{lang==='de'?'Punkte':'Points'}</div>
-          <div className="quiz-result-msg">
-            {score >= 13
-              ? (lang==='de'?"🎉 Ausgezeichnet! Weiter zu Lab 04.":"🎉 Excellent! Move on to Lab 04.")
-              : score >= 10
-              ? (lang==='de'?"👍 Gut! Lies die Erklärungen nochmal durch.":"👍 Good! Read through the explanations again.")
-              : (lang==='de'?"💪 Noch einmal! Schau dir die Erklärungen an.":"💪 Try again! Review the explanations.")}
-          </div>
-        </div>
-      )}
+<nav class="navbar">
+  <div class="navbar__inner">
+    <div class="navbar__brand">
+      <a href="index.html" style="display:flex;align-items:center;gap:0">
+        <svg class="navbar__logo" viewBox="0 0 274.3 91.2" xmlns="http://www.w3.org/2000/svg"><style>.st0{fill:#FF6A00}</style><g><g><path class="st0" d="M15,32.6h2.6c1.1,0,2-0.9,2-2v-9.1c0-1.1,0.9-2,2-2h15.6c1.1,0,2-0.9,2-2v-2.6c0-1.1-0.9-2-2-2H21.5 c-1.1,0-2,0.9-2,2v2.6c0,1.1-0.9,2-2,2H15c-1.1,0-2,0.9-2,2v9.1C13,31.7,13.9,32.6,15,32.6z"/><path class="st0" d="M63.1,0H47.5c-1.1,0-2,0.9-2,2v2.6c0,1.1,0.9,2,2,2h15.6c1.1,0,2-0.9,2-2V2C65.1,0.9,64.2,0,63.1,0z"/><path class="st0" d="M76.1,13h-2.6c-1.1,0-2,0.9-2,2v9.1c0,1.1,0.9,2,2,2h2.6c1.1,0,2-0.9,2-2V15C78.1,13.9,77.2,13,76.1,13z"/><path class="st0" d="M76.1,32.6h-2.6c-1.1,0-2,0.9-2,2v2.5c0,1.1,0.9,2,2,2h2.6c1.1,0,2-0.9,2-2v-2.6 C78.1,33.4,77.2,32.6,76.1,32.6z"/><path class="st0" d="M52.1,34.5c0-1.1-0.9-2-2-2h-2.6c-1.1,0-2,0.9-2,2v22.1c0,1.1-0.9,2-2,2h-9.1c-1.1,0-2-0.9-2-2V34.5 c0-1.1,0.9-2,2-2H37c1.1,0,2-0.9,2-2v-2.6c0-1.1-0.9-2-2-2h-2.6c-1.1,0-2,0.9-2,2v2.6c0,1.1-0.9,2-2,2H28c-1.1,0-2,0.9-2,2v28.6 c0,1.1,0.9,2,2,2h15.6c1.1,0,2-0.9,2-2v-2.6c0-1.1,0.9-2,2-2h2.6c1.1,0,2-0.9,2-2L52.1,34.5L52.1,34.5z"/><path class="st0" d="M63.1,13H47.5c-1.1,0-2,0.9-2,2v2.6c0,1.1,0.9,2,2,2h9.1c1.1,0,2,0.9,2,2v15.5c0,1.1,0.9,2,2,2h2.6 c1.1,0,2-0.9,2-2V15C65.1,13.9,64.2,13,63.1,13z"/><path class="st0" d="M63.1,45.6h-2.6c-1.1,0-2,0.9-2,2v22.1c0,1.1-0.9,2-2,2H54c-1.1,0-2,0.9-2,2v2.6c0,1.1,0.9,2,2,2h2.6 c1.1,0,2-0.9,2-2v-2.6c0-1.1,0.9-2,2-2h2.6c1.1,0,2-0.9,2-2V47.5C65.1,46.5,64.2,45.6,63.1,45.6z"/><path class="st0" d="M43.6,71.6H21.5c-1.1,0-2-0.9-2-2V47.5c0-1.1-0.9-2-2-2H15c-1.1,0-2,0.9-2,2v22.1c0,1.1,0.9,2,2,2h2.6 c1.1,0,2,0.9,2,2v2.6c0,1.1,0.9,2,2,2h22.1c1.1,0,2-0.9,2-2v-2.6C45.5,72.5,44.7,71.6,43.6,71.6z"/><path class="st0" d="M30.6,84.6H15c-1.1,0-2,0.9-2,2v2.6c0,1.1,0.9,2,2,2h15.6c1.1,0,2-0.9,2-2v-2.6 C32.5,85.5,31.7,84.6,30.6,84.6z"/><path class="st0" d="M4.6,58.6H2c-1.1,0-2,0.9-2,2v9.1c0,1.1,0.9,2,2,2h2.6c1.1,0,2-0.9,2-2v-9.1C6.5,59.5,5.6,58.6,4.6,58.6z"/></g><g><path class="st0" d="M103.1,55.2V34.5h-10v-8.4h10V14.6h9.5v11.5h11.9v8.4h-11.9v18.6c0,2.6,1,3.7,3.7,3.7h8.2v8.3h-11.4 C106.3,65.1,103.1,62.3,103.1,55.2z"/><path class="st0" d="M131.7,9.1h9.5v20c2.5-2.8,6.2-4.2,10.6-4.2c9.6,0,15.5,6.1,15.5,16.6v23.6h-9.5V42.5c0-6.1-2.9-9-7.9-9 c-5.2,0-8.6,3.7-8.6,9.3v22.3h-9.5v-56H131.7z"/><path class="st0" d="M172.1,26.1h9.9l7.6,28.4l7.6-28.4h11l7.6,28.4l7.6-28.4h9.9l-11.7,39h-11.3l-7.6-28.3l-7.6,28.3h-11.3 L172.1,26.1z"/><path class="st0" d="M236.3,53.7h9.8c0.3,3.3,3.1,4.9,7.9,4.9c4.3,0,7-1.8,7-4.7c0-2.5-1.9-3.8-5.4-4.1l-6.2-0.6 c-7.3-0.8-11.8-5.1-11.8-11.8c0-7.8,6.2-12.6,16.2-12.6c9.8,0,16.1,4.2,16.6,12.3h-9.5c-0.2-3.1-2.9-4.6-7.2-4.6 c-4.1,0-6.6,1.6-6.6,4.3c0,2.3,1.8,3.6,5.8,4.1l6.3,0.7c7.4,0.9,11.6,5.2,11.6,11.7c0,7.8-6.5,12.9-16.9,12.9 C243.1,66.3,236.7,62,236.3,53.7z"/></g></g></svg>
+      </a>
+      <div class="navbar__sep"></div>
+      <span class="navbar__kurs" data-de="E-Commerce Labs" data-en="E-Commerce Labs"></span>
+      <span style="margin-left:8px;background:rgba(232,119,34,.12);color:#E87722;font-size:10px;font-weight:700;padding:3px 10px;letter-spacing:.08em;text-transform:uppercase" data-de="Lab 03 von 09 · Mittel" data-en="Lab 03 of 09 · Intermediate"></span>
     </div>
-  );
+    <div class="navbar__right">
+      <button class="lang-btn is-active" onclick="setLang('de')">DE</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+    </div>
+  </div>
+</nav>
+
+<div class="progress-bar">
+  <div class="progress-bar__inner">
+    <div class="prog-step is-done"><div class="prog-step__dot"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></div><span data-de="Kontext" data-en="Context"></span></div>
+    <div class="prog-step is-active"><div class="prog-step__dot">2</div><span data-de="Berechnete Felder" data-en="Calculated Fields"></span></div>
+    <div class="prog-step"><div class="prog-step__dot">3</div><span data-de="Scatter Plot" data-en="Scatter Plot"></span></div>
+    <div class="prog-step"><div class="prog-step__dot">4</div><span data-de="KPIs" data-en="KPIs"></span></div>
+    <div class="prog-step"><div class="prog-step__dot">5</div><span data-de="Quiz" data-en="Quiz"></span></div>
+    <div class="prog-step"><div class="prog-step__dot">6</div><span data-de="KI-Ausblick" data-en="AI Outlook"></span></div>
+    
+  </div>
+</div>
+
+<div class="lab-hero">
+  <div class="lab-hero__inner">
+    <div class="lab-hero__num" data-de="Lab 03 von 09 · Mittel" data-en="Lab 03 of 09 · Intermediate"></div>
+    <h1 class="lab-hero__title" data-de="<em>RFM</em>-Analyse" data-en="<em>RFM</em> Analysis"></h1>
+    <p class="lab-hero__sub" data-de="Recency, Frequency, Monetary – das Standard-Framework zur Kundensegmentierung im E-Commerce." data-en="Recency, Frequency, Monetary – the standard framework for customer segmentation in e-commerce."></p>
+    <div class="lab-hero__meta">
+      <div class="lab-hero__meta-item">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span data-de="<strong>75–90 Min.</strong>" data-en="<strong>75–90 Min.</strong>"></span>
+      </div>
+      <div class="lab-hero__meta-item">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <span><strong>orders.csv</strong></span>
+      </div>
+      <div class="lab-hero__meta-item">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        <span><strong>Tableau Public</strong></span>
+      </div>
+      <div class="lab-hero__meta-item">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        <span><strong data-de="15 Quiz-Fragen" data-en="15 quiz questions"></strong></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="lab-content">
+
+  <div class="lab-section">
+    <p class="block-label sr" data-de="Kontext" data-en="Context"></p>
+    <h2 class="block-title sr" data-de="Was ist RFM-Analyse?" data-en="What is RFM Analysis?"></h2>
+    <div class="block-divider sr"></div>
+    <p class="block-lead sr" data-de="RFM steht für Recency (Aktualität), Frequency (Häufigkeit) und Monetary (Umsatz). Es ist das Standard-Framework zur Kundensegmentierung im E-Commerce und hilft, die wertvollsten Kunden zu identifizieren." data-en="RFM stands for Recency, Frequency, and Monetary. It is the standard framework for customer segmentation in e-commerce and helps identify the most valuable customers."></p>
+    <div class="info-box sr">
+      <div class="info-box__title" data-de="RFM-Segmente" data-en="RFM Segments"></div>
+      <div class="info-box__body">
+        <div class="info-box__item">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#005B9A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:6px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <div class="info-box__item-title">Champions</div>
+          <div class="info-box__item-sub" data-de="Kürzlich, oft, viel – beste Kunden" data-en="Recent, frequent, high value – best customers"></div>
+        </div>
+        <div class="info-box__item">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#005B9A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:6px"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <div class="info-box__item-title">Loyal</div>
+          <div class="info-box__item-sub" data-de="Regelmäßige Käufer, engagiert" data-en="Regular buyers, engaged"></div>
+        </div>
+        <div class="info-box__item">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#005B9A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:6px"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <div class="info-box__item-title">At Risk</div>
+          <div class="info-box__item-sub" data-de="Früher wertvoll, jetzt inaktiv" data-en="Previously valuable, now inactive"></div>
+        </div>
+        <div class="info-box__item">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#005B9A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:6px"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+          <div class="info-box__item-title">Hibernating</div>
+          <div class="info-box__item-sub" data-de="Niedrige Scores in allen Dimensionen" data-en="Low scores across all dimensions"></div>
+        </div>
+        <div class="info-box__item">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#005B9A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:6px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <div class="info-box__item-title">New Customers</div>
+          <div class="info-box__item-sub" data-de="Erste Bestellung, hohes Potenzial" data-en="First order, high potential"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="lab-section">
+    <p class="block-label sr" data-de="Schritt-für-Schritt" data-en="Step by Step"></p>
+    <h2 class="block-title sr" data-de="RFM in Tableau berechnen" data-en="Calculate RFM in Tableau"></h2>
+    <div class="block-divider sr"></div>
+    <div class="steps sr">
+      <details class="step" open>
+        <summary class="step__head">
+          <div class="step__num">1</div>
+          <div class="step__title" data-de="orders.csv laden" data-en="Load orders.csv"></div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><polyline points="6 9 12 15 18 9"/></svg>
+        </summary>
+        <div class="step__body">
+          <p data-de="Tableau Public öffnen → <strong>Verbinden → Textdatei</strong> → <code>orders.csv</code> wählen. Prüfe: <code>order_date</code> als Datumsfeld erkannt? Sonst: Rechtsklick auf Spalte → Datentyp → Datum." data-en="Open Tableau Public → <strong>Connect → Text File</strong> → select <code>orders.csv</code>. Check: <code>order_date</code> recognised as date field? If not: right-click column → Data Type → Date."></p>
+        </div>
+      </details>
+      <details class="step">
+        <summary class="step__head">
+          <div class="step__num">2</div>
+          <div class="step__title" data-de="Calculated Field: Recency" data-en="Calculated Field: Recency"></div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><polyline points="6 9 12 15 18 9"/></svg>
+        </summary>
+        <div class="step__body">
+          <p data-de="Rechtsklick im Daten-Panel → <strong>Berechnetes Feld erstellen</strong>. Name: <code>Recency</code>. Formel: <code>DATEDIFF('day', MAX([order_date]), DATE(&quot;2025-01-01&quot;))</code>. Ergibt: Tage seit letzter Bestellung (kleiner = besser)." data-en="Right-click in Data panel → <strong>Create Calculated Field</strong>. Name: <code>Recency</code>. Formula: <code>DATEDIFF('day', MAX([order_date]), DATE(&quot;2025-01-01&quot;))</code>. Result: days since last order (smaller = better)."></p>
+          <div class="step__tip" data-de="<strong>DATEDIFF:</strong> Berechnet die Differenz zwischen zwei Daten. 'day' = in Tagen, MAX([order_date]) = letztes Kaufdatum pro Kunde." data-en="<strong>DATEDIFF:</strong> Calculates the difference between two dates. 'day' = in days, MAX([order_date]) = last purchase date per customer."></div>
+        </div>
+      </details>
+      <details class="step">
+        <summary class="step__head">
+          <div class="step__num">3</div>
+          <div class="step__title" data-de="Calculated Field: Frequency" data-en="Calculated Field: Frequency"></div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><polyline points="6 9 12 15 18 9"/></svg>
+        </summary>
+        <div class="step__body">
+          <p data-de="Neues berechnetes Feld. Name: <code>Frequency</code>. Formel: <code>COUNTD([order_id])</code>. Ergibt: Anzahl eindeutiger Bestellungen pro Kunde." data-en="New calculated field. Name: <code>Frequency</code>. Formula: <code>COUNTD([order_id])</code>. Result: number of distinct orders per customer."></p>
+        </div>
+      </details>
+      <details class="step">
+        <summary class="step__head">
+          <div class="step__num">4</div>
+          <div class="step__title" data-de="Calculated Field: Monetary" data-en="Calculated Field: Monetary"></div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><polyline points="6 9 12 15 18 9"/></svg>
+        </summary>
+        <div class="step__body">
+          <p data-de="Neues berechnetes Feld. Name: <code>Monetary</code>. Formel: <code>SUM([total_revenue])</code>. Ergibt: Gesamtumsatz pro Kunde." data-en="New calculated field. Name: <code>Monetary</code>. Formula: <code>SUM([total_revenue])</code>. Result: total revenue per customer."></p>
+        </div>
+      </details>
+      <details class="step">
+        <summary class="step__head">
+          <div class="step__num">5</div>
+          <div class="step__title" data-de="Scatter Plot: F vs M, Farbe = Recency" data-en="Scatter Plot: F vs M, colour = Recency"></div>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><polyline points="6 9 12 15 18 9"/></svg>
+        </summary>
+        <div class="step__body">
+          <p data-de="Neues Arbeitsblatt. <code>Frequency</code> auf X-Achse, <code>Monetary</code> auf Y-Achse. <code>Recency</code> auf <strong>Farbe</strong>. <code>customer_id</code> auf <strong>Detail</strong>. Chart-Typ: <strong>Kreis</strong>. Dashboard: <em>UrbanCart RFM</em>." data-en="New sheet. <code>Frequency</code> on X-axis, <code>Monetary</code> on Y-axis. <code>Recency</code> on <strong>Color</strong>. <code>customer_id</code> on <strong>Detail</strong>. Chart type: <strong>Circle</strong>. Dashboard: <em>UrbanCart RFM</em>."></p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <div class="lab-section">
+    <p class="block-label sr" data-de="Kennzahlen" data-en="Key Metrics"></p>
+    <h2 class="block-title sr" data-de="KPI-Cards" data-en="KPI Cards"></h2>
+    <div class="block-divider sr"></div>
+    <div class="kpi-grid sr">
+      <div class="kpi-card">
+        <svg class="kpi-card__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <div class="kpi-card__val">Champions</div>
+        <div class="kpi-card__lbl">R=5, F=5, M=5</div>
+        <div class="kpi-card__def" data-de="Höchste Scores in allen drei Dimensionen" data-en="Highest scores across all three dimensions"></div>
+      </div>
+      <div class="kpi-card">
+        <svg class="kpi-card__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+        <div class="kpi-card__val">At-Risk</div>
+        <div class="kpi-card__lbl" data-de="Niedrige R, hohe F+M" data-en="Low R, high F+M"></div>
+        <div class="kpi-card__def" data-de="Früher wertvoll, jetzt inaktiv – Reaktivierung nötig" data-en="Previously valuable, now inactive – reactivation needed"></div>
+      </div>
+      <div class="kpi-card">
+        <svg class="kpi-card__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/></svg>
+        <div class="kpi-card__val">Hibernating</div>
+        <div class="kpi-card__lbl" data-de="Niedrige alle Scores" data-en="All scores low"></div>
+        <div class="kpi-card__def" data-de="Lange nicht aktiv, kaum Umsatz – Win-back oder abschreiben" data-en="Long inactive, little revenue – win-back or write off"></div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="lab-section">
+    <p class="block-label" data-de="Quiz" data-en="Quiz"></p>
+    <h2 class="block-title" data-de="15 Fragen" data-en="15 Questions"></h2>
+    <div class="block-divider"></div>
+    <div class="quiz" id="quiz">
+      <div class="quiz__header">
+        <p class="quiz__sub" data-de="Beantworte alle Fragen, bevor du zum nächsten Lab gehst. Sofortiges Feedback." data-en="Answer all questions before moving to the next lab. Immediate feedback."></p>
+        <p class="quiz__progress" id="quiz-progress">0 / 15</p>
+      </div>
+      <div id="quiz-questions"></div>
+      <div class="quiz__result" id="quiz-result">
+        <div class="quiz__result-score" id="quiz-score">0/15</div>
+        <div class="quiz__result-label" data-de="Punkte" data-en="Points"></div>
+        <div class="quiz__result-msg" id="quiz-msg"></div>
+        <button class="quiz__result-btn" onclick="resetQuiz()" data-de="Nochmal versuchen" data-en="Try again"></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="lab-section">
+    <div class="ai-block sr">
+      <div class="ai-block__eyebrow" data-de="KI-Ausblick" data-en="AI Outlook"></div>
+      <div class="ai-block__title" data-de="Python-Prompt für diese Analyse" data-en="Python prompt for this analysis"></div>
+      <div class="ai-block__text" data-de="Nutze diesen Prompt in ChatGPT oder Claude, um die Analyse mit Python zu reproduzieren:" data-en="Use this prompt in ChatGPT or Claude to reproduce the analysis with Python:"></div>
+      <pre><span class="c"># Prompt für ChatGPT / Claude:</span>
+
+<span class="s">"Erstelle RFM-Analyse in Python. Lade orders.csv mit pandas.
+Berechne R/F/M pro customer_id mit pd.qcut (Quintile 1-5).
+Erstelle 3D Scatter Plot mit Plotly (F=X, M=Y, R=Farbe).
+Farbskala: #E87722 → #005B9A."</span></pre>
+    </div>
+  </div>
+
+  <div class="lab-nav sr">
+    <a href="lab02.html" class="lab-nav__back"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg><span data-de="Lab 02" data-en="Lab 02"></span></a>
+    <a href="lab04.html" class="lab-nav__next"><span data-de="Lab 04: ABC-Analyse" data-en="Lab 04: ABC Analysis"></span><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
+  </div>
+
+</div>
+
+<script>
+const QUESTIONS = [
+  {q:{de:'Was bedeutet das R in RFM?',en:'What does the R in RFM stand for?'},
+   opts:{de:['Revenue','Recency (Aktualität des letzten Kaufs)','Rate','Retention'],
+         en:['Revenue','Recency (recency of last purchase)','Rate','Retention']},
+   correct:1,
+   explain:{de:'R = Recency: Wie lange ist der letzte Kauf her? Je kleiner der Wert (weniger Tage), desto besser der Score.',en:'R = Recency: How recent was the last purchase? The smaller the value (fewer days), the better the score.'}},
+  {q:{de:'Was misst Frequency im RFM?',en:'What does Frequency measure in RFM?'},
+   opts:{de:['Wie häufig die Website besucht wird','Wie oft ein Kunde bestellt hat','Wie oft ein Produkt zurückgegeben wurde','Die Bestellhäufigkeit pro Monat'],
+         en:['How often the website is visited','How many times a customer has ordered','How often a product was returned','Order frequency per month']},
+   correct:1,
+   explain:{de:'Frequency = Anzahl der Käufe eines Kunden im Analysezeitraum. COUNTD([order_id]) pro Kunde.',en:'Frequency = number of purchases by a customer in the analysis period. COUNTD([order_id]) per customer.'}},
+  {q:{de:'Was ist DATEDIFF in Tableau?',en:'What is DATEDIFF in Tableau?'},
+   opts:{de:['Eine Funktion zum Formatieren von Daten','Eine Funktion zur Berechnung der Differenz zwischen zwei Datumsangaben','Eine Join-Methode','Eine Sortierfunktion'],
+         en:['A function to format dates','A function to calculate the difference between two dates','A join method','A sorting function']},
+   correct:1,
+   explain:{de:'DATEDIFF(unit, start_date, end_date) berechnet die zeitliche Differenz in der angegebenen Einheit (day, month, year).',en:"DATEDIFF(unit, start_date, end_date) calculates the time difference in the specified unit (day, month, year)."}},
+  {q:{de:'Was ist ein Champion-Kunde in RFM?',en:'What is a Champion customer in RFM?'},
+   opts:{de:['Ein Kunde mit hohem Umsatz allein','Ein Kunde mit hohen Scores in Recency, Frequency UND Monetary','Ein Neukunde','Ein Influencer'],
+         en:['A customer with high revenue alone','A customer with high scores in Recency, Frequency AND Monetary','A new customer','An influencer']},
+   correct:1,
+   explain:{de:'Champions haben hohe Scores in allen drei RFM-Dimensionen: sie haben kürzlich, oft und viel gekauft.',en:'Champions have high scores across all three RFM dimensions: they bought recently, frequently, and spent a lot.'}},
+  {q:{de:'Wann gilt ein Kunde als "churned" (abgewandert)?',en:'When is a customer considered "churned"?'},
+   opts:{de:['Nach einer Retoure','Nach einer definierten Inaktivitätsperiode (z.B. 12 Monate keine Bestellung)','Nach einem Reklamation','Nach drei negativen Reviews'],
+         en:['After a return','After a defined inactivity period (e.g. 12 months without order)','After a complaint','After three negative reviews']},
+   correct:1,
+   explain:{de:'Churn-Definition variiert je Branche. Im E-Commerce gilt ein Kunde oft nach 6–12 Monaten ohne Bestellung als abgewandert.',en:'Churn definition varies by industry. In e-commerce, a customer is often considered churned after 6–12 months without an order.'}},
+  {q:{de:'Was tut man mit Hibernating-Kunden?',en:'What should be done with Hibernating customers?'},
+   opts:{de:['Sofort löschen','Win-back-Kampagne oder abschreiben (ROI-Abwägung)','Rabatt von 80% geben','Newsletter-Frequenz erhöhen'],
+         en:['Delete immediately','Win-back campaign or write off (ROI consideration)','Give 80% discount','Increase newsletter frequency']},
+   correct:1,
+   explain:{de:'Bei Hibernating-Kunden lohnt sich eine Win-back-Kampagne – falls die Reaktivierungskosten unter dem CLV liegen. Sonst aus aktivem Marketing herausnehmen.',en:'For hibernating customers, a win-back campaign may be worthwhile – if reactivation costs are below CLV. Otherwise remove from active marketing.'}},
+  {q:{de:'Was sind Quintile?',en:'What are quintiles?'},
+   opts:{de:['Fünf gleich große Intervalle bei der Werteverteilung','Fünf Produktkategorien','Fünf Regionen','Fünf Kanäle'],
+         en:['Five equal-sized intervals in the value distribution','Five product categories','Five regions','Five channels']},
+   correct:0,
+   explain:{de:'Quintile teilen eine Verteilung in 5 gleich große Gruppen (je 20%). In RFM: Score 1 = schlechteste 20%, Score 5 = beste 20%.',en:'Quintiles divide a distribution into 5 equal groups (20% each). In RFM: score 1 = worst 20%, score 5 = best 20%.'}},
+  {q:{de:'Unterschied COUNTD vs COUNT bei Bestellungen?',en:'Difference between COUNTD and COUNT for orders?'},
+   opts:{de:['Kein Unterschied','COUNTD zählt eindeutige order_id, COUNT zählt alle Zeilen (inkl. Duplikate)','COUNT ist schneller','COUNTD nur für Zahlen'],
+         en:['No difference','COUNTD counts unique order_id, COUNT counts all rows (incl. duplicates)','COUNT is faster','COUNTD only for numbers']},
+   correct:1,
+   explain:{de:'Ein Join mit order_items kann Zeilen verdoppeln. COUNTD([order_id]) verhindert Doppelzählungen.',en:'A join with order_items can duplicate rows. COUNTD([order_id]) prevents double-counting.'}},
+  {q:{de:'Welcher RFM-Score-Bereich bezeichnet Champions?',en:'Which RFM score range indicates Champions?'},
+   opts:{de:['R=1, F=1, M=1','R=5, F=5, M=5','R=3, F=3, M=3','R=5, F=1, M=1'],
+         en:['R=1, F=1, M=1','R=5, F=5, M=5','R=3, F=3, M=3','R=5, F=1, M=1']},
+   correct:1,
+   explain:{de:'Champions haben die höchsten Scores: R=5 (sehr aktuell), F=5 (sehr häufig), M=5 (sehr hoher Umsatz).',en:'Champions have the highest scores: R=5 (very recent), F=5 (very frequent), M=5 (very high monetary value).'}},
+  {q:{de:'Was ist Churn Rate?',en:'What is Churn Rate?'},
+   opts:{de:['Anteil neuer Kunden','Anteil der Kunden, die in einem Zeitraum abwandern','Anteil der Retouren','Rabattquote'],
+         en:['Share of new customers','Share of customers who leave in a period','Return rate','Discount rate']},
+   correct:1,
+   explain:{de:'Churn Rate = Abgewanderte Kunden / Gesamtkunden × 100. Eine hohe Churn Rate ist teuer: Neukunden akquirieren kostet 5–7x mehr als Bestandskunden zu halten.',en:'Churn Rate = churned customers / total customers × 100. High churn is costly: acquiring new customers costs 5–7x more than retaining existing ones.'}},
+  {q:{de:'Wozu wird RFM im CRM eingesetzt?',en:'How is RFM used in CRM?'},
+   opts:{de:['Zum Erstellen von Rechnungen','Zur automatischen Segmentierung und gezielten Ansprache von Kunden','Zur Lagerverwaltung','Zum Preismanagement'],
+         en:['To create invoices','For automatic segmentation and targeted customer communication','For warehouse management','For price management']},
+   correct:1,
+   explain:{de:'Im CRM ermöglicht RFM automatische Segmentierung: Champions bekommen VIP-Angebote, At-Risk-Kunden Reaktivierungsmails.',en:'In CRM, RFM enables automatic segmentation: Champions get VIP offers, At-Risk customers receive reactivation emails.'}},
+  {q:{de:'Welche Marketingmaßnahme eignet sich für At-Risk-Kunden?',en:'Which marketing measure is suitable for At-Risk customers?'},
+   opts:{de:['Nichts tun','Personalisierte Reaktivierungs-E-Mail mit speziellem Angebot','Alle Rabatte streichen','An Neukunden weiterleiten'],
+         en:['Do nothing','Personalised reactivation email with special offer','Remove all discounts','Redirect to new customers']},
+   correct:1,
+   explain:{de:'At-Risk-Kunden waren wertvoll – eine personalisierte E-Mail ("Wir vermissen dich!") mit Anreiz (Rabatt, exklusives Angebot) ist am effektivsten.',en:'At-Risk customers were valuable – a personalised email ("We miss you!") with incentive (discount, exclusive offer) is most effective.'}},
+  {q:{de:'Wie berechnet man den RFM-Gesamtscore?',en:'How is the overall RFM score calculated?'},
+   opts:{de:['R + F + M summieren','R × F × M multiplizieren','R, F, M getrennt in Quintile einteilen und Score 1-5 vergeben','Nur Monetary zählt'],
+         en:['Sum R + F + M','Multiply R × F × M','Divide R, F, M separately into quintiles and assign score 1–5','Only Monetary counts']},
+   correct:2,
+   explain:{de:'Jede Dimension wird separat in Quintile unterteilt (Score 1–5). Der Gesamtscore kann als String "RFM" oder als Summe ausgedrückt werden.',en:'Each dimension is divided into quintiles separately (score 1–5). The overall score can be expressed as a string "RFM" or as a sum.'}},
+  {q:{de:'Wie viel mehr kostet die Akquise eines Neukunden vs. Halten eines Bestandskunden?',en:'How much more does acquiring a new customer cost vs. retaining an existing one?'},
+   opts:{de:['Gleich viel','2× mehr','5–7× mehr','10× mehr'],
+         en:['The same','2× more','5–7× more','10× more']},
+   correct:2,
+   explain:{de:'Studien zeigen: Neukundenakquise kostet 5–7× mehr als Bestandskundenbindung. Deshalb ist Retention-Marketing so wichtig.',en:'Studies show: acquiring new customers costs 5–7× more than retaining existing ones. This is why retention marketing matters.'}},
+  {q:{de:'Was ist der Monetary-Wert im RFM?',en:'What is the Monetary value in RFM?'},
+   opts:{de:['Anzahl der Käufe','Gesamtumsatz des Kunden im Analysezeitraum','Durchschnittlicher Warenkorbwert','Marketingkosten pro Kunde'],
+         en:['Number of purchases','Total customer revenue in the analysis period','Average basket value','Marketing cost per customer']},
+   correct:1,
+   explain:{de:'M = Monetary: SUM([total_revenue]) pro Kunde. Gibt an, wie viel ein Kunde insgesamt ausgegeben hat.',en:'M = Monetary: SUM([total_revenue]) per customer. Shows how much a customer has spent in total.'}}
+];
+
+// Language
+function setLang(lang) {
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-de]').forEach(el => {
+    const v = el.getAttribute('data-' + lang);
+    if (v !== null) el.innerHTML = v;
+  });
+  document.querySelectorAll('.lang-btn').forEach(b =>
+    b.classList.toggle('is-active', b.textContent.toLowerCase() === lang));
+  localStorage.setItem('lang', lang);
 }
 
-function App() {
-  const [lang, setLang] = useState('de');
-  const t = T[lang];
+// Scroll reveal
+(function(){
+  const obs = new IntersectionObserver(entries =>
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); }),
+    {threshold:.08});
+  document.querySelectorAll('.sr').forEach(el => obs.observe(el));
+})();
 
-  useEffect(() => {
-    const els = document.querySelectorAll('.sr');
-    const obs = new IntersectionObserver(entries => {
-      entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
-    }, { threshold: 0.08 });
-    els.forEach(el => obs.observe(el));
-    return () => obs.disconnect();
-  }, [lang]);
+let answers = {};
+let lang = () => document.documentElement.lang || 'de';
 
-  return (
-    <>
-      <nav className="navbar">
-        <div className="nav-brand">
-          <a href="index.html" style={{textDecoration:'none', display:'flex', alignItems:'center', gap:'10px'}}>
-            <img src={"data:image/png;base64,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"} alt="THWS Business School" style={{height:'30px',width:'auto'}}/>
-            <div style={{width:'1px',height:'24px',background:'#E9ECEF'}}/>
-            <span className="nav-brand-text">E-Commerce Labs</span>
-          </a>
-          <span className="nav-lab-badge">{t.labNum}</span>
-        </div>
-        <div className="lang-wrap">
-          <button className={`lang-btn${lang==='de'?' active':''}`} onClick={()=>setLang('de')}>DE</button>
-          <button className={`lang-btn${lang==='en'?' active':''}`} onClick={()=>setLang('en')}>EN</button>
-        </div>
-      </nav>
+function buildQuiz() {
+  const container = document.getElementById('quiz-questions');
+  container.innerHTML = '';
+  answers = {};
+  updateProgress();
 
-      <div className="progress-bar">
-        {t.progSteps.map((s, i) => (
-          <React.Fragment key={i}>
-            <div className={`prog-step ${i < 3 ? 'done' : i === 3 ? 'active' : ''}`}>
-              <div className={`prog-dot ${i < 3 ? 'done' : i === 3 ? 'active' : ''}`}>
-                {i < 3 ? '✓' : i + 1}
-              </div>
-              {s}
-            </div>
-            {i < t.progSteps.length - 1 && <div className="prog-arrow">›</div>}
-          </React.Fragment>
-        ))}
-      </div>
+  QUESTIONS.forEach((q, qi) => {
+    const div = document.createElement('div');
+    div.className = 'question';
+    div.id = 'q' + qi;
 
-      <div className="lab-hero">
-        <div className="lab-hero-inner">
-          <div className="lab-num">{t.labNum}</div>
-          <h1 className="lab-title">{t.labTitle[0]}<span>{t.labTitle[1]}</span></h1>
-          <p className="lab-sub">{t.labSub}</p>
-          <div className="lab-meta">
-            {[["⏱",t.metaDauer],["📊",t.metaLevel],["📁",t.metaData],["🔧",t.metaTool]].map(([icon,val],i) => (
-              <div key={i} className="lab-meta-item">{icon} <strong>{val}</strong></div>
-            ))}
-          </div>
-        </div>
-      </div>
+    const l = lang();
+    const opts = q.opts[l].map((opt, oi) =>
+      `<button class="opt" onclick="answer(${qi},${oi})" id="opt-${qi}-${oi}">
+        <span class="opt__letter">${'ABCD'[oi]}</span>
+        ${opt}
+      </button>`
+    ).join('');
 
-      <div className="content">
-        <div className="section-block sr">
-          <div className="block-eyebrow">{t.s1eye}</div>
-          <h2 className="block-title">{t.s1title}</h2>
-          <div className="divider"/>
-          <p className="block-lead">{t.s1lead}</p>
-          <table className="rfm-table">
-            <thead>
-              <tr>
-                <th>{lang==='de'?'Segment':'Segment'}</th>
-                <th>R-Score</th>
-                <th>F-Score</th>
-                <th>M-Score</th>
-                <th>{lang==='de'?'Maßnahme':'Action'}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {t.rfmSegments.map((seg, i) => (
-                <tr key={i}>
-                  <td><span className={`seg-badge ${seg.css}`}>{seg.seg}</span></td>
-                  <td>{seg.r}</td>
-                  <td>{seg.f}</td>
-                  <td>{seg.m}</td>
-                  <td style={{fontSize:'0.8rem', color:'#6C757D'}}>{seg.desc}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
-        <div className="section-block sr">
-          <div className="block-eyebrow">{t.s2eye}</div>
-          <h2 className="block-title">{t.s2title}</h2>
-          <div className="divider"/>
-          <p className="block-lead">{t.s2lead}</p>
-          <div className="steps">
-            {t.steps.map((step, i) => (
-              <div key={i} className="step-card">
-                <div className="step-header">
-                  <div className="step-num">{i+1}</div>
-                  <div className="step-title">{step.title}</div>
-                </div>
-                <div className="step-body" dangerouslySetInnerHTML={{__html: step.body}}/>
-                {step.tip && <div className="step-tip">{step.tip}</div>}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="section-block sr">
-          <div className="block-eyebrow">{t.s3eye}</div>
-          <h2 className="block-title">{t.s3title}</h2>
-          <div className="divider"/>
-          <p className="block-lead">{t.s3lead}</p>
-          <div className="kpi-grid">
-            {t.kpis.map((k,i) => (
-              <div key={i} className="kpi-card">
-                <div className="kpi-icon">{k.icon}</div>
-                <div className="kpi-val">{k.val}</div>
-                <div className="kpi-lbl">{k.lbl}</div>
-                <div className="kpi-def">{k.def}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="section-block sr">
-          <div className="block-eyebrow">{t.s4eye}</div>
-          <h2 className="block-title">{t.s4title}</h2>
-          <div className="divider"/>
-          <div className="steps">
-            {t.viz_steps.map((step, i) => (
-              <div key={i} className="step-card">
-                <div className="step-header">
-                  <div className="step-num">{i+1}</div>
-                  <div className="step-title">{step.title}</div>
-                </div>
-                <div className="step-body" dangerouslySetInnerHTML={{__html: step.body}}/>
-                {step.tip && <div className="step-tip">{step.tip}</div>}
-                <div className="screenshot-placeholder">
-                  <div className="screenshot-placeholder-icon">📸</div>
-                  <div className="screenshot-placeholder-text">
-                    {lang==='de'?`Dein Ergebnis für Schritt ${i+1}`:`Your result for step ${i+1}`}
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="section-block sr">
-          <Quiz questions={t.questions} t={t} lang={lang}/>
-        </div>
-
-        <div className="section-block sr">
-          <div className="ai-section">
-            <div className="ai-eyebrow">{t.aiEye}</div>
-            <h3 className="ai-title">{t.aiTitle}</h3>
-            <p className="ai-text">{t.aiText}</p>
-            <div className="code-block">{t.aiPrompt}</div>
-            <p style={{fontSize:'0.78rem', color:'rgba(255,255,255,0.4)', marginTop:'12px'}}>
-              {lang==='de'
-                ? '→ Nächstes Lab: ABC-Analyse – welche Produkte tragen 80% des Umsatzes?'
-                : '→ Next lab: ABC Analysis – which products contribute 80% of revenue?'}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div className="lab-nav">
-        <a href="lab02.html" className="lab-nav-btn">
-          {t.prevLab}
-        </a>
-        <a href="lab04.html" className="lab-nav-btn primary">
-          {t.nextLab}
-        </a>
-      </div>
-    </>
-  );
+    div.innerHTML = `
+      <div class="question__num">Frage ${qi+1} / 15</div>
+      <div class="question__text">${q.q[l]}</div>
+      <div class="question__options">${opts}</div>
+      <div class="feedback" id="fb-${qi}" style="display:none"></div>
+    `;
+    container.appendChild(div);
+  });
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+function answer(qi, oi) {
+  if (answers[qi] !== undefined) return;
+  answers[qi] = oi;
+
+  const l = lang();
+  const q = QUESTIONS[qi];
+  const correct = oi === q.correct;
+
+  for (let i = 0; i < 4; i++) {
+    const btn = document.getElementById(`opt-${qi}-${i}`);
+    btn.disabled = true;
+    if (i === q.correct) btn.classList.add('is-correct');
+    else if (i === oi) btn.classList.add('is-wrong');
+  }
+
+  const fb = document.getElementById(`fb-${qi}`);
+  fb.style.display = 'block';
+  fb.className = `feedback ${correct ? 'is-correct' : 'is-wrong'}`;
+  fb.innerHTML = `${correct ? '&#10003; Richtig. ' : '&#10007; Nicht ganz. '}${q.explain[l]}`;
+
+  updateProgress();
+  if (Object.keys(answers).length === QUESTIONS.length) showResult();
+}
+
+function updateProgress() {
+  const done = Object.keys(answers).length;
+  document.getElementById('quiz-progress').textContent = `${done} / 15`;
+}
+
+function showResult() {
+  const score = Object.entries(answers).filter(([i,a]) => a === QUESTIONS[i].correct).length;
+  const el = document.getElementById('quiz-result');
+  const l = lang();
+  el.classList.add('is-visible');
+  document.getElementById('quiz-score').textContent = `${score}/15`;
+  document.getElementById('quiz-msg').textContent =
+    score >= 13 ? (l==='de'?'Ausgezeichnet! Weiter zum nächsten Lab.':'Excellent! Continue to the next lab.') :
+    score >= 10 ? (l==='de'?'Gut! Lies die Erklärungen noch einmal.':'Good! Review the explanations.') :
+                  (l==='de'?'Noch einmal versuchen.':'Try again.');
+}
+
+function resetQuiz() {
+  document.getElementById('quiz-result').classList.remove('is-visible');
+  buildQuiz();
+}
+
+(function(){
+  const l = localStorage.getItem('lang') || 'de';
+  setLang(l);
+  buildQuiz();
+})();
+
 </script>
 </body>
 </html>
