@@ -749,8 +749,6 @@
   </div>
 </section>
 
-<div style="max-width:1200px;margin:0 auto">
-
 <script>
 function setLang(l){document.documentElement.lang=l;document.querySelectorAll('[data-de]').forEach(el=>{const v=el.getAttribute('data-'+l);if(v!==null)el.innerHTML=v;});document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('is-active',b.textContent.toLowerCase()===l));localStorage.setItem('lang',l);}
 (function(){const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:.06});document.querySelectorAll('.sr').forEach(el=>obs.observe(el));})();
@@ -765,6 +763,5 @@ function setLang(l){document.documentElement.lang=l;document.querySelectorAll('[
   });
 })();
 </script>
-</div>
 </body>
 </html>
