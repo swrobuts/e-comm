@@ -91,6 +91,50 @@
 
 /* ── Arch tooltip ── */
 #arch-tooltip{display:none;position:fixed;z-index:999;max-width:280px;background:#1E293B;border-left:3px solid var(--orange);padding:12px 16px;font-size:12px;color:rgba(255,255,255,.8);line-height:1.7;pointer-events:none;box-shadow:0 8px 32px rgba(0,0,0,.4);}
+
+/* ── Readability overrides ── */
+.infobox__item__sub { font-size: 13px; color: var(--gray-600); line-height: 1.7; margin-top: 4px; }
+.infobox__item__title { font-size: 14px; }
+.ds-card__meta { font-size: 13px; }
+.ds-field { font-size: 13px; padding: 6px 0; }
+.ds-potential { font-size: 14px; padding: 16px 20px; }
+.ds-potential strong { font-size: 12px; }
+.ds-links { font-size: 13px; }
+.tag { font-size: 11px; padding: 2px 8px; }
+.ext-card__source { font-size: 11px; }
+.ext-card__title { font-size: 15px; }
+.ext-card__hyp { font-size: 14px; line-height: 1.75; }
+.ext-card__tag { font-size: 11px; }
+.law-card { font-size: 14px; line-height: 1.8; }
+.law-card__title { font-size: 14px; }
+.ethics-q { font-size: 15px; line-height: 1.8; }
+.dark-callout { font-size: 14px; }
+
+/* ── Consistent section spacing ── */
+.block + .block { margin-top: 0; }
+.block h3 { font-size: 17px; font-weight: 800; margin-bottom: var(--space-2); color: var(--gray-900); }
+.block p { font-size: 14px; color: var(--gray-600); line-height: 1.8; }
+
+/* ── Pipeline flow consistent sizing ── */
+.pipeline-flow { margin: 32px 0; display: grid; grid-template-columns: repeat(5,1fr); gap: 0; border: 2px solid var(--gray-200); overflow: hidden; }
+.pipeline-step { padding: 24px 16px; text-align: center; background: #fff; border-right: 1px solid var(--gray-200); }
+.pipeline-step:last-child { border-right: none; }
+.pipeline-num { font-size: 11px; font-weight: 800; color: var(--orange); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 10px; }
+.pipeline-icon { width: 40px; height: 40px; border: 2px solid var(--orange); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; }
+.pipeline-label { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+.pipeline-desc { font-size: 12px; color: var(--gray-600); line-height: 1.6; }
+
+/* ── Research questions (override) ── */
+.rq { padding: 16px 0; border-bottom: 1px solid var(--gray-200); }
+.rq:last-child { border-bottom: none; }
+.rq__num { display: inline-block; font-size: 11px; font-weight: 800; color: var(--orange); letter-spacing: .1em; background: rgba(232,119,34,.1); padding: 3px 8px; margin-bottom: 6px; }
+.rq__title { font-size: 15px; font-weight: 700; color: var(--gray-900); margin-bottom: 4px; margin-top: 0; }
+.rq__sub { font-size: 14px; color: var(--gray-600); line-height: 1.75; }
+
+/* ── Dark section typography ── */
+.dark-section h2 { font-size: 32px; font-weight: 800; letter-spacing: -0.5px; color: #fff; margin-bottom: 16px; }
+.dark-section .block__eyebrow { color: var(--orange); margin-bottom: 16px; }
+.dark-section p.lead { font-size: 15px; color: rgba(255,255,255,.55); line-height: 1.8; max-width: 700px; margin-bottom: 48px; }
 </style>
 </head>
 <body>
@@ -120,36 +164,36 @@
   <div class="block__rule"></div>
   <p class="block__lead" data-de="UrbanCart ist ein fiktiver E-Commerce-Shop. Jede Nutzerinteraktion erzeugt strukturierte Datenpunkte, die in einer relationalen Datenbank gespeichert und als CSV-Dateien exportiert werden. Diese CSVs sind die Grundlage aller 9 Labs &#8211; eine vereinfachte, aber realistische Darstellung dessen, was in echten Shops passiert." data-en="UrbanCart is a fictional e-commerce shop. Every user interaction creates structured data points stored in a relational database and exported as CSV files. These CSVs are the foundation of all 9 labs &#8211; a simplified but realistic representation of what happens in real shops."></p>
 
-  <div style="margin:32px 0;display:grid;grid-template-columns:repeat(5,1fr);gap:0;border:2px solid var(--gray-200);overflow:hidden;" class="sr">
-    <div style="padding:24px 16px;text-align:center;background:#fff;border-right:1px solid var(--gray-200);">
-      <div style="font-size:11px;font-weight:800;color:var(--orange);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">01</div>
-      <div style="width:40px;height:40px;border:2px solid var(--orange);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></div>
-      <div style="font-size:13px;font-weight:700;margin-bottom:6px;" data-de="Nutzer interagiert" data-en="User interacts"></div>
-      <div style="font-size:11px;color:var(--gray-600);line-height:1.6;" data-de="Klick, Kauf, Bewertung" data-en="Click, purchase, review"></div>
+  <div class="pipeline-flow sr">
+    <div class="pipeline-step">
+      <div class="pipeline-num">01</div>
+      <div class="pipeline-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg></div>
+      <div class="pipeline-label" data-de="Nutzer interagiert" data-en="User interacts"></div>
+      <div class="pipeline-desc" data-de="Klick, Kauf, Bewertung" data-en="Click, purchase, review"></div>
     </div>
-    <div style="padding:24px 16px;text-align:center;background:#fff;border-right:1px solid var(--gray-200);">
-      <div style="font-size:11px;font-weight:800;color:var(--orange);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">02</div>
-      <div style="width:40px;height:40px;border:2px solid var(--orange);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
-      <div style="font-size:13px;font-weight:700;margin-bottom:6px;" data-de="Event-Logging" data-en="Event Logging"></div>
-      <div style="font-size:11px;color:var(--gray-600);line-height:1.6;" data-de="Zeitstempel, Session, Ger&#228;t" data-en="Timestamp, session, device"></div>
+    <div class="pipeline-step">
+      <div class="pipeline-num">02</div>
+      <div class="pipeline-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+      <div class="pipeline-label" data-de="Event-Logging" data-en="Event Logging"></div>
+      <div class="pipeline-desc" data-de="Zeitstempel, Session, Ger&#228;t" data-en="Timestamp, session, device"></div>
     </div>
-    <div style="padding:24px 16px;text-align:center;background:#fff;border-right:1px solid var(--gray-200);">
-      <div style="font-size:11px;font-weight:800;color:var(--orange);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">03</div>
-      <div style="width:40px;height:40px;border:2px solid var(--orange);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div>
-      <div style="font-size:13px;font-weight:700;margin-bottom:6px;" data-de="Relationale Datenbank" data-en="Relational Database"></div>
-      <div style="font-size:11px;color:var(--gray-600);line-height:1.6;" data-de="SQL, normalisiert, ACID" data-en="SQL, normalised, ACID"></div>
+    <div class="pipeline-step">
+      <div class="pipeline-num">03</div>
+      <div class="pipeline-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div>
+      <div class="pipeline-label" data-de="Relationale Datenbank" data-en="Relational Database"></div>
+      <div class="pipeline-desc" data-de="SQL, normalisiert, ACID" data-en="SQL, normalised, ACID"></div>
     </div>
-    <div style="padding:24px 16px;text-align:center;background:#fff;border-right:1px solid var(--gray-200);">
-      <div style="font-size:11px;font-weight:800;color:var(--orange);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">04</div>
-      <div style="width:40px;height:40px;border:2px solid var(--orange);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
-      <div style="font-size:13px;font-weight:700;margin-bottom:6px;" data-de="7 CSV-Dateien" data-en="7 CSV Files"></div>
-      <div style="font-size:11px;color:var(--gray-600);line-height:1.6;" data-de="58.344 Datenpunkte" data-en="58,344 data points"></div>
+    <div class="pipeline-step">
+      <div class="pipeline-num">04</div>
+      <div class="pipeline-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+      <div class="pipeline-label" data-de="7 CSV-Dateien" data-en="7 CSV Files"></div>
+      <div class="pipeline-desc" data-de="58.344 Datenpunkte" data-en="58,344 data points"></div>
     </div>
-    <div style="padding:24px 16px;text-align:center;background:#fff;">
-      <div style="font-size:11px;font-weight:800;color:var(--orange);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;">05</div>
-      <div style="width:40px;height:40px;border:2px solid var(--orange);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg></div>
-      <div style="font-size:13px;font-weight:700;margin-bottom:6px;" data-de="Tableau-Analyse" data-en="Tableau Analysis"></div>
-      <div style="font-size:11px;color:var(--gray-600);line-height:1.6;" data-de="KPIs, Trends, Entscheidungen" data-en="KPIs, trends, decisions"></div>
+    <div class="pipeline-step">
+      <div class="pipeline-num">05</div>
+      <div class="pipeline-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg></div>
+      <div class="pipeline-label" data-de="Tableau-Analyse" data-en="Tableau Analysis"></div>
+      <div class="pipeline-desc" data-de="KPIs, Trends, Entscheidungen" data-en="KPIs, trends, decisions"></div>
     </div>
   </div>
 
@@ -395,24 +439,24 @@
   </div>
 
   <div style="margin-top:32px;" class="sr">
-    <h3 style="font-size:16px;font-weight:800;margin-bottom:16px;" data-de="Rechtsgrundlagen nach Art. 6 DSGVO" data-en="Legal bases under Art. 6 GDPR"></h3>
+    <h3 data-de="Rechtsgrundlagen nach Art. 6 DSGVO" data-en="Legal bases under Art. 6 GDPR"></h3>
     <div class="law-grid">
       <div class="law-card" style="background:var(--gray-100);border:1px solid var(--gray-200);">
-        <div class="law-card__title" style="color:var(--orange);font-size:13px;">
+        <div class="law-card__title" style="color:var(--orange);">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
           Art. 6 Abs. 1 lit. a &#8211; Einwilligung
         </div>
         <div style="font-size:13px;color:var(--gray-700);line-height:1.8;" data-de="Marketing-Cookies, Newsletter, Profiling. Opt-in (nicht Opt-out!), jederzeit widerrufbar. Cookie-Banner müssen DSGVO-konform gestaltet sein &#8211; kein 'Dark Pattern'." data-en="Marketing cookies, newsletter, profiling. Opt-in (not opt-out!), revocable at any time. Cookie banners must be GDPR-compliant &#8211; no dark pattern."></div>
       </div>
       <div class="law-card" style="background:var(--gray-100);border:1px solid var(--gray-200);">
-        <div class="law-card__title" style="color:var(--blue);font-size:13px;">
+        <div class="law-card__title" style="color:var(--blue);">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
           Art. 6 Abs. 1 lit. b &#8211; Vertragserfüllung
         </div>
         <div style="font-size:13px;color:var(--gray-700);line-height:1.8;" data-de="Bestelldaten, Lieferadresse, Zahlungsdaten &#8211; notwendig, um den Kaufvertrag zu erfüllen. Keine Einwilligung erforderlich. Gilt nur für den konkreten Zweck." data-en="Order data, delivery address, payment data &#8211; necessary to fulfil the purchase contract. No consent required. Applies only to the specific purpose."></div>
       </div>
       <div class="law-card" style="background:var(--gray-100);border:1px solid var(--gray-200);">
-        <div class="law-card__title" style="color:var(--green,#3D7A56);font-size:13px;">
+        <div class="law-card__title" style="color:var(--green,#3D7A56);">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           Art. 6 Abs. 1 lit. f &#8211; Berechtigtes Interesse
         </div>
@@ -422,7 +466,7 @@
   </div>
 
   <div style="margin-top:32px;" class="sr">
-    <h3 style="font-size:16px;font-weight:800;margin-bottom:16px;" data-de="Cookies &amp; Tracking: TDDDG (2024)" data-en="Cookies &amp; Tracking: TDDDG (2024)"></h3>
+    <h3 data-de="Cookies &amp; Tracking: TDDDG (2024)" data-en="Cookies &amp; Tracking: TDDDG (2024)"></h3>
     <div class="concept-box">
       <div class="concept-item">
         <div class="concept-item__title" style="color:var(--green,#3D7A56);">
@@ -493,9 +537,9 @@
 
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px;align-items:stretch;" class="sr">
     <div>
-      <h3 style="font-size:15px;font-weight:800;margin-bottom:12px;" data-de="Dark Patterns: manipulative Interface-Design" data-en="Dark Patterns: Manipulative Interface Design"></h3>
-      <p style="font-size:13px;color:var(--gray-600);line-height:1.8;margin-bottom:12px;" data-de="Dark Patterns sind Interface-Designs, die Nutzer zu Entscheidungen manipulieren, die sie eigentlich nicht treffen wollen. Im E-Commerce weit verbreitet &#8211; und seit 2024 in der EU explizit verboten (Digital Services Act):" data-en="Dark patterns are interface designs that manipulate users into decisions they would not otherwise make. Widespread in e-commerce &#8211; and since 2024 explicitly prohibited in the EU (Digital Services Act):"></div>
-      <ul style="font-size:13px;color:var(--gray-600);line-height:2;list-style:none;padding:0;">
+      <h3 data-de="Dark Patterns: manipulative Interface-Design" data-en="Dark Patterns: Manipulative Interface Design"></h3>
+      <p style="color:var(--gray-600);line-height:1.8;margin-bottom:12px;" data-de="Dark Patterns sind Interface-Designs, die Nutzer zu Entscheidungen manipulieren, die sie eigentlich nicht treffen wollen. Im E-Commerce weit verbreitet &#8211; und seit 2024 in der EU explizit verboten (Digital Services Act):" data-en="Dark patterns are interface designs that manipulate users into decisions they would not otherwise make. Widespread in e-commerce &#8211; and since 2024 explicitly prohibited in the EU (Digital Services Act):"></div>
+      <ul style="color:var(--gray-600);line-height:2;list-style:none;padding:0;">
         <li style="display:flex;gap:8px;align-items:flex-start;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2.5" style="flex-shrink:0;margin-top:3px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg><span data-de="Newsletter-Opt-in vorausgewählt beim Checkout" data-en="Newsletter opt-in pre-selected at checkout"></span></li>
         <li style="display:flex;gap:8px;align-items:flex-start;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2.5" style="flex-shrink:0;margin-top:3px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg><span data-de="'Ablehnen'-Button bewusst klein und versteckt" data-en="'Reject' button deliberately small and hidden"></span></li>
         <li style="display:flex;gap:8px;align-items:flex-start;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2.5" style="flex-shrink:0;margin-top:3px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg><span data-de="Künstliche Knappheit ('Nur noch 2 auf Lager!' &#8211; oft falsch)" data-en="Artificial scarcity ('Only 2 left in stock!' &#8211; often false)"></span></li>
@@ -504,15 +548,15 @@
       </ul>
     </div>
     <div>
-      <h3 style="font-size:15px;font-weight:800;margin-bottom:12px;" data-de="Surveillance Capitalism (Shoshana Zuboff)" data-en="Surveillance Capitalism (Shoshana Zuboff)"></h3>
-      <p style="font-size:13px;color:var(--gray-600);line-height:1.8;" data-de="Die Politikwissenschaftlerin Shoshana Zuboff prägte 2019 den Begriff 'Surveillance Capitalism': ein Wirtschaftsmodell, in dem menschliche Erfahrung als kostenloser Rohstoff für Verhaltensvorhersage-Produkte abgebaut wird." data-en="Political scientist Shoshana Zuboff coined the term 'surveillance capitalism' in 2019: an economic model in which human experience is mined as free raw material for behavioural prediction products."></p>
-      <p style="font-size:13px;color:var(--gray-600);line-height:1.8;margin-top:12px;" data-de="Kern-These: Nicht du bist der Kunde &#8211; du bist das Produkt. Dein Verhalten wird vorhergesagt, beeinflusst und an Werbetreibende verkauft. Die Analyse deiner Klicks dient nicht (nur) dazu, dir bessere Produkte zu zeigen, sondern dein Kaufverhalten zu konditionieren." data-en="Core thesis: you are not the customer &#8211; you are the product. Your behaviour is predicted, influenced and sold to advertisers. Analysing your clicks serves not (only) to show you better products, but to condition your purchasing behaviour."></p>
+      <h3 data-de="Surveillance Capitalism (Shoshana Zuboff)" data-en="Surveillance Capitalism (Shoshana Zuboff)"></h3>
+      <p style="color:var(--gray-600);line-height:1.8;" data-de="Die Politikwissenschaftlerin Shoshana Zuboff prägte 2019 den Begriff 'Surveillance Capitalism': ein Wirtschaftsmodell, in dem menschliche Erfahrung als kostenloser Rohstoff für Verhaltensvorhersage-Produkte abgebaut wird." data-en="Political scientist Shoshana Zuboff coined the term 'surveillance capitalism' in 2019: an economic model in which human experience is mined as free raw material for behavioural prediction products."></p>
+      <p style="color:var(--gray-600);line-height:1.8;margin-top:12px;" data-de="Kern-These: Nicht du bist der Kunde &#8211; du bist das Produkt. Dein Verhalten wird vorhergesagt, beeinflusst und an Werbetreibende verkauft. Die Analyse deiner Klicks dient nicht (nur) dazu, dir bessere Produkte zu zeigen, sondern dein Kaufverhalten zu konditionieren." data-en="Core thesis: you are not the customer &#8211; you are the product. Your behaviour is predicted, influenced and sold to advertisers. Analysing your clicks serves not (only) to show you better products, but to condition your purchasing behaviour."></p>
       <div class="step__tip" style="margin-top:12px;" data-de="Lektüreempfehlung: Zuboff, S. (2019): Das Zeitalter des Überwachungskapitalismus. Campus Verlag." data-en="Reading recommendation: Zuboff, S. (2019): The Age of Surveillance Capitalism. PublicAffairs."></div>
     </div>
   </div>
 
   <div style="margin-top:32px;">
-    <h3 style="font-size:15px;font-weight:800;margin-bottom:16px;color:var(--gray-900);" data-de="Ethische Leitfragen &#8211; zum Nachdenken" data-en="Ethical Questions &#8211; for Reflection"></h3>
+    <h3 data-de="Ethische Leitfragen &#8211; zum Nachdenken" data-en="Ethical Questions &#8211; for Reflection"></h3>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:stretch;">
       <div class="ethics-q" data-de="Wenn ein Algorithmus günstigeren Kunden automatisch höhere Preise anzeigt, weil er ihr Kaufverhalten als 'weniger preissensitiv' klassifiziert hat &#8211; ist das Optimierung oder Ausbeutung?" data-en="If an algorithm automatically shows higher prices to customers because it has classified their buying behaviour as 'less price-sensitive' &#8211; is that optimisation or exploitation?"></div>
       <div class="ethics-q" data-de="Wie lange darf ein Unternehmen Kaufhistorien speichern? Was passiert, wenn aus Kaufdaten politische Überzeugungen oder gesundheitliche Probleme abgeleitet werden können?" data-en="How long may a company store purchase histories? What happens when political views or health issues can be inferred from purchase data?"></div>
@@ -534,30 +578,30 @@
   <div class="infobox sr" style="margin-top:32px;">
     <div class="infobox__title" data-de="5 Forschungsfragen" data-en="5 Research Questions"></div>
     <div>
-      <div style="padding:14px 0;border-bottom:1px solid var(--gray-200);">
-        <div style="font-size:10px;font-weight:800;color:var(--orange);letter-spacing:.1em;margin-bottom:4px;">01</div>
-        <div style="font-size:14px;font-weight:700;color:var(--gray-900);margin-bottom:4px;" data-de="Wie beeinflussen Social-Media-Kampagnen die Conversion Rate im E-Commerce &#8211; und mit welchem zeitlichen Versatz?" data-en="How do social media campaigns affect e-commerce conversion rates &#8211; and with what time lag?"></div>
-        <div style="font-size:13px;color:var(--gray-600);line-height:1.7;" data-de="Datenbasis: UrbanCart marketing.csv + sessions.csv + Social-Media-API (Meta/TikTok). Methodik: Granger-Kausalitätstest, Kreuzkorrelationsanalyse nach Kanal." data-en="Data basis: UrbanCart marketing.csv + sessions.csv + social media API (Meta/TikTok). Methodology: Granger causality test, cross-correlation analysis by channel."></div>
+      <div class="rq">
+        <div class="rq__num">01</div>
+        <div class="rq__title" data-de="Wie beeinflussen Social-Media-Kampagnen die Conversion Rate im E-Commerce &#8211; und mit welchem zeitlichen Versatz?" data-en="How do social media campaigns affect e-commerce conversion rates &#8211; and with what time lag?"></div>
+        <div class="rq__sub" data-de="Datenbasis: UrbanCart marketing.csv + sessions.csv + Social-Media-API (Meta/TikTok). Methodik: Granger-Kausalitätstest, Kreuzkorrelationsanalyse nach Kanal." data-en="Data basis: UrbanCart marketing.csv + sessions.csv + social media API (Meta/TikTok). Methodology: Granger causality test, cross-correlation analysis by channel."></div>
       </div>
-      <div style="padding:14px 0;border-bottom:1px solid var(--gray-200);">
-        <div style="font-size:10px;font-weight:800;color:var(--orange);letter-spacing:.1em;margin-bottom:4px;">02</div>
-        <div style="font-size:14px;font-weight:700;color:var(--gray-900);margin-bottom:4px;" data-de="Können unstrukturierte Review-Texte Umsatztrends 4&#8211;6 Wochen im Voraus signalisieren?" data-en="Can unstructured review texts signal revenue trends 4&#8211;6 weeks in advance?"></div>
-        <div style="font-size:13px;color:var(--gray-600);line-height:1.7;" data-de="Datenbasis: reviews.csv + orders.csv (zeitlicher Verlauf). Methodik: NLP Sentiment-Zeitreihe, Korrelation mit nachfolgendem Umsatz per Produktkategorie." data-en="Data basis: reviews.csv + orders.csv (temporal). Methodology: NLP sentiment time series, correlation with subsequent revenue per product category."></div>
+      <div class="rq">
+        <div class="rq__num">02</div>
+        <div class="rq__title" data-de="Können unstrukturierte Review-Texte Umsatztrends 4&#8211;6 Wochen im Voraus signalisieren?" data-en="Can unstructured review texts signal revenue trends 4&#8211;6 weeks in advance?"></div>
+        <div class="rq__sub" data-de="Datenbasis: reviews.csv + orders.csv (zeitlicher Verlauf). Methodik: NLP Sentiment-Zeitreihe, Korrelation mit nachfolgendem Umsatz per Produktkategorie." data-en="Data basis: reviews.csv + orders.csv (temporal). Methodology: NLP sentiment time series, correlation with subsequent revenue per product category."></div>
       </div>
-      <div style="padding:14px 0;border-bottom:1px solid var(--gray-200);">
-        <div style="font-size:10px;font-weight:800;color:var(--orange);letter-spacing:.1em;margin-bottom:4px;">03</div>
-        <div style="font-size:14px;font-weight:700;color:var(--gray-900);margin-bottom:4px;" data-de="Welche Kombination aus demografischen Merkmalen und Kaufverhalten prognostiziert Kundenchurn am zuverlässigsten?" data-en="Which combination of demographic characteristics and purchase behaviour most reliably predicts customer churn?"></div>
-        <div style="font-size:13px;color:var(--gray-600);line-height:1.7;" data-de="Datenbasis: customers.csv + orders.csv (RFM-Features). Methodik: Logistische Regression, Random Forest, Modellvergleich mit AUC-ROC." data-en="Data basis: customers.csv + orders.csv (RFM features). Methodology: logistic regression, random forest, model comparison with AUC-ROC."></div>
+      <div class="rq">
+        <div class="rq__num">03</div>
+        <div class="rq__title" data-de="Welche Kombination aus demografischen Merkmalen und Kaufverhalten prognostiziert Kundenchurn am zuverlässigsten?" data-en="Which combination of demographic characteristics and purchase behaviour most reliably predicts customer churn?"></div>
+        <div class="rq__sub" data-de="Datenbasis: customers.csv + orders.csv (RFM-Features). Methodik: Logistische Regression, Random Forest, Modellvergleich mit AUC-ROC." data-en="Data basis: customers.csv + orders.csv (RFM features). Methodology: logistic regression, random forest, model comparison with AUC-ROC."></div>
       </div>
-      <div style="padding:14px 0;border-bottom:1px solid var(--gray-200);">
-        <div style="font-size:10px;font-weight:800;color:var(--orange);letter-spacing:.1em;margin-bottom:4px;">04</div>
-        <div style="font-size:14px;font-weight:700;color:var(--gray-900);margin-bottom:4px;" data-de="Wie verändert sich die Marketing-Effizienz (ROAS) in Abhängigkeit vom GfK-Konsumklima?" data-en="How does marketing efficiency (ROAS) vary depending on the GfK consumer confidence index?"></div>
-        <div style="font-size:13px;color:var(--gray-600);line-height:1.7;" data-de="Datenbasis: marketing.csv + Statistisches Bundesamt (GfK-Daten). Methodik: Regressionsanalyse, Rolling-Window-Korrelation, saisonale Bereinigung." data-en="Data basis: marketing.csv + Federal Statistical Office (GfK data). Methodology: regression analysis, rolling-window correlation, seasonal adjustment."></div>
+      <div class="rq">
+        <div class="rq__num">04</div>
+        <div class="rq__title" data-de="Wie verändert sich die Marketing-Effizienz (ROAS) in Abhängigkeit vom GfK-Konsumklima?" data-en="How does marketing efficiency (ROAS) vary depending on the GfK consumer confidence index?"></div>
+        <div class="rq__sub" data-de="Datenbasis: marketing.csv + Statistisches Bundesamt (GfK-Daten). Methodik: Regressionsanalyse, Rolling-Window-Korrelation, saisonale Bereinigung." data-en="Data basis: marketing.csv + Federal Statistical Office (GfK data). Methodology: regression analysis, rolling-window correlation, seasonal adjustment."></div>
       </div>
-      <div style="padding:14px 0;border-bottom:1px solid var(--gray-200);">
-        <div style="font-size:10px;font-weight:800;color:var(--orange);letter-spacing:.1em;margin-bottom:4px;">05</div>
-        <div style="font-size:14px;font-weight:700;color:var(--gray-900);margin-bottom:4px;" data-de="Inwiefern spiegeln UrbanCarts Bewertungsmuster ethische Risiken algorithmischer Systeme wider?" data-en="To what extent do UrbanCart's review patterns reflect ethical risks of algorithmic systems?"></div>
-        <div style="font-size:13px;color:var(--gray-600);line-height:1.7;" data-de="Datenbasis: reviews.csv + customers.csv. Fragestellung: Gibt es systematische Unterschiede in Bewertungsmustern nach Region oder Altersgruppe, die auf algorithmische Benachteiligung hindeuten könnten?" data-en="Data basis: reviews.csv + customers.csv. Question: are there systematic differences in review patterns by region or age group that might indicate algorithmic disadvantage?"></div>
+      <div class="rq">
+        <div class="rq__num">05</div>
+        <div class="rq__title" data-de="Inwiefern spiegeln UrbanCarts Bewertungsmuster ethische Risiken algorithmischer Systeme wider?" data-en="To what extent do UrbanCart's review patterns reflect ethical risks of algorithmic systems?"></div>
+        <div class="rq__sub" data-de="Datenbasis: reviews.csv + customers.csv. Fragestellung: Gibt es systematische Unterschiede in Bewertungsmustern nach Region oder Altersgruppe, die auf algorithmische Benachteiligung hindeuten könnten?" data-en="Data basis: reviews.csv + customers.csv. Question: are there systematic differences in review patterns by region or age group that might indicate algorithmic disadvantage?"></div>
       </div>
     </div>
   </div>
@@ -638,7 +682,7 @@
     <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:12px;">
       <div>
         <div style="font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--orange);margin-bottom:16px;" data-de="Kapitel 3 &#183; Produktions-Setup" data-en="Chapter 3 · Production Setup"></div>
-        <h2 style="font-size:36px;font-weight:800;letter-spacing:-1px;color:#fff;margin-bottom:16px;" data-de="Moderne Analytics-Referenzarchitektur" data-en="Modern Analytics Reference Architecture"></h2>
+        <h2 style="font-size:32px;font-weight:800;letter-spacing:-0.5px;color:#fff;margin-bottom:16px;" data-de="Moderne Analytics-Referenzarchitektur" data-en="Modern Analytics Reference Architecture"></h2>
       </div>
       <span style="flex-shrink:0;margin-top:8px;display:inline-flex;align-items:center;gap:6px;background:rgba(61,122,86,.2);border:1.5px solid #3D7A56;color:#6ECC95;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:6px 14px;">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
