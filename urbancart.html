@@ -928,7 +928,7 @@ function updateCartUI() {
   
   list.innerHTML = cart.map(item => `
     <div class="cart-item">
-      <img src="${item.img}" class="cart-item__img"/>
+      <img src="${item.img}" class="cart-item__img" alt="${item.name}"/>
       <div class="cart-item__info">
         <div class="cart-item__name">${item.name}</div>
         <div class="cart-item__cat">${item.cat}</div>
