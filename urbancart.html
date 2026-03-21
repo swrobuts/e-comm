@@ -298,9 +298,22 @@ body{background:var(--shop-bg);font-family:'Segoe UI','Helvetica Neue',sans-seri
 <!-- DATA FLOW SECTION -->
 <section class="data-flow">
   <div class="data-flow__inner">
-    <div class="data-flow__eyebrow">Lehrkontext – Vom Klick zum Dashboard</div>
-    <h2 class="data-flow__title">Wie Shopdaten zu Tableau-Analysen werden</h2>
-    <p class="data-flow__sub">Diese Demo-Site ist kein echter Shop – sie ist ein Lehrinstrument. Jede Nutzerinteraktion entspricht einem Datenpunkt in den CSV-Dateien, die du in Tableau analysierst.</p>
+
+    <!-- ── DEMO FLOW (vereinfacht) ── -->
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:12px;">
+      <div>
+        <div class="data-flow__eyebrow">Lehrkontext – Vom Klick zum Dashboard</div>
+        <h2 class="data-flow__title">Wie Shopdaten zu Tableau-Analysen werden</h2>
+      </div>
+      <div style="flex-shrink:0;margin-top:8px;">
+        <span style="display:inline-flex;align-items:center;gap:6px;background:#FFF8F0;border:1.5px solid var(--orange);color:var(--orange);font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:6px 14px;">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          Vereinfacht · Nur für diese Demo
+        </span>
+      </div>
+    </div>
+    <p class="data-flow__sub">Diese Demo-Site ist kein echter Shop – sie ist ein Lehrinstrument. Die Daten liegen als CSV vor, damit du sie direkt in Tableau laden kannst. <strong>In der Realität würde so niemand arbeiten</strong> – weiter unten siehst du, wie ein echter E-Commerce-Tech-Stack aussieht.</p>
+
     <div class="data-flow__steps">
       <div class="data-flow__step">
         <div class="data-flow__step-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
@@ -312,13 +325,13 @@ body{background:var(--shop-bg);font-family:'Segoe UI','Helvetica Neue',sans-seri
         <div class="data-flow__step-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
         <div class="data-flow__step-num">2</div>
         <div class="data-flow__step-title">Erfassung</div>
-        <div class="data-flow__step-sub">Session-Tracking, Event-Logging, Datenbank</div>
+        <div class="data-flow__step-sub">Session-Tracking, Event-Logging</div>
       </div>
       <div class="data-flow__step">
-        <div class="data-flow__step-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
-        <div class="data-flow__step-num">3</div>
-        <div class="data-flow__step-title">CSV-Export</div>
-        <div class="data-flow__step-sub">orders.csv, customers.csv, sessions.csv …</div>
+        <div class="data-flow__step-icon" style="border-color:var(--orange);background:#FFF8F0;"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/></svg></div>
+        <div class="data-flow__step-num" style="background:#f97316;">!</div>
+        <div class="data-flow__step-title" style="color:var(--orange);">CSV-Export</div>
+        <div class="data-flow__step-sub" style="color:var(--orange);font-weight:600;">Nur Demo! In Realität: Datenbank</div>
       </div>
       <div class="data-flow__step">
         <div class="data-flow__step-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
@@ -333,6 +346,7 @@ body{background:var(--shop-bg);font-family:'Segoe UI','Helvetica Neue',sans-seri
         <div class="data-flow__step-sub">KPIs, Trends, Entscheidungen</div>
       </div>
     </div>
+
     <div class="data-flow__detail">
       <div class="data-flow__card">
         <div class="data-flow__card-title">Was wird erfasst?</div>
@@ -370,8 +384,230 @@ body{background:var(--shop-bg);font-family:'Segoe UI','Helvetica Neue',sans-seri
         </ul>
       </div>
     </div>
+
   </div>
 </section>
+
+<!-- ══════════════════════════════════════
+     REAL-WORLD TECH STACK
+     ══════════════════════════════════════ -->
+<section style="padding:80px 48px;background:#0F172A;">
+  <div style="max-width:1100px;margin:0 auto;">
+
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:12px;">
+      <div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--orange);margin-bottom:16px;">Realität – Produktions-Setup</div>
+        <h2 style="font-size:36px;font-weight:800;letter-spacing:-1px;color:#fff;margin-bottom:16px;">So würde ein echter E-Commerce-Stack aussehen</h2>
+      </div>
+      <span style="flex-shrink:0;margin-top:8px;display:inline-flex;align-items:center;gap:6px;background:rgba(61,122,86,.2);border:1.5px solid #3D7A56;color:#6ECC95;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:6px 14px;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        Produktion · Best Practice
+      </span>
+    </div>
+
+    <p style="font-size:15px;color:rgba(255,255,255,.55);line-height:1.8;max-width:700px;margin-bottom:48px;">CSV-Exporte sind für einen Lehrkontext praktisch – aber in der Praxis ein Anti-Pattern. Kein skalierendes E-Commerce-System arbeitet mit manuellen CSV-Exporten. Stattdessen gibt es spezialisierte Schichten für Erfassung, Speicherung, Transformation und Auswertung.</p>
+
+    <!-- Architecture diagram -->
+    <div id="arch-diagram" style="width:100%;overflow-x:auto;">
+
+      <!-- Layer labels -->
+      <div style="display:grid;grid-template-columns:120px 1fr;gap:0;min-width:720px;">
+
+        <!-- LEFT LABELS -->
+        <div style="display:flex;flex-direction:column;gap:0;padding-top:0;">
+          <div class="arch-layer-label" style="height:110px;display:flex;align-items:center;">
+            <span>Datenquellen</span>
+          </div>
+          <div class="arch-layer-label" style="height:90px;display:flex;align-items:center;">
+            <span>Erfassung</span>
+          </div>
+          <div class="arch-layer-label" style="height:90px;display:flex;align-items:center;">
+            <span>Transport /<br/>Streaming</span>
+          </div>
+          <div class="arch-layer-label" style="height:90px;display:flex;align-items:center;">
+            <span>Speicherung</span>
+          </div>
+          <div class="arch-layer-label" style="height:90px;display:flex;align-items:center;">
+            <span>Transformation</span>
+          </div>
+          <div class="arch-layer-label" style="height:90px;display:flex;align-items:center;">
+            <span>Data Warehouse</span>
+          </div>
+          <div class="arch-layer-label" style="height:90px;display:flex;align-items:center;">
+            <span>Analyse & BI</span>
+          </div>
+        </div>
+
+        <!-- RIGHT: DIAGRAM -->
+        <div style="border-left:1px solid rgba(255,255,255,.08);">
+
+          <!-- L1: Sources -->
+          <div class="arch-layer arch-layer--source" style="height:110px;">
+            <div class="arch-node" data-tip="Webshop, Mobile App, PWA – erzeugt Klick-, Kauf- und Verhaltens-Events in Echtzeit.">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              <span>Shop / App</span>
+            </div>
+            <div class="arch-node" data-tip="ERP-System (z.B. SAP) verwaltet Lagerbestand, Lieferkette, Buchhaltung – liefert Stammdaten via API oder CDC.">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3H8L2 7h20z"/></svg>
+              <span>ERP / SAP</span>
+            </div>
+            <div class="arch-node" data-tip="Google Ads, Meta, E-Mail-Tools – liefern Impression-, Click- und Conversion-Daten über Marketing-APIs.">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+              <span>Marketing</span>
+            </div>
+            <div class="arch-node" data-tip="Salesforce, HubSpot o.ä. – enthält Kundenkontakte, Lifecycle-Status, Support-Tickets.">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+              <span>CRM</span>
+            </div>
+          </div>
+
+          <div class="arch-arrow-row"><div class="arch-arrow-down"></div></div>
+
+          <!-- L2: Capture -->
+          <div class="arch-layer arch-layer--capture" style="height:90px;">
+            <div class="arch-node arch-node--blue" data-tip="Segment, Rudderstack oder Google Tag Manager erfassen Browser- und App-Events und routen sie an mehrere Ziele gleichzeitig (CDP = Customer Data Platform).">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
+              <span>CDP / Tag Manager<br/><em>Segment, GTM</em></span>
+            </div>
+            <div class="arch-node arch-node--blue" data-tip="Change Data Capture liest den Transaktions-Log der operativen DB (z.B. PostgreSQL Write-Ahead-Log) und streamt Änderungen – ohne Abfrage-Last. Tools: Debezium, AWS DMS.">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              <span>CDC (DB-Log)<br/><em>Debezium, DMS</em></span>
+            </div>
+            <div class="arch-node arch-node--blue" data-tip="Fertige Konnektoren für externe APIs (Google Ads, Shopify, Stripe…). Fivetran oder Airbyte extrahieren automatisch und laden in den Warehouse.">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+              <span>Konnektoren<br/><em>Fivetran, Airbyte</em></span>
+            </div>
+          </div>
+
+          <div class="arch-arrow-row"><div class="arch-arrow-down"></div></div>
+
+          <!-- L3: Transport -->
+          <div class="arch-layer arch-layer--transport" style="height:90px;">
+            <div class="arch-node arch-node--dark" data-tip="Apache Kafka ist der de-facto-Standard für Event-Streaming in großen Systemen. Events werden als Streams in Topics geschrieben – mehrere Konsumenten können unabhängig lesen (Entkopplung!).">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              <span>Message Queue / Stream<br/><em>Apache Kafka, Kinesis</em></span>
+            </div>
+            <div class="arch-node arch-node--dark" data-tip="Batch-Orchestrierung mit Apache Airflow oder Prefect: zeitgesteuerte Pipelines, Fehlerbehandlung, Monitoring, Retry-Logik.">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span>Orchestrierung<br/><em>Airflow, Prefect</em></span>
+            </div>
+          </div>
+
+          <div class="arch-arrow-row"><div class="arch-arrow-down"></div></div>
+
+          <!-- L4: Storage -->
+          <div class="arch-layer arch-layer--storage" style="height:90px;">
+            <div class="arch-node arch-node--orange" data-tip="Operative Datenbank (PostgreSQL, MySQL) für Transaktionen: Bestellungen, Kunden, Produkte. Optimiert für schnelle Schreiboperationen, nicht für Analysen.">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+              <span>Operative DB<br/><em>PostgreSQL, MySQL</em></span>
+            </div>
+            <div class="arch-node arch-node--orange" data-tip="Data Lake (S3, GCS, Azure ADLS) speichert rohe, unstrukturierte Daten günstig und langfristig – als Landing Zone vor der Transformation.">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 12a10 10 0 01-10 10 10 10 0 01-10-10 10 10 0 0110-10"/><path d="M22 12H12L7 7"/></svg>
+              <span>Data Lake<br/><em>S3, GCS, Azure</em></span>
+            </div>
+          </div>
+
+          <div class="arch-arrow-row"><div class="arch-arrow-down"></div></div>
+
+          <!-- L5: Transform -->
+          <div class="arch-layer arch-layer--transform" style="height:90px;">
+            <div class="arch-node arch-node--blue" data-tip="dbt (data build tool) transformiert Rohdaten mit SQL in saubere, dokumentierte Tabellen. Versionierung via Git, automatische Tests, Lineage-Dokumentation.">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+              <span>Transformation<br/><em>dbt (ELT)</em></span>
+            </div>
+            <div class="arch-node arch-node--blue" data-tip="Apache Spark oder AWS Glue für große Datenmengen: verteilte Verarbeitung von Milliarden Zeilen, Machine Learning auf Rohdaten.">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              <span>Batch Processing<br/><em>Spark, AWS Glue</em></span>
+            </div>
+          </div>
+
+          <div class="arch-arrow-row"><div class="arch-arrow-down"></div></div>
+
+          <!-- L6: Warehouse -->
+          <div class="arch-layer arch-layer--warehouse" style="height:90px;">
+            <div class="arch-node arch-node--green" data-tip="Snowflake: Cloud-natives Data Warehouse, trennt Compute und Storage, skaliert unbegrenzt, pay-per-query. Standard für mid-to-large E-Commerce.">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2v20M2 12h20M4.93 4.93l14.14 14.14M19.07 4.93L4.93 19.07"/></svg>
+              <span>Snowflake</span>
+            </div>
+            <div class="arch-node arch-node--green" data-tip="Google BigQuery: serverless, skaliert auf Petabytes, SQL-Standard, integriert mit Google Ads / GA4.">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              <span>BigQuery</span>
+            </div>
+            <div class="arch-node arch-node--green" data-tip="Amazon Redshift: MPP-Warehouse, eng integriert in AWS-Ökosystem (S3, EMR, SageMaker).">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+              <span>Redshift</span>
+            </div>
+          </div>
+
+          <div class="arch-arrow-row"><div class="arch-arrow-down"></div></div>
+
+          <!-- L7: BI -->
+          <div class="arch-layer arch-layer--bi" style="height:90px;">
+            <div class="arch-node arch-node--result" data-tip="Tableau, Power BI, Looker verbinden sich direkt mit dem Data Warehouse – live oder über Extrakte. Kein CSV-Export nötig.">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+              <span>BI / Dashboards<br/><em>Tableau, Power BI, Looker</em></span>
+            </div>
+            <div class="arch-node arch-node--result" data-tip="Python (pandas, scikit-learn, PyTorch) direkt auf dem Warehouse für ML, Forecasting und Sentiment-Analyse.">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+              <span>Python / ML<br/><em>Notebooks, SageMaker</em></span>
+            </div>
+            <div class="arch-node arch-node--result" data-tip="Self-Service-Analyse für Nicht-Techniker: Metabase, Superset oder Lightdash auf Basis des Semantic Layers.">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+              <span>Self-Service<br/><em>Metabase, Superset</em></span>
+            </div>
+          </div>
+
+        </div><!-- /right -->
+      </div><!-- /grid -->
+    </div><!-- /arch-diagram -->
+
+    <!-- Tooltip container -->
+    <div id="arch-tooltip" style="display:none;position:fixed;z-index:999;max-width:280px;background:#1E293B;border-left:3px solid var(--orange);padding:12px 16px;font-size:12px;color:rgba(255,255,255,.8);line-height:1.7;pointer-events:none;box-shadow:0 8px 32px rgba(0,0,0,.4);"></div>
+
+    <!-- Key differences callout -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:48px;">
+      <div style="background:rgba(255,255,255,.04);border-left:3px solid var(--orange);padding:24px;">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--orange);margin-bottom:10px;">CSV vs. Datenbank</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.6);line-height:1.8;">CSV: manueller Export, statisch, kein Concurrent Access, keine Transaktionen, keine Referenzintegrität. Operative DB: ACID-Transaktionen, Millisekunden-Latenz, skaliert auf Millionen Zeilen.</div>
+      </div>
+      <div style="background:rgba(255,255,255,.04);border-left:3px solid var(--blue);padding:24px;">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--blue);margin-bottom:10px;">ELT statt ETL</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.6);line-height:1.8;">Moderner Ansatz: erst <em>Extract → Load</em> (roh in den Warehouse), dann <em>Transform</em> mit dbt in SQL. Rohdaten bleiben erhalten, Transformationen sind versioniert und testbar.</div>
+      </div>
+      <div style="background:rgba(255,255,255,.04);border-left:3px solid #3D7A56;padding:24px;">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#6ECC95;margin-bottom:10px;">Warum Streaming?</div>
+        <div style="font-size:13px;color:rgba(255,255,255,.6);line-height:1.8;">Kafka entkoppelt Produzenten und Konsumenten. Ein Checkout-Event kann gleichzeitig Lager, Empfehlungsengine, Analytics und Fraud-Detection triggern – ohne direkte Abhängigkeit.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<style>
+.arch-layer-label{padding:0 16px 0 0;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.3);text-align:right;line-height:1.4;}
+.arch-layer{display:flex;align-items:center;gap:8px;padding:0 24px;border-top:1px solid rgba(255,255,255,.06);}
+.arch-layer--source   {background:rgba(232,119,34,.06);}
+.arch-layer--capture  {background:rgba(0,91,154,.08);}
+.arch-layer--transport{background:rgba(255,255,255,.03);}
+.arch-layer--storage  {background:rgba(232,119,34,.06);}
+.arch-layer--transform{background:rgba(0,91,154,.08);}
+.arch-layer--warehouse{background:rgba(61,122,86,.08);}
+.arch-layer--bi       {background:rgba(61,122,86,.12);}
+.arch-arrow-row{display:flex;align-items:center;padding:0 24px;height:20px;}
+.arch-arrow-down{flex:1;height:20px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.15);}
+.arch-arrow-down::after{content:'↓';font-size:18px;line-height:1;}
+.arch-node{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:10px 12px;min-width:120px;max-width:160px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);font-size:11px;font-weight:700;color:rgba(255,255,255,.75);text-align:center;cursor:help;transition:all .2s;line-height:1.4;flex:1;}
+.arch-node em{font-style:normal;font-size:10px;color:rgba(255,255,255,.35);font-weight:400;}
+.arch-node:hover{border-color:var(--orange);color:#fff;background:rgba(232,119,34,.1);transform:translateY(-2px);}
+.arch-node--blue{border-color:rgba(0,91,154,.4);background:rgba(0,91,154,.12);}
+.arch-node--blue:hover{border-color:var(--blue);background:rgba(0,91,154,.25);}
+.arch-node--orange{border-color:rgba(232,119,34,.3);background:rgba(232,119,34,.1);}
+.arch-node--dark{border-color:rgba(255,255,255,.15);background:rgba(255,255,255,.05);}
+.arch-node--green{border-color:rgba(61,122,86,.4);background:rgba(61,122,86,.15);}
+.arch-node--green:hover{border-color:#3D7A56;background:rgba(61,122,86,.3);}
+.arch-node--result{border-color:rgba(61,122,86,.5);background:rgba(61,122,86,.2);}
+.arch-node--result:hover{border-color:#6ECC95;background:rgba(61,122,86,.35);}
+</style>
 
 <!-- PRODUCTS -->
 <section class="shop-section" id="produkte">
@@ -1075,6 +1311,27 @@ async function initDeliveryMap(postal, city) {
 // ══════════════════════════════════════════
 // Dynamisches Jahr
 document.querySelectorAll('.current-year').forEach(el => el.textContent = new Date().getFullYear());
+
+// ── Architecture diagram tooltips ──
+(function(){
+  const tip = document.getElementById('arch-tooltip');
+  if (!tip) return;
+  document.querySelectorAll('.arch-node[data-tip]').forEach(node => {
+    node.addEventListener('mouseenter', e => {
+      tip.textContent = node.getAttribute('data-tip');
+      tip.style.display = 'block';
+    });
+    node.addEventListener('mousemove', e => {
+      const x = e.clientX + 16, y = e.clientY - 8;
+      const maxX = window.innerWidth - 300;
+      tip.style.left = Math.min(x, maxX) + 'px';
+      tip.style.top = y + 'px';
+    });
+    node.addEventListener('mouseleave', () => {
+      tip.style.display = 'none';
+    });
+  });
+})();
 
 document.getElementById('cart-btn').addEventListener('click', openCart);
 
