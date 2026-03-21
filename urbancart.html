@@ -272,7 +272,7 @@ body{background:var(--shop-bg);font-family:'Segoe UI','Helvetica Neue',sans-seri
 <!-- HERO -->
 <section class="shop-hero">
   <div class="shop-hero__text">
-    <div class="shop-hero__kicker">Neue Kollektion · Frühjahr 2025</div>
+    <div class="shop-hero__kicker">Neue Kollektion · Frühjahr <span class="current-year"></span></div>
     <h1 class="shop-hero__title">Mode die<br/><em>bleibt.</em></h1>
     <p class="shop-hero__sub">Minimalismus trifft Qualität. UrbanCart kuratiert Stücke, die nicht der nächsten Saison hinterherlaufen – sondern sie überdauern.</p>
     <a href="#produkte" class="shop-hero__cta">
@@ -281,7 +281,7 @@ body{background:var(--shop-bg);font-family:'Segoe UI','Helvetica Neue',sans-seri
     </a>
   </div>
   <div class="shop-hero__img">
-    <img src="assets/fashion/hero.webp" alt="UrbanCart Kollektion Frühjahr 2025"/>
+    <img src="assets/fashion/hero.webp" alt="UrbanCart Kollektion Frühjahr"/>
     <div class="shop-hero__badge">NEW IN</div>
   </div>
 </section>
@@ -544,7 +544,7 @@ body{background:var(--shop-bg);font-family:'Segoe UI','Helvetica Neue',sans-seri
     </ul>
   </div>
   <div class="shop-footer__bottom" style="grid-column:1/-1">
-    <span>© 2025 UrbanCart · Fiktiver Demo-Shop · THWS Business School</span>
+    <span>© <span class="current-year"></span> UrbanCart · Fiktiver Demo-Shop · THWS Business School</span>
     <span>Alle Daten sind synthetisch generiert · Keine echten Transaktionen</span>
   </div>
 </footer>
@@ -1073,6 +1073,9 @@ async function initDeliveryMap(postal, city) {
 // ══════════════════════════════════════════
 // EVENT LISTENERS
 // ══════════════════════════════════════════
+// Dynamisches Jahr
+document.querySelectorAll('.current-year').forEach(el => el.textContent = new Date().getFullYear());
+
 document.getElementById('cart-btn').addEventListener('click', openCart);
 
 document.querySelectorAll('.product-card').forEach(card => {
