@@ -92,6 +92,9 @@
 /* ── Arch tooltip ── */
 #arch-tooltip{display:none;position:fixed;z-index:999;max-width:280px;background:#1E293B;border-left:3px solid var(--orange);padding:12px 16px;font-size:12px;color:rgba(255,255,255,.8);line-height:1.7;pointer-events:none;box-shadow:0 8px 32px rgba(0,0,0,.4);}
 
+/* ── Eyebrow color override (green instead of orange) ── */
+.block__eyebrow { color: rgba(61,122,86,.85); }
+
 /* ── Readability overrides ── */
 .infobox__item__sub { font-size: 13px; color: var(--gray-600); line-height: 1.7; margin-top: 4px; }
 .infobox__item__title { font-size: 14px; }
@@ -133,7 +136,7 @@
 
 /* ── Dark section typography ── */
 .dark-section h2 { font-size: 32px; font-weight: 800; letter-spacing: -0.5px; color: #fff; margin-bottom: 16px; }
-.dark-section .block__eyebrow { color: var(--orange); margin-bottom: 16px; }
+.dark-section .block__eyebrow { color: rgba(110,204,149,.85); margin-bottom: 16px; }
 .dark-section p.lead { font-size: 15px; color: rgba(255,255,255,.55); line-height: 1.8; max-width: 700px; margin-bottom: 48px; }
 
 /* ── Grid overflow fix (min-width:0, NOT overflow:hidden) ── */
@@ -699,7 +702,7 @@
   <div class="dark-section__inner">
     <div style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:12px;">
       <div>
-        <div style="font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--orange);margin-bottom:16px;" data-de="Architektur &#183; Produktions-Setup" data-en="Architecture · Production Setup"></div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(110,204,149,.85);margin-bottom:16px;" data-de="Architektur &#183; Produktions-Setup" data-en="Architecture · Production Setup"></div>
         <h2 style="font-size:32px;font-weight:800;letter-spacing:-0.5px;color:#fff;margin-bottom:16px;" data-de="Moderne Analytics-Referenzarchitektur" data-en="Modern Analytics Reference Architecture"></h2>
       </div>
       <span style="flex-shrink:0;margin-top:8px;display:inline-flex;align-items:center;gap:6px;background:rgba(61,122,86,.2);border:1.5px solid #3D7A56;color:#6ECC95;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;padding:6px 14px;">
