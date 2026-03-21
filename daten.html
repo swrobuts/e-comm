@@ -112,8 +112,8 @@
 
 /* ── Consistent section spacing ── */
 .block + .block { margin-top: 0; }
-.block h3 { font-size: 17px; font-weight: 800; margin-bottom: var(--space-2); color: var(--gray-900); }
-.block p { font-size: 14px; color: var(--gray-600); line-height: 1.8; }
+.block > h3 { font-size: 17px; font-weight: 800; margin-bottom: var(--space-2); color: var(--gray-900); }
+.block > div > h3 { font-size: 17px; font-weight: 800; margin-bottom: var(--space-2); color: var(--gray-900); }
 
 /* ── Pipeline flow consistent sizing ── */
 .pipeline-flow { margin: 32px 0; display: grid; grid-template-columns: repeat(5,1fr); gap: 0; border: 2px solid var(--gray-200); overflow: hidden; }
@@ -136,9 +136,11 @@
 .dark-section .block__eyebrow { color: var(--orange); margin-bottom: 16px; }
 .dark-section p.lead { font-size: 15px; color: rgba(255,255,255,.55); line-height: 1.8; max-width: 700px; margin-bottom: 48px; }
 
-/* ── Overflow fix: prevent grids from exceeding lab-main ── */
-.lab-main { min-width: 0; overflow: hidden; }
-.block { min-width: 0; overflow: hidden; }
+/* ── Grid overflow fix (min-width:0, NOT overflow:hidden) ── */
+.lab-main { min-width: 0; }
+.block { min-width: 0; }
+.two-col, .ethics-grid, .pipeline-flow, .ds-grid, .ext-grid, .law-grid, .law-grid-2 { min-width: 0; }
+.two-col > *, .ethics-grid > *, .ds-grid > *, .ext-grid > * { min-width: 0; overflow-wrap: break-word; word-break: break-word; }
 
 /* ── Ethics grid: responsive ── */
 .ethics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: stretch; }
@@ -554,7 +556,7 @@
   <div class="two-col sr">
     <div>
       <h3 data-de="Dark Patterns: manipulative Interface-Design" data-en="Dark Patterns: Manipulative Interface Design"></h3>
-      <p style="color:var(--gray-600);line-height:1.8;margin-bottom:12px;" data-de="Dark Patterns sind Interface-Designs, die Nutzer zu Entscheidungen manipulieren, die sie eigentlich nicht treffen wollen. Im E-Commerce weit verbreitet &#8211; und seit 2024 in der EU explizit verboten (Digital Services Act):" data-en="Dark patterns are interface designs that manipulate users into decisions they would not otherwise make. Widespread in e-commerce &#8211; and since 2024 explicitly prohibited in the EU (Digital Services Act):"></div>
+      <p style="color:var(--gray-600);line-height:1.8;margin-bottom:12px;" data-de="Dark Patterns sind Interface-Designs, die Nutzer zu Entscheidungen manipulieren, die sie eigentlich nicht treffen wollen. Im E-Commerce weit verbreitet &#8211; und seit 2024 in der EU explizit verboten (Digital Services Act):" data-en="Dark patterns are interface designs that manipulate users into decisions they would not otherwise make. Widespread in e-commerce &#8211; and since 2024 explicitly prohibited in the EU (Digital Services Act):"></p>
       <ul style="color:var(--gray-600);line-height:2;list-style:none;padding:0;">
         <li style="display:flex;gap:8px;align-items:flex-start;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2.5" style="flex-shrink:0;margin-top:3px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg><span data-de="Newsletter-Opt-in vorausgewählt beim Checkout" data-en="Newsletter opt-in pre-selected at checkout"></span></li>
         <li style="display:flex;gap:8px;align-items:flex-start;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#DC2626" stroke-width="2.5" style="flex-shrink:0;margin-top:3px"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg><span data-de="'Ablehnen'-Button bewusst klein und versteckt" data-en="'Reject' button deliberately small and hidden"></span></li>
